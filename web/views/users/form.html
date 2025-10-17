@@ -1,0 +1,187 @@
+<!-- 用户表单 - 用于新增和编辑 -->
+<form {{if .IsEdit}} hx-put="/users/{{.User.ID}}" hx-target="#user-row-{{.User.ID}}" hx-swap="outerHTML" {{else}}
+    hx-post="/users" hx-target="#user-table-container" hx-swap="outerHTML" {{end}} x-data="userForm({{.IsEdit}})"
+    @submit.prevent="submitForm">
+
+    <div class="form-row">
+        <!-- 用户名 -->
+        <div class="field">
+            <label class="label">用户名 <span class="has-text-danger">*</span></label>
+            <div class="control has-icons-left">
+                <input class="input" type="text" name="username" placeholder="请输入用户名" value="{{.User.Username}}" {{if
+                    .IsEdit}}readonly{{end}} required x-model="form.username" :class="{'is-danger': errors.username}">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+            </div>
+            <p class="help is-danger" x-show="errors.username" x-text="errors.username"></p>
+        </div>
+
+        <!-- 邮箱 -->
+        <div class="field">
+            <label class="label">邮箱 <span class="has-text-danger">*</span></label>
+            <div class="control has-icons-left">
+                <input class="input" type="email" name="email" placeholder="请输入邮箱" value="{{.User.Email}}" required
+                    x-model="form.email" :class="{'is-danger': errors.email}">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                </span>
+            </div>
+            <p class="help is-danger" x-show="errors.email" x-text="errors.email"></p>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <!-- 真实姓名 -->
+        <div class="field">
+            <label class="label">真实姓名 <span class="has-text-danger">*</span></label>
+            <div class="control has-icons-left">
+                <input class="input" type="text" name="real_name" placeholder="请输入真实姓名" value="{{.User.RealName}}"
+                    required x-model="form.realName" :class="{'is-danger': errors.realName}">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-id-card"></i>
+                </span>
+            </div>
+            <p class="help is-danger" x-show="errors.realName" x-text="errors.realName"></p>
+        </div>
+
+        <!-- 电话 -->
+        <div class="field">
+            <label class="label">电话</label>
+            <div class="control has-icons-left">
+                <input class="input" type="tel" name="phone" placeholder="请输入电话号码" value="{{.User.Phone}}"
+                    x-model="form.phone">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-phone"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <!-- 角色 -->
+        <div class="field">
+            <label class="label">角色 <span class="has-text-danger">*</span></label>
+            <div class="control">
+                <div class="select is-fullwidth">
+                    <select name="role" required x-model="form.role">
+                        <option value="">请选择角色</option>
+                        <option value="admin" {{if eq .User.Role "admin" }}selected{{end}}>管理员</option>
+                        <option value="editor" {{if eq .User.Role "editor" }}selected{{end}}>编辑</option>
+                        <option value="viewer" {{if eq .User.Role "viewer" }}selected{{end}}>访客</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 状态 -->
+        <div class="field">
+            <label class="label">状态 <span class="has-text-danger">*</span></label>
+            <div class="control">
+                <div class="select is-fullwidth">
+                    <select name="status" required x-model="form.status">
+                        <option value="">请选择状态</option>
+                        <option value="active" {{if eq .User.Status "active" }}selected{{end}}>活跃</option>
+                        <option value="inactive" {{if eq .User.Status "inactive" }}selected{{end}}>非活跃</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{if not .IsEdit}}
+    <!-- 密码（仅新增时显示） -->
+    <div class="field">
+        <label class="label">密码 <span class="has-text-danger">*</span></label>
+        <div class="control has-icons-left">
+            <input class="input" type="password" name="password" placeholder="请输入密码" required minlength="6"
+                x-model="form.password" :class="{'is-danger': errors.password}">
+            <span class="icon is-small is-left">
+                <i class="fas fa-lock"></i>
+            </span>
+        </div>
+        <p class="help">密码长度至少 6 位</p>
+        <p class="help is-danger" x-show="errors.password" x-text="errors.password"></p>
+    </div>
+    {{end}}
+
+    <!-- 提交按钮 -->
+    <div class="field is-grouped is-grouped-right" style="margin-top: 2rem;">
+        <div class="control">
+            <button type="button" class="button" @click="$refs.userModal.classList.remove('is-active')">
+                取消
+            </button>
+        </div>
+        <div class="control">
+            <button type="submit" class="button is-primary" :class="{'is-loading': loading}" :disabled="loading">
+                <span class="icon">
+                    <i class="fas fa-save"></i>
+                </span>
+                <span>{{if .IsEdit}}更新{{else}}创建{{end}}</span>
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    function userForm(isEdit) {
+        return {
+            loading: false,
+            errors: {},
+            form: {
+                username: '',
+                email: '',
+                realName: '',
+                phone: '',
+                role: '',
+                status: '',
+                password: ''
+            },
+
+            validateForm() {
+                this.errors = {};
+                let isValid = true;
+
+                if (!this.form.username && !isEdit) {
+                    this.errors.username = '用户名不能为空';
+                    isValid = false;
+                }
+
+                if (!this.form.email) {
+                    this.errors.email = '邮箱不能为空';
+                    isValid = false;
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) {
+                    this.errors.email = '邮箱格式不正确';
+                    isValid = false;
+                }
+
+                if (!this.form.realName) {
+                    this.errors.realName = '真实姓名不能为空';
+                    isValid = false;
+                }
+
+                if (!isEdit && (!this.form.password || this.form.password.length < 6)) {
+                    this.errors.password = '密码长度至少 6 位';
+                    isValid = false;
+                }
+
+                return isValid;
+            },
+
+            submitForm(event) {
+                if (this.validateForm()) {
+                    this.loading = true;
+                    // 让 HTMX 处理表单提交
+                    htmx.trigger(event.target, 'submit');
+
+                    // 监听提交完成
+                    setTimeout(() => {
+                        this.loading = false;
+                        // 关闭模态框
+                        document.querySelector('.modal').classList.remove('is-active');
+                    }, 500);
+                }
+            }
+        };
+    }
+</script>

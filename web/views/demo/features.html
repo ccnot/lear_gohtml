@@ -1,0 +1,450 @@
+<!-- HTMX & Alpine.js 特性演示页面 -->
+<div x-data="demoPage()" x-cloak>
+    <!-- 页面标题 -->
+    <div id="page-title" hx-swap-oob="true">特性演示</div>
+
+    <!-- 页面说明 -->
+    <div class="notification is-info is-light" style="margin-bottom: 1.5rem;">
+        <button class="delete" @click="$el.parentElement.remove()"></button>
+        <strong><i class="fas fa-graduation-cap"></i> 学习提示</strong>
+        <p style="margin-top: 0.5rem;">这个页面展示了 HTMX 和 Alpine.js 的常用特性。打开浏览器开发者工具（F12）查看网络请求和控制台日志，以便更好地理解每个特性的工作原理。</p>
+    </div>
+
+    <!-- 标签页导航 -->
+    <div class="tabs is-boxed">
+        <ul>
+            <li :class="{ 'is-active': activeTab === 'htmx' }">
+                <a @click.prevent="activeTab = 'htmx'">
+                    <span class="icon is-small"><i class="fas fa-bolt"></i></span>
+                    <span>HTMX 特性</span>
+                </a>
+            </li>
+            <li :class="{ 'is-active': activeTab === 'alpine' }">
+                <a @click.prevent="activeTab = 'alpine'">
+                    <span class="icon is-small"><i class="fas fa-mountain"></i></span>
+                    <span>Alpine.js 特性</span>
+                </a>
+            </li>
+            <li :class="{ 'is-active': activeTab === 'combined' }">
+                <a @click.prevent="activeTab = 'combined'">
+                    <span class="icon is-small"><i class="fas fa-puzzle-piece"></i></span>
+                    <span>组合示例</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- HTMX 特性演示 -->
+    <div x-show="activeTab === 'htmx'" x-transition class="content-card">
+        <h2 class="title is-4">
+            <i class="fas fa-bolt has-text-warning"></i>
+            HTMX 特性演示
+        </h2>
+
+        <!-- 1. 实时自动保存 -->
+        <div class="box">
+            <h3 class="subtitle is-5">
+                <span class="tag is-info">1</span>
+                实时自动保存 <code>hx-trigger="input changed delay:500ms"</code>
+            </h3>
+            <p class="mb-3">输入内容后，500毫秒无操作会自动保存</p>
+
+            <div class="field">
+                <label class="label">网站名称</label>
+                <div class="control">
+                    <input class="input" type="text" name="field" value="HTMX 管理后台" hx-post="/demo/autosave"
+                        hx-trigger="input changed delay:500ms" hx-target="#save-status-1"
+                        hx-indicator="#save-indicator-1" hx-vals='{"field": "siteName"}' placeholder="输入网站名称...">
+                </div>
+            </div>
+
+            <div style="min-height: 40px; margin-top: 0.5rem;">
+                <div id="save-status-1" style="display: inline-block;">
+                    <span class="tag">等待输入...</span>
+                </div>
+                <span id="save-indicator-1" class="htmx-indicator ml-2">
+                    <span class="icon has-text-info">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                    <span>保存中...</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- 2. 禁用按钮 -->
+        <div class="box">
+            <h3 class="subtitle is-5">
+                <span class="tag is-info">2</span>
+                请求期间禁用 <code>hx-disable-elt</code>
+            </h3>
+            <p class="mb-3">点击按钮后，按钮会被禁用直到请求完成（模拟2秒延迟）</p>
+
+            <button class="button is-primary" hx-post="/demo/slow" hx-target="#slow-result" hx-disable-elt="this"
+                hx-indicator="#slow-indicator">
+                <span class="icon"><i class="fas fa-clock"></i></span>
+                <span>慢速请求（2秒）</span>
+            </button>
+            <span id="slow-indicator" class="htmx-indicator ml-2">
+                <span class="icon has-text-info">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </span>
+            </span>
+
+            <div id="slow-result" class="mt-3"></div>
+        </div>
+
+        <!-- 3. 轮询 -->
+        <div class="box">
+            <h3 class="subtitle is-5">
+                <span class="tag is-info">3</span>
+                自动轮询 <code>hx-trigger="every 3s"</code>
+            </h3>
+            <p class="mb-3">每3秒自动刷新一次统计数据</p>
+
+            <div hx-get="/demo/stats" hx-trigger="load, every 3s" hx-swap="innerHTML" hx-indicator="#poll-indicator">
+                <div class="box has-text-centered">
+                    <span class="icon is-large has-text-info">
+                        <i class="fas fa-sync-alt fa-spin"></i>
+                    </span>
+                    <p>正在加载...</p>
+                </div>
+            </div>
+            <div class="has-text-centered mt-2">
+                <span id="poll-indicator" class="htmx-indicator">
+                    <span class="tag is-info is-light">
+                        <span class="icon"><i class="fas fa-sync-alt fa-spin"></i></span>
+                        <span>刷新中...</span>
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- 4. 表单验证 -->
+        <div class="box">
+            <h3 class="subtitle is-5">
+                <span class="tag is-info">4</span>
+                表单验证 <code>hx-validate="true"</code>
+            </h3>
+            <p class="mb-3">提交前会触发 HTML5 验证</p>
+
+            <form hx-post="/demo/validate" hx-target="#validate-result" hx-validate="true">
+                <div class="field">
+                    <label class="label">邮箱</label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="email" name="email" required placeholder="example@email.com">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">密码</label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="password" name="password" required minlength="6"
+                            placeholder="至少6个字符">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <button class="button is-primary" type="submit">
+                    <span class="icon"><i class="fas fa-check"></i></span>
+                    <span>验证并提交</span>
+                </button>
+            </form>
+
+            <div id="validate-result" class="mt-3"></div>
+        </div>
+
+        <!-- 5. 选择性更新 -->
+        <div class="box">
+            <h3 class="subtitle is-5">
+                <span class="tag is-info">5</span>
+                选择性更新 <code>hx-select</code>
+            </h3>
+            <p class="mb-3">只更新响应中的特定部分</p>
+
+            <button class="button is-info" hx-get="/demo/users" hx-target="#user-container" hx-select="#user-list">
+                <span class="icon"><i class="fas fa-users"></i></span>
+                <span>加载用户列表</span>
+            </button>
+
+            <div id="user-container" class="mt-3">
+                <p class="has-text-grey-light">点击按钮加载用户...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alpine.js 特性演示 -->
+    <div x-show="activeTab === 'alpine'" x-transition class="content-card">
+        <h2 class="title is-4">
+            <i class="fas fa-mountain has-text-info"></i>
+            Alpine.js 特性演示
+        </h2>
+
+        <!-- 1. 过渡动画 -->
+        <div class="box">
+            <h3 class="subtitle is-5">
+                <span class="tag is-success">1</span>
+                过渡动画 <code>x-transition</code>
+            </h3>
+
+            <button class="button is-primary" @click="showTransition = !showTransition">
+                <span x-text="showTransition ? '隐藏' : '显示'"></span>内容
+            </button>
+
+            <div x-show="showTransition" x-transition class="notification is-info is-light mt-3">
+                <p>✨ 这是一个带淡入淡出效果的内容块</p>
+            </div>
+
+            <div class="mt-4">
+                <button class="button is-info" @click="showCustomTransition = !showCustomTransition">
+                    自定义动画
+                </button>
+
+                <div x-show="showCustomTransition" x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 transform scale-90"
+                    x-transition:enter-end="opacity-100 transform scale-100"
+                    x-transition:leave="transition ease-in duration-300"
+                    x-transition:leave-start="opacity-100 transform scale-100"
+                    x-transition:leave-end="opacity-0 transform scale-90" class="notification is-success is-light mt-3">
+                    <p>🎨 这是一个自定义缩放+淡入淡出动画</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 数据监听 -->
+        <div class="box">
+            <h3 class="subtitle is-5">
+                <span class="tag is-success">2</span>
+                数据监听 <code>$watch</code>
+            </h3>
+            <p class="mb-3">改变颜色，页面主题会实时预览</p>
+
+            <div x-data="{
+                primaryColor: '#1976d2',
+                init() {
+                    this.$watch('primaryColor', value => {
+                        document.documentElement.style.setProperty('--demo-primary', value);
+                    });
+                }
+            }">
+                <div class="field">
+                    <label class="label">主色调</label>
+                    <div class="control">
+                        <input type="color" x-model="primaryColor" class="input" style="height: 50px;">
+                    </div>
+                    <p class="help">当前颜色: <span x-text="primaryColor"></span></p>
+                </div>
+
+                <div class="notification" style="background-color: var(--demo-primary, #1976d2); color: white;">
+                    <strong>预览区域</strong>
+                    <p>这个区域的背景色会跟随你选择的颜色变化</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Magic Properties -->
+        <div class="box">
+            <h3 class="subtitle is-5">
+                <span class="tag is-success">3</span>
+                Magic Properties <code>$refs, $el, $dispatch</code>
+            </h3>
+
+            <div class="field">
+                <label class="label">$refs 示例</label>
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <input class="input" x-ref="myInput" placeholder="输入一些文字...">
+                    </div>
+                    <div class="control">
+                        <button class="button is-info" @click="$refs.myInput.focus()">
+                            聚焦
+                        </button>
+                        <button class="button is-warning" @click="$refs.myInput.value = ''">
+                            清空
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">$el 示例</label>
+                <button class="button is-primary"
+                    @click="$el.classList.toggle('is-loading'); setTimeout(() => $el.classList.remove('is-loading'), 2000)">
+                    点击添加 Loading 状态
+                </button>
+            </div>
+
+            <div @custom-event="alert('接收到自定义事件: ' + $event.detail.message)">
+                <label class="label">$dispatch 示例</label>
+                <button class="button is-success" @click="$dispatch('custom-event', { message: 'Hello from Alpine!' })">
+                    派发自定义事件
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. 全局状态 -->
+        <div class="box">
+            <h3 class="subtitle is-5">
+                <span class="tag is-success">4</span>
+                全局状态 <code>Alpine.store()</code>
+            </h3>
+            <p class="mb-3">多个组件共享状态（在 app.js 中定义）</p>
+
+            <div x-data class="columns">
+                <div class="column">
+                    <div class="box has-background-info-light">
+                        <p class="heading">组件 A</p>
+                        <p class="title is-4" x-text="$store.demo.count"></p>
+                        <button class="button is-info is-small" @click="$store.demo.increment()">
+                            增加
+                        </button>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box has-background-success-light">
+                        <p class="heading">组件 B</p>
+                        <p class="title is-4" x-text="$store.demo.count"></p>
+                        <button class="button is-success is-small" @click="$store.demo.decrement()">
+                            减少
+                        </button>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box has-background-warning-light">
+                        <p class="heading">组件 C</p>
+                        <p class="title is-4" x-text="$store.demo.count"></p>
+                        <button class="button is-warning is-small" @click="$store.demo.reset()">
+                            重置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 组合示例 -->
+    <div x-show="activeTab === 'combined'" x-transition class="content-card">
+        <h2 class="title is-4">
+            <i class="fas fa-puzzle-piece has-text-success"></i>
+            HTMX + Alpine.js 组合示例
+        </h2>
+
+        <!-- 智能搜索 -->
+        <div class="box">
+            <h3 class="subtitle is-5">智能搜索框</h3>
+            <p class="mb-3">结合 Alpine.js 的本地筛选和 HTMX 的实时搜索</p>
+
+            <div x-data="{ 
+                searchTerm: '',
+                localItems: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'],
+                get filteredItems() {
+                    return this.localItems.filter(item => 
+                        item.toLowerCase().includes(this.searchTerm.toLowerCase())
+                    );
+                }
+            }">
+                <div class="field">
+                    <div class="control has-icons-left">
+                        <input class="input" type="text" x-model="searchTerm" placeholder="搜索水果...">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="tags">
+                    <template x-for="item in filteredItems" :key="item">
+                        <span class="tag is-info is-medium" x-text="item"></span>
+                    </template>
+                    <span x-show="filteredItems.length === 0" class="tag is-light">
+                        没有找到结果
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 带撤销的编辑器 -->
+        <div class="box">
+            <h3 class="subtitle is-5">带撤销功能的编辑器</h3>
+            <p class="mb-3">使用 Alpine.js 管理历史，HTMX 自动保存</p>
+
+            <div x-data="{
+                content: 'Hello World!',
+                history: [],
+                
+                change(value) {
+                    if (this.content !== value) {
+                        this.history.push(this.content);
+                        if (this.history.length > 10) this.history.shift();
+                        this.content = value;
+                    }
+                },
+                
+                undo() {
+                    if (this.history.length > 0) {
+                        this.content = this.history.pop();
+                    }
+                }
+            }">
+                <div class="field">
+                    <div class="control">
+                        <textarea class="textarea" :value="content" @input="change($event.target.value)"
+                            hx-post="/demo/autosave" hx-trigger="input changed delay:1s" hx-target="#editor-status"
+                            hx-vals='{"field": "content"}' rows="4"></textarea>
+                    </div>
+                </div>
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button class="button" @click="undo()" :disabled="history.length === 0">
+                            <span class="icon"><i class="fas fa-undo"></i></span>
+                            <span>撤销 (<span x-text="history.length"></span>)</span>
+                        </button>
+                    </div>
+                    <div class="control">
+                        <div id="editor-status">
+                            <span class="tag">准备就绪</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alpine.js 组件定义 -->
+<script>
+    function demoPage() {
+        return {
+            activeTab: 'htmx',
+            showTransition: false,
+            showCustomTransition: false,
+
+            init() {
+                console.log('✅ 特性演示页面已初始化');
+            }
+        };
+    }
+</script>
+
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+
+    .htmx-indicator {
+        display: none;
+    }
+
+    .htmx-request .htmx-indicator {
+        display: inline-block;
+    }
+
+    .htmx-request.htmx-indicator {
+        display: inline-block;
+    }
+</style>

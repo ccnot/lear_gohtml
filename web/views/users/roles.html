@@ -1,0 +1,202 @@
+<!-- 角色管理页面 -->
+<div>
+    <!-- 页面标题 -->
+    <div id="page-title" hx-swap-oob="true">角色管理</div>
+
+    <!-- 面包屑导航 -->
+    <nav class="breadcrumb" aria-label="breadcrumbs" style="margin-bottom: 1.5rem;">
+        <ul>
+            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                    hx-push-url="true">首页</a></li>
+            <li><a href="#" @click.prevent>用户管理</a></li>
+            <li class="is-active"><a href="#" aria-current="page">角色管理</a></li>
+        </ul>
+    </nav>
+
+    <!-- 内容卡片 -->
+    <div class="content-card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-user-tag has-text-info"></i>
+                角色列表
+            </h3>
+            <button class="button is-primary">
+                <span class="icon">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span>新增角色</span>
+            </button>
+        </div>
+
+        <div class="card-body">
+            <!-- 角色列表 -->
+            <div class="table-container">
+                <table class="table is-fullwidth is-hoverable">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">ID</th>
+                            <th>角色名称</th>
+                            <th>角色标识</th>
+                            <th>描述</th>
+                            <th style="width: 100px;">用户数</th>
+                            <th>创建时间</th>
+                            <th style="width: 150px;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 管理员 -->
+                        <tr>
+                            <td>1</td>
+                            <td><span class="badge is-danger">管理员</span></td>
+                            <td><code>admin</code></td>
+                            <td>系统管理员，拥有所有权限</td>
+                            <td><strong>5</strong></td>
+                            <td>2024-01-01</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="button is-small is-info is-light" title="编辑">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-edit"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-primary is-light" title="权限设置">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-key"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- 编辑 -->
+                        <tr>
+                            <td>2</td>
+                            <td><span class="badge is-info">编辑</span></td>
+                            <td><code>editor</code></td>
+                            <td>内容编辑，可以管理用户和商品</td>
+                            <td><strong>12</strong></td>
+                            <td>2024-01-01</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="button is-small is-info is-light" title="编辑">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-edit"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-primary is-light" title="权限设置">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-key"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- 访客 -->
+                        <tr>
+                            <td>3</td>
+                            <td><span class="badge">访客</span></td>
+                            <td><code>viewer</code></td>
+                            <td>只读权限，只能查看内容</td>
+                            <td><strong>83</strong></td>
+                            <td>2024-01-01</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="button is-small is-info is-light" title="编辑">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-edit"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-primary is-light" title="权限设置">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-key"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-danger is-light" title="删除">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 说明卡片 -->
+    <div class="content-card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-info-circle has-text-primary"></i>
+                角色说明
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="notification is-info is-light">
+                <p><strong>💡 提示：</strong></p>
+                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li>管理员角色拥有系统所有权限，不可删除</li>
+                    <li>每个角色可以关联多个用户</li>
+                    <li>删除角色前需要先将该角色下的用户转移到其他角色</li>
+                    <li>角色权限修改会立即生效，无需用户重新登录</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .breadcrumb {
+        margin: 0;
+        padding: 0;
+    }
+
+    .breadcrumb ul {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .breadcrumb li {
+        display: flex;
+        align-items: center;
+    }
+
+    .breadcrumb li+li::before {
+        content: "/";
+        padding: 0 0.75rem;
+        color: #b5b5b5;
+    }
+
+    .breadcrumb a {
+        color: #4a4a4a;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .breadcrumb a:hover {
+        color: var(--primary-color);
+    }
+
+    .breadcrumb li.is-active a {
+        color: var(--primary-color);
+        font-weight: 600;
+        cursor: default;
+    }
+
+    .breadcrumb li.is-active a:hover {
+        color: var(--primary-color);
+    }
+
+    code {
+        background: #f5f5f5;
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.875rem;
+        color: #e74c3c;
+    }
+</style>

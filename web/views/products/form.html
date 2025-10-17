@@ -1,0 +1,187 @@
+<!-- 商品表单 - 用于新增和编辑 -->
+<form {{if .IsEdit}} hx-put="/products/{{.Product.ID}}" hx-target="#product-card-{{.Product.ID}}" hx-swap="outerHTML"
+    {{else}} hx-post="/products" hx-target="#products-container" hx-swap="outerHTML" {{end}}
+    x-data="productForm({{.IsEdit}})" @submit.prevent="submitForm">
+
+    <!-- 商品名称 -->
+    <div class="field">
+        <label class="label">商品名称 <span class="has-text-danger">*</span></label>
+        <div class="control has-icons-left">
+            <input class="input" type="text" name="name" placeholder="请输入商品名称" value="{{.Product.Name}}" required
+                x-model="form.name" :class="{'is-danger': errors.name}">
+            <span class="icon is-small is-left">
+                <i class="fas fa-tag"></i>
+            </span>
+        </div>
+        <p class="help is-danger" x-show="errors.name" x-text="errors.name"></p>
+    </div>
+
+    <div class="form-row">
+        <!-- SKU -->
+        <div class="field">
+            <label class="label">SKU 编码 <span class="has-text-danger">*</span></label>
+            <div class="control has-icons-left">
+                <input class="input" type="text" name="sku" placeholder="请输入 SKU" value="{{.Product.SKU}}" {{if
+                    .IsEdit}}readonly{{end}} required x-model="form.sku" :class="{'is-danger': errors.sku}">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-barcode"></i>
+                </span>
+            </div>
+            <p class="help is-danger" x-show="errors.sku" x-text="errors.sku"></p>
+        </div>
+
+        <!-- 分类 -->
+        <div class="field">
+            <label class="label">分类 <span class="has-text-danger">*</span></label>
+            <div class="control">
+                <div class="select is-fullwidth">
+                    <select name="category" required x-model="form.category">
+                        <option value="">请选择分类</option>
+                        <option value="电子产品" {{if eq .Product.Category "电子产品" }}selected{{end}}>电子产品</option>
+                        <option value="数码配件" {{if eq .Product.Category "数码配件" }}selected{{end}}>数码配件</option>
+                        <option value="办公用品" {{if eq .Product.Category "办公用品" }}selected{{end}}>办公用品</option>
+                        <option value="智能设备" {{if eq .Product.Category "智能设备" }}selected{{end}}>智能设备</option>
+                        <option value="电脑配件" {{if eq .Product.Category "电脑配件" }}selected{{end}}>电脑配件</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <!-- 价格 -->
+        <div class="field">
+            <label class="label">价格 <span class="has-text-danger">*</span></label>
+            <div class="control has-icons-left">
+                <input class="input" type="number" name="price" placeholder="0.00" value="{{.Product.Price}}"
+                    step="0.01" min="0" required x-model="form.price" :class="{'is-danger': errors.price}">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-dollar-sign"></i>
+                </span>
+            </div>
+            <p class="help">请输入正数</p>
+            <p class="help is-danger" x-show="errors.price" x-text="errors.price"></p>
+        </div>
+
+        <!-- 库存 -->
+        <div class="field">
+            <label class="label">库存 <span class="has-text-danger">*</span></label>
+            <div class="control has-icons-left">
+                <input class="input" type="number" name="stock" placeholder="0" value="{{.Product.Stock}}" min="0"
+                    required x-model="form.stock" :class="{'is-danger': errors.stock}">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-boxes"></i>
+                </span>
+            </div>
+            <p class="help is-danger" x-show="errors.stock" x-text="errors.stock"></p>
+        </div>
+    </div>
+
+    <!-- 状态 -->
+    <div class="field">
+        <label class="label">状态 <span class="has-text-danger">*</span></label>
+        <div class="control">
+            <label class="radio">
+                <input type="radio" name="status" value="active" {{if or (eq .Product.Status "active" ) (not
+                    .Product.Status)}}checked{{end}} x-model="form.status">
+                在售
+            </label>
+            <label class="radio">
+                <input type="radio" name="status" value="inactive" {{if eq .Product.Status "inactive" }}checked{{end}}
+                    x-model="form.status">
+                下架
+            </label>
+            <label class="radio">
+                <input type="radio" name="status" value="out_of_stock" {{if eq .Product.Status "out_of_stock"
+                    }}checked{{end}} x-model="form.status">
+                缺货
+            </label>
+        </div>
+    </div>
+
+    <!-- 描述 -->
+    <div class="field">
+        <label class="label">商品描述</label>
+        <div class="control">
+            <textarea class="textarea" name="description" placeholder="请输入商品描述" rows="3"
+                x-model="form.description">{{.Product.Description}}</textarea>
+        </div>
+    </div>
+
+    <!-- 提交按钮 -->
+    <div class="field is-grouped is-grouped-right" style="margin-top: 2rem;">
+        <div class="control">
+            <button type="button" class="button" @click="$refs.productModal.classList.remove('is-active')">
+                取消
+            </button>
+        </div>
+        <div class="control">
+            <button type="submit" class="button is-primary" :class="{'is-loading': loading}" :disabled="loading">
+                <span class="icon">
+                    <i class="fas fa-save"></i>
+                </span>
+                <span>{{if .IsEdit}}更新{{else}}创建{{end}}</span>
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    function productForm(isEdit) {
+        return {
+            loading: false,
+            errors: {},
+            form: {
+                name: '',
+                sku: '',
+                category: '',
+                price: '',
+                stock: '',
+                status: 'active',
+                description: ''
+            },
+
+            validateForm() {
+                this.errors = {};
+                let isValid = true;
+
+                if (!this.form.name) {
+                    this.errors.name = '商品名称不能为空';
+                    isValid = false;
+                }
+
+                if (!this.form.sku && !isEdit) {
+                    this.errors.sku = 'SKU 不能为空';
+                    isValid = false;
+                }
+
+                if (!this.form.price || parseFloat(this.form.price) <= 0) {
+                    this.errors.price = '请输入有效的价格';
+                    isValid = false;
+                }
+
+                if (!this.form.stock || parseInt(this.form.stock) < 0) {
+                    this.errors.stock = '请输入有效的库存';
+                    isValid = false;
+                }
+
+                return isValid;
+            },
+
+            submitForm(event) {
+                if (this.validateForm()) {
+                    this.loading = true;
+                    // 让 HTMX 处理表单提交
+                    htmx.trigger(event.target, 'submit');
+
+                    // 监听提交完成
+                    setTimeout(() => {
+                        this.loading = false;
+                        // 关闭模态框
+                        document.querySelector('.modal').classList.remove('is-active');
+                    }, 500);
+                }
+            }
+        };
+    }
+</script>

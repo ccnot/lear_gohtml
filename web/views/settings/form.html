@@ -1,0 +1,247 @@
+<!-- 系统设置页面 -->
+<div>
+    <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
+    <div id="page-title" hx-swap-oob="true">系统设置</div>
+
+    <div class="content-card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-cog has-text-warning"></i>
+                系统配置
+            </h3>
+        </div>
+
+        <div class="card-body">
+            <!-- 设置表单 -->
+            <form hx-post="/settings" hx-target="#settings-form-container" hx-swap="innerHTML" x-data="settingsForm()"
+                @submit.prevent="submitForm">
+
+                <div id="settings-form-container">
+                    <!-- Tab 导航 -->
+                    <div class="tabs is-boxed" x-data="{ activeTab: 'basic' }">
+                        <ul>
+                            <li :class="{ 'is-active': activeTab === 'basic' }">
+                                <a @click.prevent="activeTab = 'basic'">
+                                    <span class="icon is-small"><i class="fas fa-info-circle"></i></span>
+                                    <span>基本信息</span>
+                                </a>
+                            </li>
+                            <li :class="{ 'is-active': activeTab === 'contact' }">
+                                <a @click.prevent="activeTab = 'contact'">
+                                    <span class="icon is-small"><i class="fas fa-address-book"></i></span>
+                                    <span>联系方式</span>
+                                </a>
+                            </li>
+                            <li :class="{ 'is-active': activeTab === 'regional' }">
+                                <a @click.prevent="activeTab = 'regional'">
+                                    <span class="icon is-small"><i class="fas fa-globe"></i></span>
+                                    <span>区域设置</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab 内容 -->
+                        <div style="padding: 2rem 1rem;">
+                            <!-- 基本信息 Tab -->
+                            <div x-show="activeTab === 'basic'" x-transition>
+                                <h4 class="title is-5" style="margin-bottom: 1.5rem;">基本信息</h4>
+
+                                <div class="field">
+                                    <label class="label">网站名称 <span class="has-text-danger">*</span></label>
+                                    <div class="control has-icons-left">
+                                        <input class="input" type="text" name="site_name" placeholder="请输入网站名称"
+                                            value="{{.SiteName}}" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-signature"></i>
+                                        </span>
+                                    </div>
+                                    <p class="help">网站的显示名称</p>
+                                </div>
+
+                                <div class="field">
+                                    <label class="label">网站描述</label>
+                                    <div class="control">
+                                        <textarea class="textarea" name="site_description" placeholder="请输入网站描述"
+                                            rows="4">{{.SiteDescription}}</textarea>
+                                    </div>
+                                    <p class="help">简要描述网站的用途和功能</p>
+                                </div>
+                            </div>
+
+                            <!-- 联系方式 Tab -->
+                            <div x-show="activeTab === 'contact'" x-transition>
+                                <h4 class="title is-5" style="margin-bottom: 1.5rem;">联系方式</h4>
+
+                                <div class="field">
+                                    <label class="label">联系邮箱 <span class="has-text-danger">*</span></label>
+                                    <div class="control has-icons-left">
+                                        <input class="input" type="email" name="contact_email"
+                                            placeholder="admin@example.com" value="{{.ContactEmail}}" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                    </div>
+                                    <p class="help">系统通知和联系邮箱</p>
+                                </div>
+
+                                <div class="field">
+                                    <label class="label">联系电话</label>
+                                    <div class="control has-icons-left">
+                                        <input class="input" type="tel" name="contact_phone" placeholder="400-123-4567"
+                                            value="{{.ContactPhone}}">
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-phone"></i>
+                                        </span>
+                                    </div>
+                                    <p class="help">客服或技术支持电话</p>
+                                </div>
+                            </div>
+
+                            <!-- 区域设置 Tab -->
+                            <div x-show="activeTab === 'regional'" x-transition>
+                                <h4 class="title is-5" style="margin-bottom: 1.5rem;">区域设置</h4>
+
+                                <div class="form-row">
+                                    <div class="field">
+                                        <label class="label">货币 <span class="has-text-danger">*</span></label>
+                                        <div class="control">
+                                            <div class="select is-fullwidth">
+                                                <select name="currency" required>
+                                                    <option value="CNY" {{if eq .Currency "CNY" }}selected{{end}}>人民币
+                                                        (CNY)</option>
+                                                    <option value="USD" {{if eq .Currency "USD" }}selected{{end}}>美元
+                                                        (USD)</option>
+                                                    <option value="EUR" {{if eq .Currency "EUR" }}selected{{end}}>欧元
+                                                        (EUR)</option>
+                                                    <option value="GBP" {{if eq .Currency "GBP" }}selected{{end}}>英镑
+                                                        (GBP)</option>
+                                                    <option value="JPY" {{if eq .Currency "JPY" }}selected{{end}}>日元
+                                                        (JPY)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p class="help">系统使用的默认货币</p>
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="label">时区 <span class="has-text-danger">*</span></label>
+                                        <div class="control">
+                                            <div class="select is-fullwidth">
+                                                <select name="timezone" required>
+                                                    <option value="Asia/Shanghai" {{if eq .Timezone "Asia/Shanghai"
+                                                        }}selected{{end}}>亚洲/上海 (GMT+8)</option>
+                                                    <option value="Asia/Singapore" {{if eq .Timezone "Asia/Singapore"
+                                                        }}selected{{end}}>亚洲/新加坡 (GMT+8)</option>
+                                                    <option value="Asia/Tokyo" {{if eq .Timezone "Asia/Tokyo"
+                                                        }}selected{{end}}>亚洲/东京 (GMT+9)</option>
+                                                    <option value="America/New_York" {{if eq
+                                                        .Timezone "America/New_York" }}selected{{end}}>美国/纽约 (GMT-5)
+                                                    </option>
+                                                    <option value="Europe/London" {{if eq .Timezone "Europe/London"
+                                                        }}selected{{end}}>欧洲/伦敦 (GMT+0)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p class="help">系统使用的时区</p>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label class="label">语言 <span class="has-text-danger">*</span></label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="language" required>
+                                                <option value="zh-CN" {{if eq .Language "zh-CN" }}selected{{end}}>简体中文
+                                                </option>
+                                                <option value="zh-TW" {{if eq .Language "zh-TW" }}selected{{end}}>繁体中文
+                                                </option>
+                                                <option value="en-US" {{if eq .Language "en-US" }}selected{{end}}>
+                                                    English (US)</option>
+                                                <option value="ja-JP" {{if eq .Language "ja-JP" }}selected{{end}}>日本語
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <p class="help">系统界面语言</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <div class="field is-grouped is-grouped-right"
+                        style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #dbdbdb;">
+                        <div class="control">
+                            <button type="button" class="button is-light" onclick="location.reload()">
+                                <span class="icon">
+                                    <i class="fas fa-undo"></i>
+                                </span>
+                                <span>重置</span>
+                            </button>
+                        </div>
+                        <div class="control">
+                            <button type="submit" class="button is-primary" :class="{'is-loading': loading}"
+                                :disabled="loading">
+                                <span class="icon">
+                                    <i class="fas fa-save"></i>
+                                </span>
+                                <span>保存设置</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 危险操作区域 -->
+    <div class="content-card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-exclamation-triangle has-text-danger"></i>
+                危险操作
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="notification is-warning is-light">
+                <strong>警告：</strong> 以下操作可能会影响系统运行，请谨慎操作。
+            </div>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="button is-warning" x-data @click="if(confirm('确定要清除缓存吗？')) { alert('缓存已清除（模拟操作）') }">
+                    <span class="icon">
+                        <i class="fas fa-broom"></i>
+                    </span>
+                    <span>清除缓存</span>
+                </button>
+
+                <button class="button is-danger" x-data
+                    @click="if(confirm('确定要重置所有设置吗？此操作不可恢复！')) { alert('设置已重置（模拟操作）') }">
+                    <span class="icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </span>
+                    <span>重置所有设置</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function settingsForm() {
+        return {
+            loading: false,
+
+            submitForm(event) {
+                this.loading = true;
+                // 让 HTMX 处理表单提交
+                htmx.trigger(event.target, 'submit');
+
+                // 监听提交完成
+                setTimeout(() => {
+                    this.loading = false;
+                }, 500);
+            }
+        };
+    }
+</script>

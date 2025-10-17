@@ -1,0 +1,53 @@
+<!-- 用户表格单行 - 用于单行更新 -->
+<tr id="user-row-{{.ID}}">
+    <td>{{.ID}}</td>
+    <td>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <img src="{{.Avatar}}" alt="{{.Username}}" class="user-avatar">
+            <strong>{{.Username}}</strong>
+        </div>
+    </td>
+    <td>{{.RealName}}</td>
+    <td>{{.Email}}</td>
+    <td>{{.Phone}}</td>
+    <td>
+        {{if eq .Role "admin"}}
+        <span class="badge is-danger">管理员</span>
+        {{else if eq .Role "editor"}}
+        <span class="badge is-info">编辑</span>
+        {{else}}
+        <span class="badge">访客</span>
+        {{end}}
+    </td>
+    <td>
+        {{if eq .Status "active"}}
+        <span class="badge is-success">活跃</span>
+        {{else}}
+        <span class="badge is-warning">非活跃</span>
+        {{end}}
+    </td>
+    <td>{{.CreatedAt.Format "2006-01-02"}}</td>
+    <td>
+        <div class="action-buttons" x-data="deleteConfirm({
+            title: '确认删除',
+            message: '确定要删除用户【{{.Username}}】吗？此操作不可恢复。',
+            url: '/users/{{.ID}}',
+            target: '#user-row-{{.ID}}'
+        })">
+            <!-- 编辑按钮 -->
+            <a href="/users/{{.ID}}" class="button is-small is-info is-light" hx-get="/users/{{.ID}}"
+                hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true" title="编辑">
+                <span class="icon is-small">
+                    <i class="fas fa-edit"></i>
+                </span>
+            </a>
+
+            <!-- 删除按钮 -->
+            <button class="button is-small is-danger is-light" @click="confirmDelete()" title="删除">
+                <span class="icon is-small">
+                    <i class="fas fa-trash"></i>
+                </span>
+            </button>
+        </div>
+    </td>
+</tr>

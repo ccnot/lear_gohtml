@@ -1,0 +1,81 @@
+<!-- 顶部栏 -->
+<header class="top-header">
+    <div class="header-title">
+        <!-- 将通过 HTMX 动态更新标题 -->
+        <span id="page-title">管理后台</span>
+    </div>
+
+    <div class="header-actions">
+        <!-- 刷新按钮 -->
+        <button class="button is-light" onclick="window.location.reload()" title="刷新页面">
+            <span class="icon">
+                <i class="fas fa-sync-alt"></i>
+            </span>
+        </button>
+
+        <!-- 通知 -->
+        <div class="dropdown is-right" x-data="{ open: false }" :class="{ 'is-active': open }">
+            <div class="dropdown-trigger">
+                <button class="button is-light" @click="open = !open">
+                    <span class="icon">
+                        <i class="fas fa-bell"></i>
+                    </span>
+                    <span class="tag is-danger is-rounded"
+                        style="position: absolute; top: 8px; right: 8px; padding: 0 4px; font-size: 0.6rem;">3</span>
+                </button>
+            </div>
+            <div class="dropdown-menu" x-show="open" @click.away="open = false" style="min-width: 300px;">
+                <div class="dropdown-content">
+                    <div class="dropdown-item">
+                        <p class="has-text-weight-semibold">通知中心</p>
+                    </div>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-user has-text-info"></i> 新用户注册
+                        <br>
+                        <small class="has-text-grey">5 分钟前</small>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-shopping-cart has-text-success"></i> 新订单
+                        <br>
+                        <small class="has-text-grey">15 分钟前</small>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-exclamation-triangle has-text-warning"></i> 库存预警
+                        <br>
+                        <small class="has-text-grey">1 小时前</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 用户菜单 -->
+        <div class="dropdown is-right" x-data="{ open: false }" :class="{ 'is-active': open }">
+            <div class="dropdown-trigger">
+                <button class="button is-light" @click="open = !open">
+                    <span class="icon">
+                        <i class="fas fa-user-circle"></i>
+                    </span>
+                    <span>管理员</span>
+                    <span class="icon is-small">
+                        <i class="fas fa-angle-down"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" x-show="open" @click.away="open = false">
+                <div class="dropdown-content">
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-user"></i> 个人信息
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-key"></i> 修改密码
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item has-text-danger">
+                        <i class="fas fa-sign-out-alt"></i> 退出登录
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

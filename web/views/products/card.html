@@ -1,0 +1,62 @@
+<!-- 商品卡片 - 用于网格显示和单卡更新 -->
+<div class="product-card" id="product-card-{{.ID}}">
+    <div style="position: relative;">
+        <div class="product-image"
+            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-box" style="font-size: 4rem; color: rgba(255,255,255,0.5);"></i>
+        </div>
+        <!-- 状态标签 -->
+        <div style="position: absolute; top: 10px; right: 10px;">
+            {{if eq .Status "active"}}
+            <span class="badge is-success">在售</span>
+            {{else if eq .Status "inactive"}}
+            <span class="badge is-warning">下架</span>
+            {{else}}
+            <span class="badge is-danger">缺货</span>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="product-info">
+        <!-- 商品名称 -->
+        <h4 class="product-name" title="{{.Name}}">
+            {{.Name}}
+        </h4>
+
+        <!-- SKU 和分类 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span class="tag is-light is-small">{{.SKU}}</span>
+            <span class="tag is-info is-light is-small">{{.Category}}</span>
+        </div>
+
+        <!-- 价格和库存 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div class="product-price">¥{{printf "%.2f" .Price}}</div>
+            <div style="font-size: 0.875rem; color: #7a7a7a;">
+                库存: <strong>{{.Stock}}</strong>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div style="display: flex; gap: 0.5rem;" x-data="deleteConfirm({
+            title: '确认删除',
+            message: '确定要删除商品【{{.Name}}】吗？此操作不可恢复。',
+            url: '/products/{{.ID}}',
+            target: '#product-card-{{.ID}}'
+        })">
+            <a href="/products/{{.ID}}" class="button is-info is-light is-small is-fullwidth" hx-get="/products/{{.ID}}"
+                hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true">
+                <span class="icon is-small">
+                    <i class="fas fa-edit"></i>
+                </span>
+                <span>编辑</span>
+            </a>
+
+            <button class="button is-danger is-light is-small" @click="confirmDelete()" title="删除">
+                <span class="icon is-small">
+                    <i class="fas fa-trash"></i>
+                </span>
+            </button>
+        </div>
+    </div>
+</div>

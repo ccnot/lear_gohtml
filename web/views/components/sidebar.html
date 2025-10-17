@@ -1,0 +1,64 @@
+<!-- 侧边栏导航 -->
+<aside class="sidebar">
+    <!-- Logo/品牌 -->
+    <div class="sidebar-brand">
+        <i class="fas fa-cube"></i> Admin Panel
+    </div>
+
+    <!-- 导航菜单 -->
+    <nav class="sidebar-menu">
+        <!-- 仪表盘 -->
+        <a href="/dashboard" class="menu-item active" hx-get="/dashboard" hx-target="#main-container"
+            hx-swap="innerHTML" hx-push-url="true">
+            <i class="fas fa-home"></i>
+            <span>仪表盘</span>
+        </a>
+
+        <!-- 用户管理（带二级菜单） -->
+        <div class="menu-item-group" x-data="{ open: false }">
+            <a href="#" class="menu-item" @click.prevent="open = !open" :class="{ 'active': open }">
+                <i class="fas fa-users"></i>
+                <span>用户管理</span>
+                <i class="fas fa-chevron-down submenu-arrow" :class="{ 'rotate': open }"></i>
+            </a>
+            <div class="submenu" x-show="open" x-transition>
+                <a href="/users" class="submenu-item" hx-get="/users" hx-target="#main-container" hx-swap="innerHTML"
+                    hx-push-url="true">
+                    <i class="fas fa-list"></i>
+                    <span>用户列表</span>
+                </a>
+                <a href="/users/roles" class="submenu-item" hx-get="/users/roles" hx-target="#main-container"
+                    hx-swap="innerHTML" hx-push-url="true">
+                    <i class="fas fa-user-tag"></i>
+                    <span>角色管理</span>
+                </a>
+                <a href="/users/permissions" class="submenu-item" hx-get="/users/permissions"
+                    hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>权限管理</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 商品管理 -->
+        <a href="/products" class="menu-item" hx-get="/products" hx-target="#main-container" hx-swap="innerHTML"
+            hx-push-url="true">
+            <i class="fas fa-box"></i>
+            <span>商品管理</span>
+        </a>
+
+        <!-- 订单管理 -->
+        <a href="/orders" class="menu-item" hx-get="/orders" hx-target="#main-container" hx-swap="innerHTML"
+            hx-push-url="true">
+            <i class="fas fa-shopping-cart"></i>
+            <span>订单管理</span>
+        </a>
+
+        <!-- 系统设置 -->
+        <a href="/settings" class="menu-item" hx-get="/settings" hx-target="#main-container" hx-swap="innerHTML"
+            hx-push-url="true">
+            <i class="fas fa-cog"></i>
+            <span>系统设置</span>
+        </a>
+    </nav>
+</aside>

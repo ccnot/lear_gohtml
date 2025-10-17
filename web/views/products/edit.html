@@ -1,0 +1,176 @@
+<!-- 商品编辑页面 -->
+<div>
+    <!-- 页面标题 -->
+    <div id="page-title" hx-swap-oob="true">编辑商品</div>
+
+    <!-- 面包屑 -->
+    <nav class="breadcrumb" aria-label="breadcrumbs" style="margin-bottom: 1.5rem;">
+        <ul>
+            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                    hx-push-url="true">首页</a></li>
+            <li><a href="/products" hx-get="/products" hx-target="#main-container" hx-swap="innerHTML"
+                    hx-push-url="true">商品管理</a></li>
+            <li class="is-active"><a href="#" aria-current="page">编辑商品</a></li>
+        </ul>
+    </nav>
+
+    <!-- 表单卡片 -->
+    <div class="content-card">
+        <!-- 错误提示框 -->
+        {{if .Error}}
+        <div class="notification is-danger is-light" style="margin-bottom: 1.5rem;">
+            <button class="delete" onclick="this.parentElement.remove()"></button>
+            <strong><i class="fas fa-exclamation-triangle"></i> 验证错误</strong>
+            <p style="margin-top: 0.5rem;">{{.Error}}</p>
+        </div>
+        {{end}}
+
+        <form hx-put="/products/{{.Product.ID}}" hx-target="#main-container" hx-swap="innerHTML" x-data="productForm()"
+            @submit="submitForm($event)" x-init="
+                {{if .FormData}}
+                form.name = '{{.FormData.Name}}';
+                form.category = '{{.FormData.Category}}';
+                form.price = {{.FormData.Price}};
+                form.stock = {{.FormData.Stock}};
+                form.status = '{{.FormData.Status}}';
+                form.description = '{{.FormData.Description}}';
+                {{else}}
+                form.name = '{{.Product.Name}}';
+                form.category = '{{.Product.Category}}';
+                form.price = {{.Product.Price}};
+                form.stock = {{.Product.Stock}};
+                form.status = '{{.Product.Status}}';
+                form.description = '{{.Product.Description}}';
+                {{end}}
+            ">
+
+            <div class="form-row">
+                <!-- 商品名称 -->
+                <div class="field">
+                    <label class="label">商品名称 <span class="has-text-danger">*</span></label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="text" name="name" placeholder="请输入商品名称" value="{{.Product.Name}}"
+                            required x-model="form.name" :class="{'is-danger': errors.name}">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-box"></i>
+                        </span>
+                    </div>
+                    <p class="help is-danger" x-show="errors.name" x-text="errors.name"></p>
+                </div>
+
+                <!-- SKU（只读） -->
+                <div class="field">
+                    <label class="label">SKU</label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="text" name="sku" value="{{.Product.SKU}}" readonly>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-barcode"></i>
+                        </span>
+                    </div>
+                    <p class="help">SKU创建后不可修改</p>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- 分类 -->
+                <div class="field">
+                    <label class="label">分类 <span class="has-text-danger">*</span></label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select name="category" required x-model="form.category">
+                                <option value="">请选择分类</option>
+                                <option value="电子产品" {{if eq .Product.Category "电子产品" }}selected{{end}}>电子产品</option>
+                                <option value="数码配件" {{if eq .Product.Category "数码配件" }}selected{{end}}>数码配件</option>
+                                <option value="办公用品" {{if eq .Product.Category "办公用品" }}selected{{end}}>办公用品</option>
+                                <option value="智能设备" {{if eq .Product.Category "智能设备" }}selected{{end}}>智能设备</option>
+                                <option value="电脑配件" {{if eq .Product.Category "电脑配件" }}selected{{end}}>电脑配件</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 价格 -->
+                <div class="field">
+                    <label class="label">价格 <span class="has-text-danger">*</span></label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="number" name="price" placeholder="请输入价格" value="{{.Product.Price}}"
+                            required step="0.01" min="0" x-model="form.price" :class="{'is-danger': errors.price}">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-yuan-sign"></i>
+                        </span>
+                    </div>
+                    <p class="help is-danger" x-show="errors.price" x-text="errors.price"></p>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- 库存 -->
+                <div class="field">
+                    <label class="label">库存 <span class="has-text-danger">*</span></label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="number" name="stock" placeholder="请输入库存数量" value="{{.Product.Stock}}"
+                            required min="0" x-model="form.stock" :class="{'is-danger': errors.stock}">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-warehouse"></i>
+                        </span>
+                    </div>
+                    <p class="help is-danger" x-show="errors.stock" x-text="errors.stock"></p>
+                </div>
+
+                <!-- 状态 -->
+                <div class="field">
+                    <label class="label">状态 <span class="has-text-danger">*</span></label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select name="status" required x-model="form.status">
+                                <option value="">请选择状态</option>
+                                <option value="active" {{if eq .Product.Status "active" }}selected{{end}}>上架</option>
+                                <option value="inactive" {{if eq .Product.Status "inactive" }}selected{{end}}>下架
+                                </option>
+                                <option value="out_of_stock" {{if eq .Product.Status "out_of_stock" }}selected{{end}}>缺货
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 描述 -->
+            <div class="field">
+                <label class="label">商品描述</label>
+                <div class="control">
+                    <textarea class="textarea" name="description" placeholder="请输入商品描述" rows="4"
+                        x-model="form.description">{{.Product.Description}}</textarea>
+                </div>
+            </div>
+
+            <!-- 商品信息 -->
+            <div class="notification is-info is-light" style="margin-top: 1.5rem;">
+                <p><strong>创建时间：</strong>{{.Product.CreatedAt.Format "2006-01-02 15:04:05"}}</p>
+                <p><strong>更新时间：</strong>{{.Product.UpdatedAt.Format "2006-01-02 15:04:05"}}</p>
+            </div>
+
+            <!-- 提交按钮 -->
+            <div class="field is-grouped is-grouped-right" style="margin-top: 2rem;">
+                <div class="control">
+                    <a href="/products" hx-get="/products" hx-target="#main-container" hx-swap="innerHTML"
+                        hx-push-url="true" class="button is-light">
+                        <span class="icon">
+                            <i class="fas fa-times"></i>
+                        </span>
+                        <span>取消</span>
+                    </a>
+                </div>
+                <div class="control">
+                    <button type="submit" class="button is-primary" :class="{'is-loading': loading}"
+                        :disabled="loading">
+                        <span class="icon">
+                            <i class="fas fa-save"></i>
+                        </span>
+                        <span>更新商品</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

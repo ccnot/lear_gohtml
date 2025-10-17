@@ -1,0 +1,160 @@
+<!-- 订单列表页面 -->
+<div x-data="{ orderModal: null }" x-init="orderModal = $refs.orderModal">
+    <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
+    <div id="page-title" hx-swap-oob="true">订单管理</div>
+
+    <div class="content-card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-shopping-cart has-text-success"></i>
+                订单列表
+            </h3>
+        </div>
+
+        <div class="card-body">
+            <!-- 搜索和筛选栏 -->
+            <div class="search-bar">
+                <div class="field has-addons" style="flex: 1; max-width: 400px;">
+                    <div class="control has-icons-left" style="flex: 1;">
+                        <input class="input" type="search" name="keyword" placeholder="搜索订单号、客户名称..." value="{{.Query}}"
+                            hx-get="/orders" hx-trigger="keyup changed delay:500ms, search"
+                            hx-target="#order-table-container" hx-swap="innerHTML"
+                            hx-select="#order-table-container > *" hx-include="[name='status']"
+                            hx-indicator="#search-indicator">
+                        <span class="icon is-left">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                    <div class="control">
+                        <button class="button is-info">
+                            <span class="icon htmx-indicator" id="search-indicator">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 状态筛选 -->
+                <div class="select">
+                    <select name="status" hx-get="/orders" hx-trigger="change" hx-target="#order-table-container"
+                        hx-swap="innerHTML" hx-select="#order-table-container > *" hx-include="[name='keyword']">
+                        <option value="">全部状态</option>
+                        <option value="pending" {{if eq .Status "pending" }}selected{{end}}>待处理</option>
+                        <option value="paid" {{if eq .Status "paid" }}selected{{end}}>已支付</option>
+                        <option value="shipped" {{if eq .Status "shipped" }}selected{{end}}>已发货</option>
+                        <option value="completed" {{if eq .Status "completed" }}selected{{end}}>已完成</option>
+                        <option value="cancelled" {{if eq .Status "cancelled" }}selected{{end}}>已取消</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 订单表格容器 -->
+            <div id="order-table-container">
+                {{if .Orders}}
+                <div class="table-container">
+                    <table class="data-table table is-fullwidth is-hoverable">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">ID</th>
+                                <th>订单号</th>
+                                <th>客户名称</th>
+                                <th>金额</th>
+                                <th>支付方式</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                                <th style="width: 200px;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-table-body">
+                            {{range .Orders}}
+                            {{template "orders/row.html" .}}
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 -->
+                {{if gt .PageInfo.TotalPages 1}}
+                <div class="pagination-wrapper">
+                    <div class="pagination-info">
+                        显示 {{.PageInfo.Page}} / {{.PageInfo.TotalPages}} 页，共 {{.PageInfo.Total}} 条记录
+                    </div>
+                    <nav class="pagination" role="navigation">
+                        {{if gt .PageInfo.Page 1}}
+                        <a class="pagination-previous"
+                            hx-get="/orders?page={{sub .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&status={{.Status}}"
+                            hx-target="#order-table-container" hx-swap="innerHTML"
+                            hx-select="#order-table-container > *">
+                            上一页
+                        </a>
+                        {{else}}
+                        <a class="pagination-previous" disabled>上一页</a>
+                        {{end}}
+
+                        {{if lt .PageInfo.Page .PageInfo.TotalPages}}
+                        <a class="pagination-next"
+                            hx-get="/orders?page={{add .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&status={{.Status}}"
+                            hx-target="#order-table-container" hx-swap="innerHTML"
+                            hx-select="#order-table-container > *">
+                            下一页
+                        </a>
+                        {{else}}
+                        <a class="pagination-next" disabled>下一页</a>
+                        {{end}}
+
+                        <ul class="pagination-list">
+                            {{range $i := iterate .PageInfo.TotalPages}}
+                            {{if eq $i $.PageInfo.Page}}
+                            <li><a class="pagination-link is-current">{{$i}}</a></li>
+                            {{else if or (eq $i 1) (eq $i $.PageInfo.TotalPages) (and (ge $i (sub $.PageInfo.Page 2))
+                            (le $i (add $.PageInfo.Page 2)))}}
+                            <li>
+                                <a class="pagination-link"
+                                    hx-get="/orders?page={{$i}}&page_size={{$.PageInfo.PageSize}}&keyword={{$.Query}}&status={{$.Status}}"
+                                    hx-target="#order-table-container" hx-swap="innerHTML"
+                                    hx-select="#order-table-container > *">
+                                    {{$i}}
+                                </a>
+                            </li>
+                            {{else if or (eq $i 2) (eq $i (sub $.PageInfo.TotalPages 1))}}
+                            <li><span class="pagination-ellipsis">&hellip;</span></li>
+                            {{end}}
+                            {{end}}
+                        </ul>
+                    </nav>
+                </div>
+                {{end}}
+                {{else}}
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="empty-state-text">没有找到订单</div>
+                    <p class="has-text-grey">尝试调整搜索条件</p>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单详情模态框 -->
+    <div class="modal" x-ref="orderModal">
+        <div class="modal-background" @click="orderModal.classList.remove('is-active')"></div>
+        <div class="modal-card" style="width: 700px; max-width: 90vw;">
+            <header class="modal-card-head">
+                <p class="modal-card-title">
+                    <i class="fas fa-file-invoice has-text-info"></i>
+                    订单详情
+                </p>
+                <button class="delete" @click="orderModal.classList.remove('is-active')"></button>
+            </header>
+            <section class="modal-card-body" id="order-modal-content">
+                <!-- 详情内容将通过 HTMX 加载 -->
+                <div class="has-text-centered" style="padding: 2rem;">
+                    <span class="icon is-large has-text-info">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    </span>
+                    <p class="mt-3">加载中...</p>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

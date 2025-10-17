@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - HTMX Demo</title>
+
+    <!-- Bulma CSS v1.0.4 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="/static/css/admin.css?v=20250117-dropdown">
+
+    <!-- HTMX v2.0.7 -->
+    <script src="https://unpkg.com/htmx.org@2.0.7"></script>
+
+    <!-- Alpine.js v3.15.0 -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js"></script>
+
+    <!-- 自定义 JS (添加版本号避免缓存) -->
+    <script src="/static/js/app.js?v=20250117-9"></script>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        {{template "components/sidebar.html"}}
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 顶部栏 -->
+            {{template "components/header.html"}}
+
+            <!-- 内容容器 - 这里是 HTMX 的目标区域 -->
+            <div id="main-container" class="content-container">
+                <!-- 默认加载仪表盘 -->
+                <div hx-get="/dashboard" hx-trigger="load" hx-target="#main-container" hx-swap="innerHTML">
+                    <div class="has-text-centered" style="padding: 3rem;">
+                        <div class="loading-spinner" style="margin: 0 auto;"></div>
+                        <p style="margin-top: 1rem; color: #7a7a7a;">加载中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知容器 -->
+    <div id="toast-container" class="toast-container" x-data="toastManager()"
+        @show-toast.window="showToast($event.detail)">
+        <template x-for="toast in toasts" :key="toast.id">
+            <div :class="'toast ' + toast.type" x-show="toast.visible" x-transition.duration.300ms>
+                <span x-html="toast.icon"></span>
+                <span x-text="toast.message"></span>
+                <button class="delete" @click="removeToast(toast.id)"></button>
+            </div>
+        </template>
+    </div>
+
+    <!-- Alpine.js 全局组件 -->
+    <script>
+        // Toast 管理器
+        function toastManager() {
+            return {
+                toasts: [],
+                nextId: 1,
+
+                showToast(detail) {
+                    const id = this.nextId++;
+                    const icons = {
+                        success: '<i class="fas fa-check-circle has-text-success"></i>',
+                        error: '<i class="fas fa-exclamation-circle has-text-danger"></i>',
+                        warning: '<i class="fas fa-exclamation-triangle has-text-warning"></i>',
+                        info: '<i class="fas fa-info-circle has-text-info"></i>'
+                    };
+
+                    const toast = {
+                        id: id,
+                        message: detail.message || '操作完成',
+                        type: detail.type || 'info',
+                        icon: icons[detail.type] || icons.info,
+                        visible: true
+                    };
+
+                    this.toasts.push(toast);
+
+                    // 3秒后自动移除
+                    setTimeout(() => {
+                        this.removeToast(id);
+                    }, 3000);
+                },
+
+                removeToast(id) {
+                    const index = this.toasts.findIndex(t => t.id === id);
+                    if (index > -1) {
+                        this.toasts[index].visible = false;
+                        setTimeout(() => {
+                            this.toasts.splice(index, 1);
+                        }, 300);
+                    }
+                }
+            };
+        }
+
+        // HTMX 配置和事件监听
+        document.addEventListener('DOMContentLoaded', function () {
+            // HTMX Toast 消息已移至 app.js 统一处理（带 URL 解码）
+
+            // 更新导航激活状态
+            document.body.addEventListener('htmx:afterSettle', function (evt) {
+                const target = evt.detail.target;
+                if (target && target.id === 'main-container') {
+                    updateActiveNav();
+                }
+            });
+        });
+
+        // 更新导航激活状态
+        function updateActiveNav() {
+            const path = window.location.pathname;
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === path) {
+                    item.classList.add('active');
+                }
+            });
+        }
+    </script>
+
+    <!-- 确认对话框组件 -->
+    {{template "components/confirm-dialog.html"}}
+</body>
+
+</html>
