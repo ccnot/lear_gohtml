@@ -1,55 +1,56 @@
 <!-- 订单详情 -->
-<div style="color: #363636;">
+<div>
     <!-- 订单基本信息 -->
-    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+    <div style="background: var(--bg-hover); padding: 24px; border-radius: var(--radius-lg); margin-bottom: 24px;">
+        <div class="uk-grid-small uk-child-width-1-2" uk-grid>
             <div>
-                <div style="font-size: 0.875rem; color: #7a7a7a; margin-bottom: 0.25rem;">订单号</div>
-                <div style="font-weight: 600; color: #212121;">{{.Order.OrderNo}}</div>
+                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">订单号</div>
+                <div style="font-weight: 600; color: var(--text-primary);">{{.Order.OrderNo}}</div>
             </div>
             <div>
-                <div style="font-size: 0.875rem; color: #7a7a7a; margin-bottom: 0.25rem;">订单状态</div>
+                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">订单状态</div>
                 <div>
                     {{if eq .Order.Status "pending"}}
-                    <span class="badge is-warning">待处理</span>
+                    <span class="badge warning">待处理</span>
                     {{else if eq .Order.Status "paid"}}
-                    <span class="badge is-info">已支付</span>
+                    <span class="badge info">已支付</span>
                     {{else if eq .Order.Status "shipped"}}
-                    <span class="badge is-primary">已发货</span>
+                    <span class="badge primary">已发货</span>
                     {{else if eq .Order.Status "completed"}}
-                    <span class="badge is-success">已完成</span>
+                    <span class="badge success">已完成</span>
                     {{else if eq .Order.Status "cancelled"}}
-                    <span class="badge is-danger">已取消</span>
+                    <span class="badge danger">已取消</span>
                     {{end}}
                 </div>
             </div>
             <div>
-                <div style="font-size: 0.875rem; color: #7a7a7a; margin-bottom: 0.25rem;">客户名称</div>
-                <div style="font-weight: 600; color: #212121;">{{.Order.CustomerName}}</div>
+                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">客户名称</div>
+                <div style="font-weight: 600; color: var(--text-primary);">{{.Order.CustomerName}}</div>
             </div>
             <div>
-                <div style="font-size: 0.875rem; color: #7a7a7a; margin-bottom: 0.25rem;">联系邮箱</div>
-                <div style="color: #363636;">{{.Order.CustomerEmail}}</div>
+                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">联系邮箱</div>
+                <div style="color: var(--text-primary);">{{.Order.CustomerEmail}}</div>
             </div>
             <div>
-                <div style="font-size: 0.875rem; color: #7a7a7a; margin-bottom: 0.25rem;">支付方式</div>
-                <div style="color: #363636;">{{.Order.PaymentMethod}}</div>
+                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">支付方式</div>
+                <div style="color: var(--text-primary);">{{.Order.PaymentMethod}}</div>
             </div>
             <div>
-                <div style="font-size: 0.875rem; color: #7a7a7a; margin-bottom: 0.25rem;">创建时间</div>
-                <div style="color: #363636;">{{.Order.CreatedAt.Format "2006-01-02 15:04:05"}}</div>
+                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">创建时间</div>
+                <div style="color: var(--text-primary);">{{.Order.CreatedAt.Format "2006-01-02 15:04:05"}}</div>
             </div>
         </div>
     </div>
 
     <!-- 订单商品列表 -->
-    <div style="margin-bottom: 1.5rem;">
-        <h4 style="font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; color: #212121;">
-            <i class="fas fa-box has-text-info" style="margin-right: 0.5rem;"></i>
+    <div style="margin-bottom: 24px;">
+        <h4
+            style="font-weight: 500; margin-bottom: 16px; display: flex; align-items: center; color: var(--text-primary); font-size: 16px;">
+            <i class="fas fa-box" style="margin-right: 8px; color: var(--info-color);"></i>
             订单商品
         </h4>
         {{if .Order.Items}}
-        <table class="table is-fullwidth is-striped">
+        <table class="uk-table uk-table-divider uk-table-middle">
             <thead>
                 <tr>
                     <th>商品名称</th>
@@ -63,24 +64,24 @@
                 {{range .Order.Items}}
                 <tr>
                     <td>{{.ProductName}}</td>
-                    <td><span class="tag is-light">{{.SKU}}</span></td>
+                    <td><span class="uk-label" style="font-size: 11px;">{{.SKU}}</span></td>
                     <td>¥{{printf "%.2f" .Price}}</td>
                     <td>×{{.Quantity}}</td>
-                    <td class="has-text-weight-semibold">¥{{printf "%.2f" .Subtotal}}</td>
+                    <td style="font-weight: 600;">¥{{printf "%.2f" .Subtotal}}</td>
                 </tr>
                 {{end}}
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="4" class="has-text-right has-text-weight-bold">订单总额：</td>
-                    <td class="has-text-weight-bold has-text-primary" style="font-size: 1.25rem;">
+                    <td colspan="4" style="text-align: right; font-weight: 600;">订单总额：</td>
+                    <td style="font-weight: 600; color: var(--error-color); font-size: 18px;">
                         ¥{{printf "%.2f" .Order.TotalAmount}}
                     </td>
                 </tr>
             </tfoot>
         </table>
         {{else}}
-        <div class="notification is-light">
+        <div class="uk-alert-primary" uk-alert>
             暂无商品信息
         </div>
         {{end}}
@@ -88,42 +89,43 @@
 
     <!-- 订单时间线 -->
     <div>
-        <h4 style="font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; color: #212121;">
-            <i class="fas fa-history has-text-primary" style="margin-right: 0.5rem;"></i>
+        <h4
+            style="font-weight: 500; margin-bottom: 16px; display: flex; align-items: center; color: var(--text-primary); font-size: 16px;">
+            <i class="fas fa-history" style="margin-right: 8px; color: var(--primary-color);"></i>
             订单时间线
         </h4>
         <div class="order-timeline">
             <div class="timeline-item">
-                <strong style="color: #212121;">订单创建</strong>
+                <strong style="color: var(--text-primary);">订单创建</strong>
                 <br>
-                <small style="color: #7a7a7a;">{{.Order.CreatedAt.Format "2006-01-02 15:04:05"}}</small>
+                <small style="color: var(--text-tertiary);">{{.Order.CreatedAt.Format "2006-01-02 15:04:05"}}</small>
             </div>
             {{if ne .Order.Status "pending"}}
             <div class="timeline-item">
-                <strong style="color: #212121;">订单支付</strong>
+                <strong style="color: var(--text-primary);">订单支付</strong>
                 <br>
-                <small style="color: #7a7a7a;">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
+                <small style="color: var(--text-tertiary);">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
             </div>
             {{end}}
             {{if or (eq .Order.Status "shipped") (eq .Order.Status "completed")}}
             <div class="timeline-item">
-                <strong style="color: #212121;">订单发货</strong>
+                <strong style="color: var(--text-primary);">订单发货</strong>
                 <br>
-                <small style="color: #7a7a7a;">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
+                <small style="color: var(--text-tertiary);">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
             </div>
             {{end}}
             {{if eq .Order.Status "completed"}}
             <div class="timeline-item">
-                <strong style="color: #212121;">订单完成</strong>
+                <strong style="color: var(--text-primary);">订单完成</strong>
                 <br>
-                <small style="color: #7a7a7a;">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
+                <small style="color: var(--text-tertiary);">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
             </div>
             {{end}}
             {{if eq .Order.Status "cancelled"}}
             <div class="timeline-item">
-                <strong style="color: #f14668;">订单取消</strong>
+                <strong style="color: var(--error-color);">订单取消</strong>
                 <br>
-                <small style="color: #7a7a7a;">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
+                <small style="color: var(--text-tertiary);">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
             </div>
             {{end}}
         </div>

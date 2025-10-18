@@ -4,27 +4,23 @@
     <div id="page-title" hx-swap-oob="true">用户列表</div>
 
     <!-- 面包屑导航 -->
-    <nav class="breadcrumb" aria-label="breadcrumbs" style="margin-bottom: 1.5rem;">
-        <ul>
-            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
-                    hx-push-url="true">首页</a></li>
-            <li><a href="#" @click.prevent>用户管理</a></li>
-            <li class="is-active"><a href="#" aria-current="page">用户列表</a></li>
-        </ul>
-    </nav>
+    <ul class="uk-breadcrumb" style="margin-bottom: 24px;">
+        <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                hx-push-url="true">首页</a></li>
+        <li><span>用户管理</span></li>
+        <li class="uk-disabled"><span>用户列表</span></li>
+    </ul>
 
     <div class="content-card">
         <div class="card-header">
             <h3 class="card-title">
-                <i class="fas fa-users has-text-primary"></i>
+                <i class="fas fa-users" style="color: var(--primary-color);"></i>
                 用户列表
             </h3>
             <!-- 新增用户按钮 -->
-            <a href="/users/new" class="button is-primary" hx-get="/users/new" hx-target="#main-container"
+            <a href="/users/new" class="uk-button uk-button-primary" hx-get="/users/new" hx-target="#main-container"
                 hx-swap="innerHTML" hx-push-url="true">
-                <span class="icon">
-                    <i class="fas fa-plus"></i>
-                </span>
+                <i class="fas fa-plus"></i>
                 <span>新增用户</span>
             </a>
         </div>
@@ -32,29 +28,22 @@
         <div class="card-body">
             <!-- 搜索和筛选栏 -->
             <div class="search-bar">
-                <div class="field has-addons" style="flex: 1; max-width: 400px;">
-                    <div class="control has-icons-left" style="flex: 1;">
-                        <input class="input" type="search" name="keyword" placeholder="搜索用户名、邮箱或姓名..."
-                            value="{{.Query}}" hx-get="/users" hx-trigger="keyup changed delay:500ms, search"
-                            hx-target="#user-table-container" hx-swap="innerHTML" hx-select="#user-table-container > *"
-                            hx-include="[name='status']" hx-indicator="#search-indicator">
-                        <span class="icon is-left">
-                            <i class="fas fa-search"></i>
-                        </span>
-                    </div>
-                    <div class="control">
-                        <button class="button is-info">
-                            <span class="icon htmx-indicator" id="search-indicator">
-                                <i class="fas fa-spinner fa-spin"></i>
-                            </span>
-                        </button>
-                    </div>
+                <div class="uk-inline uk-width-1-1" style="max-width: 400px;">
+                    <span class="uk-form-icon" uk-icon="icon: search"></span>
+                    <input class="uk-input" type="search" name="keyword" placeholder="搜索用户名、邮箱或姓名..." value="{{.Query}}"
+                        hx-get="/users" hx-trigger="keyup changed delay:500ms, search" hx-target="#user-table-container"
+                        hx-swap="innerHTML" hx-select="#user-table-container > *" hx-include="[name='status']"
+                        hx-indicator="#search-indicator">
+                    <span class="uk-form-icon uk-form-icon-flip htmx-indicator" id="search-indicator">
+                        <div uk-spinner="ratio: 0.6"></div>
+                    </span>
                 </div>
 
                 <!-- 状态筛选 -->
-                <div class="select">
-                    <select name="status" hx-get="/users" hx-trigger="change" hx-target="#user-table-container"
-                        hx-swap="innerHTML" hx-select="#user-table-container > *" hx-include="[name='keyword']">
+                <div class="uk-form-controls">
+                    <select class="uk-select" name="status" hx-get="/users" hx-trigger="change"
+                        hx-target="#user-table-container" hx-swap="innerHTML" hx-select="#user-table-container > *"
+                        hx-include="[name='keyword']" style="width: 150px;">
                         <option value="" {{if eq .Status "" }}selected{{end}}>全部状态</option>
                         <option value="active" {{if eq .Status "active" }}selected{{end}}>活跃</option>
                         <option value="inactive" {{if eq .Status "inactive" }}selected{{end}}>非活跃</option>
@@ -66,7 +55,7 @@
             <div id="user-table-container" class="user-table-wrapper">
                 {{if .Users}}
                 <div class="table-container">
-                    <table class="data-table table is-fullwidth is-hoverable">
+                    <table class="uk-table uk-table-hover uk-table-divider uk-table-middle">
                         <thead>
                             <tr>
                                 <th style="width: 60px;">ID</th>
@@ -94,74 +83,61 @@
                     <div class="pagination-info">
                         显示 {{.PageInfo.Page}} / {{.PageInfo.TotalPages}} 页，共 {{.PageInfo.Total}} 条记录
                     </div>
-                    <nav class="pagination" role="navigation">
+                    <ul class="uk-pagination">
                         {{if gt .PageInfo.Page 1}}
-                        <a class="pagination-previous"
-                            hx-get="/users?page={{sub .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&status={{.Status}}"
-                            hx-target="#user-table-container" hx-swap="innerHTML" hx-select="#user-table-container > *">
-                            上一页
-                        </a>
+                        <li>
+                            <a href="#"
+                                hx-get="/users?page={{sub .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&status={{.Status}}"
+                                hx-target="#user-table-container" hx-swap="innerHTML"
+                                hx-select="#user-table-container > *">
+                                <span uk-pagination-previous></span>
+                            </a>
+                        </li>
                         {{else}}
-                        <a class="pagination-previous" disabled>上一页</a>
+                        <li class="uk-disabled"><span><span uk-pagination-previous></span></span></li>
+                        {{end}}
+
+                        {{range $i := iterate .PageInfo.TotalPages}}
+                        {{if eq $i $.PageInfo.Page}}
+                        <li class="uk-active"><span>{{$i}}</span></li>
+                        {{else if or (eq $i 1) (eq $i $.PageInfo.TotalPages) (and (ge $i (sub $.PageInfo.Page 2))
+                        (le $i (add $.PageInfo.Page 2)))}}
+                        <li>
+                            <a href="#"
+                                hx-get="/users?page={{$i}}&page_size={{$.PageInfo.PageSize}}&keyword={{$.Query}}&status={{$.Status}}"
+                                hx-target="#user-table-container" hx-swap="innerHTML"
+                                hx-select="#user-table-container > *">
+                                {{$i}}
+                            </a>
+                        </li>
+                        {{else if or (eq $i 2) (eq $i (sub $.PageInfo.TotalPages 1))}}
+                        <li class="uk-disabled"><span>…</span></li>
+                        {{end}}
                         {{end}}
 
                         {{if lt .PageInfo.Page .PageInfo.TotalPages}}
-                        <a class="pagination-next"
-                            hx-get="/users?page={{add .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&status={{.Status}}"
-                            hx-target="#user-table-container" hx-swap="innerHTML" hx-select="#user-table-container > *">
-                            下一页
-                        </a>
+                        <li>
+                            <a href="#"
+                                hx-get="/users?page={{add .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&status={{.Status}}"
+                                hx-target="#user-table-container" hx-swap="innerHTML"
+                                hx-select="#user-table-container > *">
+                                <span uk-pagination-next></span>
+                            </a>
+                        </li>
                         {{else}}
-                        <a class="pagination-next" disabled>下一页</a>
+                        <li class="uk-disabled"><span><span uk-pagination-next></span></span></li>
                         {{end}}
-
-                        <ul class="pagination-list">
-                            {{range $i := iterate .PageInfo.TotalPages}}
-                            {{if eq $i $.PageInfo.Page}}
-                            <li><a class="pagination-link is-current">{{$i}}</a></li>
-                            {{else if or (eq $i 1) (eq $i $.PageInfo.TotalPages) (and (ge $i (sub $.PageInfo.Page 2))
-                            (le $i (add $.PageInfo.Page 2)))}}
-                            <li>
-                                <a class="pagination-link"
-                                    hx-get="/users?page={{$i}}&page_size={{$.PageInfo.PageSize}}&keyword={{$.Query}}&status={{$.Status}}"
-                                    hx-target="#user-table-container" hx-swap="innerHTML"
-                                    hx-select="#user-table-container > *">
-                                    {{$i}}
-                                </a>
-                            </li>
-                            {{else if or (eq $i 2) (eq $i (sub $.PageInfo.TotalPages 1))}}
-                            <li><span class="pagination-ellipsis">&hellip;</span></li>
-                            {{end}}
-                            {{end}}
-                        </ul>
-                    </nav>
+                    </ul>
                 </div>
                 {{end}}
                 {{else}}
                 <div class="empty-state">
                     <div class="empty-state-icon"><i class="fas fa-users"></i></div>
                     <div class="empty-state-text">没有找到用户</div>
-                    <p class="has-text-grey">尝试调整搜索条件或创建新用户</p>
+                    <p>尝试调整搜索条件或创建新用户</p>
                 </div>
                 {{end}}
             </div>
-        </div>
-    </div>
-
-    <!-- 用户表单模态框 -->
-    <div class="modal" x-ref="userModal" x-data="{ show: false }">
-        <div class="modal-background" @click="$refs.userModal.classList.remove('is-active')"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">用户表单</p>
-                <button class="delete" @click="$refs.userModal.classList.remove('is-active')"></button>
-            </header>
-            <section class="modal-card-body" id="modal-content">
-                <!-- 表单内容将通过 HTMX 加载 -->
-                <div class="has-text-centered" style="padding: 2rem;">
-                    <div class="loading-spinner" style="margin: 0 auto;"></div>
-                </div>
-            </section>
         </div>
     </div>
 </div>

@@ -6,14 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理后台 - HTMX Demo</title>
 
-    <!-- Bulma CSS v1.0.4 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <!-- UIKit CSS v3.24.1 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.24.1/dist/css/uikit.min.css">
 
     <!-- Font Awesome 图标 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- 自定义样式 -->
-    <link rel="stylesheet" href="/static/css/admin.css?v=20250117-dropdown">
+    <link rel="stylesheet" href="/static/css/admin.css?v=20250118-uikit">
+
+    <!-- UIKit JS v3.24.1 -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.24.1/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.24.1/dist/js/uikit-icons.min.js"></script>
 
     <!-- HTMX v2.0.7 -->
     <script src="https://unpkg.com/htmx.org@2.0.7"></script>
@@ -22,7 +26,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js"></script>
 
     <!-- 自定义 JS (添加版本号避免缓存) -->
-    <script src="/static/js/app.js?v=20250117-9"></script>
+    <script src="/static/js/app.js?v=20250118-uikit"></script>
 </head>
 
 <body>
@@ -39,8 +43,8 @@
             <div id="main-container" class="content-container">
                 <!-- 默认加载仪表盘 -->
                 <div hx-get="/dashboard" hx-trigger="load" hx-target="#main-container" hx-swap="innerHTML">
-                    <div class="has-text-centered" style="padding: 3rem;">
-                        <div class="loading-spinner" style="margin: 0 auto;"></div>
+                    <div class="uk-text-center" style="padding: 3rem;">
+                        <div uk-spinner="ratio: 1.5"></div>
                         <p style="margin-top: 1rem; color: #7a7a7a;">加载中...</p>
                     </div>
                 </div>
@@ -55,7 +59,7 @@
             <div :class="'toast ' + toast.type" x-show="toast.visible" x-transition.duration.300ms>
                 <span x-html="toast.icon"></span>
                 <span x-text="toast.message"></span>
-                <button class="delete" @click="removeToast(toast.id)"></button>
+                <button class="toast-close uk-close-small" type="button" @click="removeToast(toast.id)"></button>
             </div>
         </template>
     </div>
@@ -71,10 +75,10 @@
                 showToast(detail) {
                     const id = this.nextId++;
                     const icons = {
-                        success: '<i class="fas fa-check-circle has-text-success"></i>',
-                        error: '<i class="fas fa-exclamation-circle has-text-danger"></i>',
-                        warning: '<i class="fas fa-exclamation-triangle has-text-warning"></i>',
-                        info: '<i class="fas fa-info-circle has-text-info"></i>'
+                        success: '<i class="fas fa-check-circle" style="color: #52c41a;"></i>',
+                        error: '<i class="fas fa-exclamation-circle" style="color: #f5222d;"></i>',
+                        warning: '<i class="fas fa-exclamation-triangle" style="color: #faad14;"></i>',
+                        info: '<i class="fas fa-info-circle" style="color: #1890ff;"></i>'
                     };
 
                     const toast = {

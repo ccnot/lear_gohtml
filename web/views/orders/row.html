@@ -5,63 +5,57 @@
     <td>
         <div>
             <div>{{.CustomerName}}</div>
-            <small class="has-text-grey">{{.CustomerEmail}}</small>
+            <small style="color: var(--text-tertiary);">{{.CustomerEmail}}</small>
         </div>
     </td>
-    <td class="has-text-weight-semibold has-text-primary">
+    <td style="font-weight: 600; color: var(--error-color);">
         ¥{{printf "%.2f" .TotalAmount}}
     </td>
     <td>{{.PaymentMethod}}</td>
     <td>
         {{if eq .Status "pending"}}
-        <span class="badge is-warning">待处理</span>
+        <span class="badge warning">待处理</span>
         {{else if eq .Status "paid"}}
-        <span class="badge is-info">已支付</span>
+        <span class="badge info">已支付</span>
         {{else if eq .Status "shipped"}}
-        <span class="badge is-primary">已发货</span>
+        <span class="badge primary">已发货</span>
         {{else if eq .Status "completed"}}
-        <span class="badge is-success">已完成</span>
+        <span class="badge success">已完成</span>
         {{else if eq .Status "cancelled"}}
-        <span class="badge is-danger">已取消</span>
+        <span class="badge danger">已取消</span>
         {{end}}
     </td>
     <td>{{.CreatedAt.Format "2006-01-02 15:04"}}</td>
     <td>
         <div class="action-buttons">
             <!-- 查看详情按钮 -->
-            <button class="button is-small is-info is-light" @click="orderModal.classList.add('is-active')"
-                hx-get="/orders/{{.ID}}" hx-target="#order-modal-content" hx-swap="innerHTML" title="查看详情">
-                <span class="icon is-small">
-                    <i class="fas fa-eye"></i>
-                </span>
+            <button class="btn-icon" hx-get="/orders/{{.ID}}" hx-target="#order-modal-content" hx-swap="innerHTML"
+                @click="UIkit.modal('#order-modal').show()" title="查看详情" uk-tooltip>
+                <i class="fas fa-eye"></i>
             </button>
 
-            <!-- 状态更新下拉菜单 -->
-            <div class="dropdown is-right" x-data="{ open: false }">
-                <div class="dropdown-trigger">
-                    <button class="button is-small is-primary is-light" @click="open = !open" title="更新状态">
-                        <span class="icon is-small">
-                            <i class="fas fa-edit"></i>
-                        </span>
-                    </button>
-                </div>
-                <div class="dropdown-menu" x-show="open" @click.away="open = false">
-                    <div class="dropdown-content">
-                        <a class="dropdown-item" @click="open = false" hx-put="/orders/{{.ID}}/status"
+            <!-- 状态更新下拉菜单 - 紧凑版 -->
+            <div>
+                <button class="btn-icon" type="button" title="更新状态" uk-tooltip>
+                    <i class="fas fa-edit"></i>
+                </button>
+                <div uk-dropdown="mode: click; pos: bottom-right; offset: 5" class="order-status-dropdown">
+                    <div class="status-dropdown-content">
+                        <a href="#" class="status-option" hx-put="/orders/{{.ID}}/status"
                             hx-vals='{"status": "pending"}' hx-target="#order-row-{{.ID}}" hx-swap="outerHTML">
-                            <span class="badge is-warning">待处理</span>
+                            <span class="badge warning">待处理</span>
                         </a>
-                        <a class="dropdown-item" @click="open = false" hx-put="/orders/{{.ID}}/status"
-                            hx-vals='{"status": "paid"}' hx-target="#order-row-{{.ID}}" hx-swap="outerHTML">
-                            <span class="badge is-info">已支付</span>
+                        <a href="#" class="status-option" hx-put="/orders/{{.ID}}/status" hx-vals='{"status": "paid"}'
+                            hx-target="#order-row-{{.ID}}" hx-swap="outerHTML">
+                            <span class="badge info">已支付</span>
                         </a>
-                        <a class="dropdown-item" @click="open = false" hx-put="/orders/{{.ID}}/status"
+                        <a href="#" class="status-option" hx-put="/orders/{{.ID}}/status"
                             hx-vals='{"status": "shipped"}' hx-target="#order-row-{{.ID}}" hx-swap="outerHTML">
-                            <span class="badge is-primary">已发货</span>
+                            <span class="badge primary">已发货</span>
                         </a>
-                        <a class="dropdown-item" @click="open = false" hx-put="/orders/{{.ID}}/status"
+                        <a href="#" class="status-option" hx-put="/orders/{{.ID}}/status"
                             hx-vals='{"status": "completed"}' hx-target="#order-row-{{.ID}}" hx-swap="outerHTML">
-                            <span class="badge is-success">已完成</span>
+                            <span class="badge success">已完成</span>
                         </a>
                     </div>
                 </div>
@@ -76,10 +70,8 @@
                 url: '/orders/{{.ID}}',
                 target: '#order-row-{{.ID}}'
             })">
-                <button class="button is-small is-danger is-light" @click="confirmDelete()" title="取消订单">
-                    <span class="icon is-small">
-                        <i class="fas fa-times"></i>
-                    </span>
+                <button class="btn-icon danger" @click="confirmDelete()" title="取消订单" uk-tooltip>
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
             {{end}}

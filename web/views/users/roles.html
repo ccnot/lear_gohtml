@@ -4,26 +4,22 @@
     <div id="page-title" hx-swap-oob="true">角色管理</div>
 
     <!-- 面包屑导航 -->
-    <nav class="breadcrumb" aria-label="breadcrumbs" style="margin-bottom: 1.5rem;">
-        <ul>
-            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
-                    hx-push-url="true">首页</a></li>
-            <li><a href="#" @click.prevent>用户管理</a></li>
-            <li class="is-active"><a href="#" aria-current="page">角色管理</a></li>
-        </ul>
-    </nav>
+    <ul class="uk-breadcrumb" style="margin-bottom: 24px;">
+        <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                hx-push-url="true">首页</a></li>
+        <li><span>用户管理</span></li>
+        <li class="uk-disabled"><span>角色管理</span></li>
+    </ul>
 
     <!-- 内容卡片 -->
     <div class="content-card">
         <div class="card-header">
             <h3 class="card-title">
-                <i class="fas fa-user-tag has-text-info"></i>
+                <i class="fas fa-user-tag" style="color: var(--info-color);"></i>
                 角色列表
             </h3>
-            <button class="button is-primary">
-                <span class="icon">
-                    <i class="fas fa-plus"></i>
-                </span>
+            <button class="uk-button uk-button-primary">
+                <i class="fas fa-plus"></i>
                 <span>新增角色</span>
             </button>
         </div>
@@ -31,7 +27,7 @@
         <div class="card-body">
             <!-- 角色列表 -->
             <div class="table-container">
-                <table class="table is-fullwidth is-hoverable">
+                <table class="uk-table uk-table-hover uk-table-divider uk-table-middle">
                     <thead>
                         <tr>
                             <th style="width: 60px;">ID</th>
@@ -47,22 +43,19 @@
                         <!-- 管理员 -->
                         <tr>
                             <td>1</td>
-                            <td><span class="badge is-danger">管理员</span></td>
+                            <td><span class="badge danger">管理员</span></td>
                             <td><code>admin</code></td>
                             <td>系统管理员，拥有所有权限</td>
                             <td><strong>5</strong></td>
                             <td>2024-01-01</td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="button is-small is-info is-light" title="编辑">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-edit"></i>
-                                        </span>
+                                    <button class="btn-icon" title="编辑" uk-tooltip>
+                                        <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="button is-small is-primary is-light" title="权限设置">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-key"></i>
-                                        </span>
+                                    <button class="btn-icon" title="权限设置" uk-tooltip
+                                        style="color: var(--primary-color); border-color: var(--primary-color);">
+                                        <i class="fas fa-key"></i>
                                     </button>
                                 </div>
                             </td>
@@ -70,22 +63,19 @@
                         <!-- 编辑 -->
                         <tr>
                             <td>2</td>
-                            <td><span class="badge is-info">编辑</span></td>
+                            <td><span class="badge info">编辑</span></td>
                             <td><code>editor</code></td>
                             <td>内容编辑，可以管理用户和商品</td>
                             <td><strong>12</strong></td>
                             <td>2024-01-01</td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="button is-small is-info is-light" title="编辑">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-edit"></i>
-                                        </span>
+                                    <button class="btn-icon" title="编辑" uk-tooltip>
+                                        <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="button is-small is-primary is-light" title="权限设置">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-key"></i>
-                                        </span>
+                                    <button class="btn-icon" title="权限设置" uk-tooltip
+                                        style="color: var(--primary-color); border-color: var(--primary-color);">
+                                        <i class="fas fa-key"></i>
                                     </button>
                                 </div>
                             </td>
@@ -100,20 +90,15 @@
                             <td>2024-01-01</td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="button is-small is-info is-light" title="编辑">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-edit"></i>
-                                        </span>
+                                    <button class="btn-icon" title="编辑" uk-tooltip>
+                                        <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="button is-small is-primary is-light" title="权限设置">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-key"></i>
-                                        </span>
+                                    <button class="btn-icon" title="权限设置" uk-tooltip
+                                        style="color: var(--primary-color); border-color: var(--primary-color);">
+                                        <i class="fas fa-key"></i>
                                     </button>
-                                    <button class="button is-small is-danger is-light" title="删除">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
+                                    <button class="btn-icon danger" title="删除" uk-tooltip>
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </td>
@@ -125,17 +110,17 @@
     </div>
 
     <!-- 说明卡片 -->
-    <div class="content-card" style="margin-top: 1.5rem;">
+    <div class="content-card" style="margin-top: 24px;">
         <div class="card-header">
             <h3 class="card-title">
-                <i class="fas fa-info-circle has-text-primary"></i>
+                <i class="fas fa-info-circle" style="color: var(--primary-color);"></i>
                 角色说明
             </h3>
         </div>
         <div class="card-body">
-            <div class="notification is-info is-light">
+            <div class="uk-alert-primary" uk-alert>
                 <p><strong>💡 提示：</strong></p>
-                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                <ul style="margin-left: 24px; margin-top: 8px;">
                     <li>管理员角色拥有系统所有权限，不可删除</li>
                     <li>每个角色可以关联多个用户</li>
                     <li>删除角色前需要先将该角色下的用户转移到其他角色</li>
@@ -147,56 +132,12 @@
 </div>
 
 <style>
-    .breadcrumb {
-        margin: 0;
-        padding: 0;
-    }
-
-    .breadcrumb ul {
-        display: flex;
-        align-items: center;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .breadcrumb li {
-        display: flex;
-        align-items: center;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 0.75rem;
-        color: #b5b5b5;
-    }
-
-    .breadcrumb a {
-        color: #4a4a4a;
-        text-decoration: none;
-        transition: color 0.2s;
-    }
-
-    .breadcrumb a:hover {
-        color: var(--primary-color);
-    }
-
-    .breadcrumb li.is-active a {
-        color: var(--primary-color);
-        font-weight: 600;
-        cursor: default;
-    }
-
-    .breadcrumb li.is-active a:hover {
-        color: var(--primary-color);
-    }
-
     code {
         background: #f5f5f5;
-        padding: 0.25rem 0.5rem;
+        padding: 4px 8px;
         border-radius: 3px;
         font-family: 'Courier New', monospace;
-        font-size: 0.875rem;
+        font-size: 13px;
         color: #e74c3c;
     }
 </style>

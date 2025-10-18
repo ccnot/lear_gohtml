@@ -2,7 +2,7 @@
 <tr id="user-row-{{.ID}}">
     <td>{{.ID}}</td>
     <td>
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 12px;">
             <img src="{{.Avatar}}" alt="{{.Username}}" class="user-avatar">
             <strong>{{.Username}}</strong>
         </div>
@@ -12,18 +12,18 @@
     <td>{{.Phone}}</td>
     <td>
         {{if eq .Role "admin"}}
-        <span class="badge is-danger">管理员</span>
+        <span class="badge danger">管理员</span>
         {{else if eq .Role "editor"}}
-        <span class="badge is-info">编辑</span>
+        <span class="badge info">编辑</span>
         {{else}}
         <span class="badge">访客</span>
         {{end}}
     </td>
     <td>
         {{if eq .Status "active"}}
-        <span class="badge is-success">活跃</span>
+        <span class="badge success">活跃</span>
         {{else}}
-        <span class="badge is-warning">非活跃</span>
+        <span class="badge warning">非活跃</span>
         {{end}}
     </td>
     <td>{{.CreatedAt.Format "2006-01-02"}}</td>
@@ -35,18 +35,14 @@
             target: '#user-row-{{.ID}}'
         })">
             <!-- 编辑按钮 -->
-            <a href="/users/{{.ID}}" class="button is-small is-info is-light" hx-get="/users/{{.ID}}"
-                hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true" title="编辑">
-                <span class="icon is-small">
-                    <i class="fas fa-edit"></i>
-                </span>
+            <a href="/users/{{.ID}}" class="btn-icon" hx-get="/users/{{.ID}}" hx-target="#main-container"
+                hx-swap="innerHTML" hx-push-url="true" title="编辑" uk-tooltip>
+                <i class="fas fa-edit"></i>
             </a>
 
             <!-- 删除按钮 -->
-            <button class="button is-small is-danger is-light" @click="confirmDelete()" title="删除">
-                <span class="icon is-small">
-                    <i class="fas fa-trash"></i>
-                </span>
+            <button class="btn-icon danger" @click="confirmDelete()" title="删除" uk-tooltip>
+                <i class="fas fa-trash"></i>
             </button>
         </div>
     </td>

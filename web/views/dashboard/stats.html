@@ -5,15 +5,13 @@
         <div class="stat-card-header">
             <span class="stat-card-title">总用户数</span>
             <span class="stat-card-icon">
-                <i class="fas fa-users has-text-primary"></i>
+                <i class="fas fa-users" style="color: var(--primary-color);"></i>
             </span>
         </div>
         <div class="stat-card-value">{{.TotalUsers}}</div>
-        <div class="stat-card-change">
-            <span class="has-text-success">
-                <i class="fas fa-arrow-up"></i> 12%
-            </span>
-            <span class="has-text-grey-light"> 较上月</span>
+        <div class="stat-card-change positive">
+            <i class="fas fa-arrow-up"></i> 12%
+            <span style="color: var(--text-tertiary);"> 较上月</span>
         </div>
     </div>
 
@@ -22,15 +20,13 @@
         <div class="stat-card-header">
             <span class="stat-card-title">总商品数</span>
             <span class="stat-card-icon">
-                <i class="fas fa-box has-text-info"></i>
+                <i class="fas fa-box" style="color: var(--info-color);"></i>
             </span>
         </div>
         <div class="stat-card-value">{{.TotalProducts}}</div>
-        <div class="stat-card-change">
-            <span class="has-text-success">
-                <i class="fas fa-arrow-up"></i> 8%
-            </span>
-            <span class="has-text-grey-light"> 较上月</span>
+        <div class="stat-card-change positive">
+            <i class="fas fa-arrow-up"></i> 8%
+            <span style="color: var(--text-tertiary);"> 较上月</span>
         </div>
     </div>
 
@@ -39,15 +35,13 @@
         <div class="stat-card-header">
             <span class="stat-card-title">总订单数</span>
             <span class="stat-card-icon">
-                <i class="fas fa-shopping-cart has-text-success"></i>
+                <i class="fas fa-shopping-cart" style="color: var(--success-color);"></i>
             </span>
         </div>
         <div class="stat-card-value">{{.TotalOrders}}</div>
-        <div class="stat-card-change">
-            <span class="has-text-success">
-                <i class="fas fa-arrow-up"></i> 23%
-            </span>
-            <span class="has-text-grey-light"> 较上月</span>
+        <div class="stat-card-change positive">
+            <i class="fas fa-arrow-up"></i> 23%
+            <span style="color: var(--text-tertiary);"> 较上月</span>
         </div>
     </div>
 
@@ -56,15 +50,13 @@
         <div class="stat-card-header">
             <span class="stat-card-title">总收入</span>
             <span class="stat-card-icon">
-                <i class="fas fa-dollar-sign has-text-warning"></i>
+                <i class="fas fa-dollar-sign" style="color: var(--warning-color);"></i>
             </span>
         </div>
         <div class="stat-card-value">¥{{printf "%.2f" .TotalRevenue}}</div>
-        <div class="stat-card-change">
-            <span class="has-text-success">
-                <i class="fas fa-arrow-up"></i> 18%
-            </span>
-            <span class="has-text-grey-light"> 较上月</span>
+        <div class="stat-card-change positive">
+            <i class="fas fa-arrow-up"></i> 18%
+            <span style="color: var(--text-tertiary);"> 较上月</span>
         </div>
     </div>
 
@@ -73,12 +65,12 @@
         <div class="stat-card-header">
             <span class="stat-card-title">活跃用户</span>
             <span class="stat-card-icon">
-                <i class="fas fa-user-check has-text-success"></i>
+                <i class="fas fa-user-check" style="color: var(--success-color);"></i>
             </span>
         </div>
         <div class="stat-card-value">{{.ActiveUsers}}</div>
         <div class="stat-card-change">
-            <span class="has-text-grey-light">在线用户数</span>
+            <span style="color: var(--text-tertiary);">在线用户数</span>
         </div>
     </div>
 
@@ -87,12 +79,12 @@
         <div class="stat-card-header">
             <span class="stat-card-title">待处理订单</span>
             <span class="stat-card-icon">
-                <i class="fas fa-clock has-text-warning"></i>
+                <i class="fas fa-clock" style="color: var(--warning-color);"></i>
             </span>
         </div>
         <div class="stat-card-value">{{.PendingOrders}}</div>
         <div class="stat-card-change">
-            <span class="has-text-grey-light">需要处理</span>
+            <span style="color: var(--text-tertiary);">需要处理</span>
         </div>
     </div>
 
@@ -101,12 +93,12 @@
         <div class="stat-card-header">
             <span class="stat-card-title">低库存预警</span>
             <span class="stat-card-icon">
-                <i class="fas fa-exclamation-triangle has-text-danger"></i>
+                <i class="fas fa-exclamation-triangle" style="color: var(--error-color);"></i>
             </span>
         </div>
         <div class="stat-card-value">{{.LowStock}}</div>
         <div class="stat-card-change">
-            <span class="has-text-danger">需要补货</span>
+            <span style="color: var(--error-color);">需要补货</span>
         </div>
     </div>
 
@@ -115,15 +107,13 @@
         <div class="stat-card-header">
             <span class="stat-card-title">今日订单</span>
             <span class="stat-card-icon">
-                <i class="fas fa-calendar-day has-text-primary"></i>
+                <i class="fas fa-calendar-day" style="color: var(--primary-color);"></i>
             </span>
         </div>
         <div class="stat-card-value">{{.TodayOrders}}</div>
-        <div class="stat-card-change">
-            <span class="has-text-success">
-                <i class="fas fa-arrow-up"></i> 5
-            </span>
-            <span class="has-text-grey-light"> 较昨日</span>
+        <div class="stat-card-change positive">
+            <i class="fas fa-arrow-up"></i> 5
+            <span style="color: var(--text-tertiary);"> 较昨日</span>
         </div>
     </div>
 </div>

@@ -4,27 +4,25 @@
     <div id="page-title" hx-swap-oob="true">权限管理</div>
 
     <!-- 面包屑导航 -->
-    <nav class="breadcrumb" aria-label="breadcrumbs" style="margin-bottom: 1.5rem;">
-        <ul>
-            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
-                    hx-push-url="true">首页</a></li>
-            <li><a href="#" @click.prevent>用户管理</a></li>
-            <li class="is-active"><a href="#" aria-current="page">权限管理</a></li>
-        </ul>
-    </nav>
+    <ul class="uk-breadcrumb" style="margin-bottom: 24px;">
+        <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                hx-push-url="true">首页</a></li>
+        <li><span>用户管理</span></li>
+        <li class="uk-disabled"><span>权限管理</span></li>
+    </ul>
 
     <!-- 权限矩阵 -->
     <div class="content-card">
         <div class="card-header">
             <h3 class="card-title">
-                <i class="fas fa-shield-alt has-text-success"></i>
+                <i class="fas fa-shield-alt" style="color: var(--success-color);"></i>
                 权限配置矩阵
             </h3>
         </div>
 
         <div class="card-body">
             <div class="table-container">
-                <table class="table is-fullwidth is-bordered">
+                <table class="uk-table uk-table-divider uk-table-middle">
                     <thead>
                         <tr>
                             <th style="width: 200px;">功能模块</th>
@@ -37,53 +35,53 @@
                         <!-- 用户管理 -->
                         <tr>
                             <td><strong>用户管理</strong></td>
-                            <td style="text-align: center; background: #d4edda;">
-                                <i class="fas fa-check-circle has-text-success"></i> 完全权限
+                            <td style="text-align: center; background: #f6ffed;">
+                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
                             </td>
-                            <td style="text-align: center; background: #fff3cd;">
-                                <i class="fas fa-check has-text-warning"></i> 查看/编辑
+                            <td style="text-align: center; background: #fffbe6;">
+                                <i class="fas fa-check" style="color: #faad14;"></i> 查看/编辑
                             </td>
-                            <td style="text-align: center; background: #f8d7da;">
-                                <i class="fas fa-times-circle has-text-danger"></i> 无权限
+                            <td style="text-align: center; background: #fff2f0;">
+                                <i class="fas fa-times-circle" style="color: #f5222d;"></i> 无权限
                             </td>
                         </tr>
                         <!-- 商品管理 -->
                         <tr>
                             <td><strong>商品管理</strong></td>
-                            <td style="text-align: center; background: #d4edda;">
-                                <i class="fas fa-check-circle has-text-success"></i> 完全权限
+                            <td style="text-align: center; background: #f6ffed;">
+                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
                             </td>
-                            <td style="text-align: center; background: #d4edda;">
-                                <i class="fas fa-check-circle has-text-success"></i> 完全权限
+                            <td style="text-align: center; background: #f6ffed;">
+                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
                             </td>
-                            <td style="text-align: center; background: #d1ecf1;">
-                                <i class="fas fa-eye has-text-info"></i> 只读
+                            <td style="text-align: center; background: #e6f7ff;">
+                                <i class="fas fa-eye" style="color: #1890ff;"></i> 只读
                             </td>
                         </tr>
                         <!-- 订单管理 -->
                         <tr>
                             <td><strong>订单管理</strong></td>
-                            <td style="text-align: center; background: #d4edda;">
-                                <i class="fas fa-check-circle has-text-success"></i> 完全权限
+                            <td style="text-align: center; background: #f6ffed;">
+                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
                             </td>
-                            <td style="text-align: center; background: #fff3cd;">
-                                <i class="fas fa-check has-text-warning"></i> 查看/编辑
+                            <td style="text-align: center; background: #fffbe6;">
+                                <i class="fas fa-check" style="color: #faad14;"></i> 查看/编辑
                             </td>
-                            <td style="text-align: center; background: #d1ecf1;">
-                                <i class="fas fa-eye has-text-info"></i> 只读
+                            <td style="text-align: center; background: #e6f7ff;">
+                                <i class="fas fa-eye" style="color: #1890ff;"></i> 只读
                             </td>
                         </tr>
                         <!-- 系统设置 -->
                         <tr>
                             <td><strong>系统设置</strong></td>
-                            <td style="text-align: center; background: #d4edda;">
-                                <i class="fas fa-check-circle has-text-success"></i> 完全权限
+                            <td style="text-align: center; background: #f6ffed;">
+                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
                             </td>
-                            <td style="text-align: center; background: #f8d7da;">
-                                <i class="fas fa-times-circle has-text-danger"></i> 无权限
+                            <td style="text-align: center; background: #fff2f0;">
+                                <i class="fas fa-times-circle" style="color: #f5222d;"></i> 无权限
                             </td>
-                            <td style="text-align: center; background: #f8d7da;">
-                                <i class="fas fa-times-circle has-text-danger"></i> 无权限
+                            <td style="text-align: center; background: #fff2f0;">
+                                <i class="fas fa-times-circle" style="color: #f5222d;"></i> 无权限
                             </td>
                         </tr>
                     </tbody>
@@ -91,65 +89,23 @@
             </div>
 
             <!-- 权限说明 -->
-            <div class="notification is-warning is-light" style="margin-top: 1.5rem;">
+            <div class="uk-alert-warning" uk-alert style="margin-top: 24px;">
                 <p><strong>🔑 权限级别说明：</strong></p>
-                <div style="margin-top: 0.75rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
+                <div class="uk-grid-small uk-child-width-1-2@s" uk-grid style="margin-top: 12px;">
                     <div>
-                        <i class="fas fa-check-circle has-text-success"></i> <strong>完全权限：</strong>增删改查所有操作
+                        <i class="fas fa-check-circle" style="color: #52c41a;"></i> <strong>完全权限：</strong>增删改查所有操作
                     </div>
                     <div>
-                        <i class="fas fa-check has-text-warning"></i> <strong>部分权限：</strong>查看和编辑，不能删除
+                        <i class="fas fa-check" style="color: #faad14;"></i> <strong>部分权限：</strong>查看和编辑，不能删除
                     </div>
                     <div>
-                        <i class="fas fa-eye has-text-info"></i> <strong>只读权限：</strong>只能查看，不能修改
+                        <i class="fas fa-eye" style="color: #1890ff;"></i> <strong>只读权限：</strong>只能查看，不能修改
                     </div>
                     <div>
-                        <i class="fas fa-times-circle has-text-danger"></i> <strong>无权限：</strong>完全不可访问
+                        <i class="fas fa-times-circle" style="color: #f5222d;"></i> <strong>无权限：</strong>完全不可访问
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .breadcrumb {
-        margin: 0;
-        padding: 0;
-    }
-
-    .breadcrumb ul {
-        display: flex;
-        align-items: center;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .breadcrumb li {
-        display: flex;
-        align-items: center;
-    }
-
-    .breadcrumb li+li::before {
-        content: "/";
-        padding: 0 0.75rem;
-        color: #b5b5b5;
-    }
-
-    .breadcrumb a {
-        color: #4a4a4a;
-        text-decoration: none;
-        transition: color 0.2s;
-    }
-
-    .breadcrumb a:hover {
-        color: var(--primary-color);
-    }
-
-    .breadcrumb li.is-active a {
-        color: var(--primary-color);
-        font-weight: 600;
-        cursor: default;
-    }
-</style>

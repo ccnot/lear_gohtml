@@ -7,74 +7,88 @@
 
     <div class="header-actions">
         <!-- 刷新按钮 -->
-        <button class="button is-light" onclick="window.location.reload()" title="刷新页面">
-            <span class="icon">
-                <i class="fas fa-sync-alt"></i>
-            </span>
+        <button class="uk-button uk-button-default" onclick="window.location.reload()" title="刷新页面"
+            uk-tooltip="title: 刷新页面; pos: bottom">
+            <i class="fas fa-sync-alt"></i>
         </button>
 
-        <!-- 通知 -->
-        <div class="dropdown is-right" x-data="{ open: false }" :class="{ 'is-active': open }">
-            <div class="dropdown-trigger">
-                <button class="button is-light" @click="open = !open">
-                    <span class="icon">
-                        <i class="fas fa-bell"></i>
-                    </span>
-                    <span class="tag is-danger is-rounded"
-                        style="position: absolute; top: 8px; right: 8px; padding: 0 4px; font-size: 0.6rem;">3</span>
-                </button>
-            </div>
-            <div class="dropdown-menu" x-show="open" @click.away="open = false" style="min-width: 300px;">
-                <div class="dropdown-content">
-                    <div class="dropdown-item">
-                        <p class="has-text-weight-semibold">通知中心</p>
-                    </div>
-                    <hr class="dropdown-divider">
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-user has-text-info"></i> 新用户注册
-                        <br>
-                        <small class="has-text-grey">5 分钟前</small>
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-shopping-cart has-text-success"></i> 新订单
-                        <br>
-                        <small class="has-text-grey">15 分钟前</small>
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-exclamation-triangle has-text-warning"></i> 库存预警
-                        <br>
-                        <small class="has-text-grey">1 小时前</small>
-                    </a>
+        <!-- 通知下拉菜单 -->
+        <div>
+            <button class="uk-button uk-button-default" type="button">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </button>
+            <div uk-dropdown="mode: click; pos: bottom-right">
+                <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
+                    <strong style="font-size: 14px;">通知中心</strong>
                 </div>
+                <ul class="uk-nav uk-dropdown-nav">
+                    <li>
+                        <a href="#">
+                            <div style="display: flex; gap: 12px;">
+                                <i class="fas fa-user" style="color: #1890ff; margin-top: 2px;"></i>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 14px;">新用户注册</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 2px;">5 分钟前
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <div style="display: flex; gap: 12px;">
+                                <i class="fas fa-shopping-cart" style="color: #52c41a; margin-top: 2px;"></i>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 14px;">新订单</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 2px;">15 分钟前
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <div style="display: flex; gap: 12px;">
+                                <i class="fas fa-exclamation-triangle" style="color: #faad14; margin-top: 2px;"></i>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 14px;">库存预警</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 2px;">1 小时前
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
 
-        <!-- 用户菜单 -->
-        <div class="dropdown is-right" x-data="{ open: false }" :class="{ 'is-active': open }">
-            <div class="dropdown-trigger">
-                <button class="button is-light" @click="open = !open">
-                    <span class="icon">
-                        <i class="fas fa-user-circle"></i>
-                    </span>
-                    <span>管理员</span>
-                    <span class="icon is-small">
-                        <i class="fas fa-angle-down"></i>
-                    </span>
-                </button>
-            </div>
-            <div class="dropdown-menu" x-show="open" @click.away="open = false">
-                <div class="dropdown-content">
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-user"></i> 个人信息
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-key"></i> 修改密码
-                    </a>
-                    <hr class="dropdown-divider">
-                    <a href="#" class="dropdown-item has-text-danger">
-                        <i class="fas fa-sign-out-alt"></i> 退出登录
-                    </a>
-                </div>
+        <!-- 用户菜单下拉 -->
+        <div>
+            <button class="uk-button uk-button-default user-dropdown-trigger" type="button">
+                <i class="fas fa-user-circle"></i>
+                <span class="user-name">管理员</span>
+                <i class="fas fa-angle-down" style="font-size: 12px;"></i>
+            </button>
+            <div uk-dropdown="mode: click; pos: bottom-right">
+                <ul class="uk-nav uk-dropdown-nav">
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-user"></i> 个人信息
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-key"></i> 修改密码
+                        </a>
+                    </li>
+                    <li class="uk-nav-divider"></li>
+                    <li>
+                        <a href="#" style="color: var(--error-color);">
+                            <i class="fas fa-sign-out-alt"></i> 退出登录
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

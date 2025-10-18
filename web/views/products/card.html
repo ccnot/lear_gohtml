@@ -3,16 +3,16 @@
     <div style="position: relative;">
         <div class="product-image"
             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
-            <i class="fas fa-box" style="font-size: 4rem; color: rgba(255,255,255,0.5);"></i>
+            <i class="fas fa-box" style="font-size: 64px; color: rgba(255,255,255,0.5);"></i>
         </div>
         <!-- 状态标签 -->
         <div style="position: absolute; top: 10px; right: 10px;">
             {{if eq .Status "active"}}
-            <span class="badge is-success">在售</span>
+            <span class="badge success">在售</span>
             {{else if eq .Status "inactive"}}
-            <span class="badge is-warning">下架</span>
+            <span class="badge warning">下架</span>
             {{else}}
-            <span class="badge is-danger">缺货</span>
+            <span class="badge danger">缺货</span>
             {{end}}
         </div>
     </div>
@@ -24,38 +24,34 @@
         </h4>
 
         <!-- SKU 和分类 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-            <span class="tag is-light is-small">{{.SKU}}</span>
-            <span class="tag is-info is-light is-small">{{.Category}}</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span class="uk-label uk-label-default" style="font-size: 11px;">{{.SKU}}</span>
+            <span class="uk-label" style="font-size: 11px; background: var(--info-color);">{{.Category}}</span>
         </div>
 
         <!-- 价格和库存 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
             <div class="product-price">¥{{printf "%.2f" .Price}}</div>
-            <div style="font-size: 0.875rem; color: #7a7a7a;">
-                库存: <strong>{{.Stock}}</strong>
+            <div style="font-size: 14px; color: var(--text-tertiary);">
+                库存: <strong style="color: var(--text-primary);">{{.Stock}}</strong>
             </div>
         </div>
 
         <!-- 操作按钮 -->
-        <div style="display: flex; gap: 0.5rem;" x-data="deleteConfirm({
+        <div style="display: flex; gap: 8px;" x-data="deleteConfirm({
             title: '确认删除',
             message: '确定要删除商品【{{.Name}}】吗？此操作不可恢复。',
             url: '/products/{{.ID}}',
             target: '#product-card-{{.ID}}'
         })">
-            <a href="/products/{{.ID}}" class="button is-info is-light is-small is-fullwidth" hx-get="/products/{{.ID}}"
-                hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true">
-                <span class="icon is-small">
-                    <i class="fas fa-edit"></i>
-                </span>
+            <a href="/products/{{.ID}}" class="uk-button uk-button-primary uk-button-small uk-width-expand"
+                hx-get="/products/{{.ID}}" hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true">
+                <i class="fas fa-edit"></i>
                 <span>编辑</span>
             </a>
 
-            <button class="button is-danger is-light is-small" @click="confirmDelete()" title="删除">
-                <span class="icon is-small">
-                    <i class="fas fa-trash"></i>
-                </span>
+            <button class="uk-button uk-button-danger uk-button-small" @click="confirmDelete()" title="删除" uk-tooltip>
+                <i class="fas fa-trash"></i>
             </button>
         </div>
     </div>

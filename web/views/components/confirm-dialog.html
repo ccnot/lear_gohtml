@@ -1,17 +1,13 @@
-<!-- 确认对话框组件 - 使用 Alpine.js -->
+<!-- 确认对话框组件 - 使用 Alpine.js + UIKit -->
 <div x-data="confirmDialog()" @confirm-dialog.window="show($event.detail)" x-cloak>
     <!-- 遮罩层 -->
-    <div x-show="isOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
-        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="confirm-dialog-overlay"
-        @click="close()">
+    <div x-show="isOpen" x-transition:enter="uk-animation-fade"
+        x-transition:leave="uk-animation-fade uk-animation-reverse" class="confirm-dialog-overlay" @click="close()">
     </div>
 
     <!-- 对话框 -->
-    <div x-show="isOpen" x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100"
-        x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform scale-100"
-        x-transition:leave-end="opacity-0 transform scale-95" class="confirm-dialog" role="dialog" aria-modal="true">
+    <div x-show="isOpen" x-transition:enter="uk-animation-scale-up" x-transition:leave="uk-animation-scale-down"
+        class="confirm-dialog" role="dialog" aria-modal="true">
 
         <div class="confirm-dialog-content">
             <!-- 图标 -->
@@ -27,10 +23,10 @@
 
             <!-- 按钮组 -->
             <div class="confirm-dialog-buttons">
-                <button @click="close()" class="button is-light" type="button">
+                <button @click="close()" class="uk-button uk-button-default" type="button">
                     取消
                 </button>
-                <button @click="confirm()" class="button is-danger" type="button" x-text="confirmText">
+                <button @click="confirm()" class="uk-button uk-button-danger" type="button" x-text="confirmText">
                 </button>
             </div>
         </div>
@@ -95,30 +91,30 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 1rem;
+        padding: 16px;
     }
 
     .confirm-dialog-content {
         background: white;
-        border-radius: 8px;
-        padding: 2rem;
+        border-radius: var(--radius-lg);
+        padding: 32px;
         max-width: 400px;
         width: 100%;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--shadow-lg);
         text-align: center;
     }
 
     .confirm-dialog-icon {
         width: 64px;
         height: 64px;
-        margin: 0 auto 1.5rem;
+        margin: 0 auto 24px;
         background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 2rem;
+        font-size: 32px;
         animation: iconPulse 0.5s ease-out;
     }
 
@@ -139,27 +135,27 @@
     }
 
     .confirm-dialog-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #212121;
-        margin-bottom: 0.75rem;
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 12px;
     }
 
     .confirm-dialog-message {
-        font-size: 1rem;
-        color: #757575;
-        margin-bottom: 2rem;
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 32px;
         line-height: 1.6;
     }
 
     .confirm-dialog-buttons {
         display: flex;
-        gap: 1rem;
+        gap: 12px;
         justify-content: center;
     }
 
-    .confirm-dialog-buttons .button {
+    .confirm-dialog-buttons .uk-button {
         min-width: 100px;
-        font-weight: 600;
+        font-weight: 500;
     }
 </style>
