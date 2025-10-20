@@ -97,6 +97,6 @@ func installRedis(app freedom.Application) {
 
 func liveness(app freedom.Application) {
 	app.Iris().Get("/ping", func(ctx freedom.Context) {
-		ctx.WriteString("pong")
+		ctx.WriteString("pong123")
 	})
 }
