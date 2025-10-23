@@ -3,16 +3,6 @@
     <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
     <div id="page-title" hx-swap-oob="true">订单管理</div>
 
-    <!-- 面包屑导航 -->
-    <div class="text-sm breadcrumbs">
-        <ul>
-            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
-                    hx-push-url="true">首页</a></li>
-            <li>订单管理</li>
-            <li>订单列表</li>
-        </ul>
-    </div>
-
     <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
             <!-- 页面头部 -->
@@ -78,7 +68,8 @@
                 </div>
 
                 <!-- 分页 -->
-                {{$ctx := dict "BaseURL" "/orders" "PageInfo" .PageInfo "TargetContainer" "order-table-container" "ExtraParams" (dict "keyword" .Query "status" .Status)}}
+                {{$ctx := dict "BaseURL" "/orders" "PageInfo" .PageInfo "TargetContainer" "order-table-container"
+                "ExtraParams" (dict "keyword" .Query "status" .Status)}}
                 {{template "components/pagination.html" $ctx}}
                 {{else}}
                 <div class="text-center py-12">

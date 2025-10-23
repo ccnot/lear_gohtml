@@ -3,16 +3,6 @@
     <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
     <div id="page-title" hx-swap-oob="true">新增商品</div>
 
-    <!-- 面包屑导航 -->
-    <div class="text-sm breadcrumbs">
-        <ul>
-            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
-                   hx-push-url="true">首页</a></li>
-            <li>商品管理</li>
-            <li>新增商品</li>
-        </ul>
-    </div>
-
     <!-- 新增商品表单卡片 -->
     <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
@@ -25,9 +15,8 @@
             </div>
 
             <!-- 商品表单 -->
-            <form hx-post="/products" hx-target="#main-container" hx-swap="innerHTML"
-                  @submit="submitForm($event)"
-                  x-data="productForm()">
+            <form hx-post="/products" hx-target="#main-container" hx-swap="innerHTML" @submit="submitForm($event)"
+                x-data="productForm()">
 
                 <!-- 错误提示框 -->
                 <div x-show="errors.length > 0" class="alert alert-error mb-4">
@@ -57,9 +46,8 @@
                             </label>
                             <div class="relative">
                                 <input class="input input-bordered w-full pl-10" type="text" name="name"
-                                       placeholder="请输入商品名称" required
-                                       x-model="form.name"
-                                       :class="{ 'input-error': errors.name }">
+                                    placeholder="请输入商品名称" required x-model="form.name"
+                                    :class="{ 'input-error': errors.name }">
                                 <i class="fas fa-box absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
                             </div>
                             <div class="label-text-alt">商品的显示名称</div>
@@ -72,10 +60,10 @@
                             </label>
                             <div class="relative">
                                 <input class="input input-bordered w-full pl-10" type="text" name="sku"
-                                       placeholder="请输入SKU编号" required
-                                       x-model="form.sku"
-                                       :class="{ 'input-error': errors.sku }">
-                                <i class="fas fa-barcode absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                                    placeholder="请输入SKU编号" required x-model="form.sku"
+                                    :class="{ 'input-error': errors.sku }">
+                                <i
+                                    class="fas fa-barcode absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
                             </div>
                             <div class="label-text-alt">商品唯一标识符</div>
                         </div>
@@ -86,8 +74,7 @@
                                 分类 <span class="text-error">*</span>
                             </label>
                             <select class="select select-bordered w-full" name="category" required
-                                    x-model="form.category"
-                                    :class="{ 'input-error': errors.category }">
+                                x-model="form.category" :class="{ 'input-error': errors.category }">
                                 <option value="">请选择分类</option>
                                 <option value="电子产品">电子产品</option>
                                 <option value="数码配件">数码配件</option>
@@ -110,10 +97,10 @@
                             </label>
                             <div class="relative">
                                 <input class="input input-bordered w-full pl-10" type="number" name="price"
-                                       placeholder="请输入价格" required step="0.01" min="0"
-                                       x-model="form.price"
-                                       :class="{ 'input-error': errors.price }">
-                                <i class="fas fa-yen-sign absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                                    placeholder="请输入价格" required step="0.01" min="0" x-model="form.price"
+                                    :class="{ 'input-error': errors.price }">
+                                <i
+                                    class="fas fa-yen-sign absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
                             </div>
                             <div class="label-text-alt">商品销售价格</div>
                         </div>
@@ -125,10 +112,10 @@
                             </label>
                             <div class="relative">
                                 <input class="input input-bordered w-full pl-10" type="number" name="stock"
-                                       placeholder="请输入库存数量" required min="0"
-                                       x-model="form.stock"
-                                       :class="{ 'input-error': errors.stock }">
-                                <i class="fas fa-database absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                                    placeholder="请输入库存数量" required min="0" x-model="form.stock"
+                                    :class="{ 'input-error': errors.stock }">
+                                <i
+                                    class="fas fa-database absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
                             </div>
                             <div class="label-text-alt">当前库存数量</div>
                         </div>
@@ -141,137 +128,136 @@
 
                     <div class="form-control">
                         <label class="label">
-                                状态 <span class="text-error">*</span>
-                            </label>
-                            <select class="select select-bordered w-full" name="status" required
-                                    x-model="form.status"
-                                    :class="{ 'input-error': errors.status }">
-                                <option value="">请选择状态</option>
-                                <option value="active">上架</option>
-                                <option value="inactive">下架</option>
-                                <option value="out_of_stock">缺货</option>
-                            </select>
-                            <div class="label-text-alt">商品的销售状态</div>
-                        </div>
+                            状态 <span class="text-error">*</span>
+                        </label>
+                        <select class="select select-bordered w-full" name="status" required x-model="form.status"
+                            :class="{ 'input-error': errors.status }">
+                            <option value="">请选择状态</option>
+                            <option value="active">上架</option>
+                            <option value="inactive">下架</option>
+                            <option value="out_of_stock">缺货</option>
+                        </select>
+                        <div class="label-text-alt">商品的销售状态</div>
                     </div>
+                </div>
 
                 <!-- 描述 -->
                 <div class="space-y-4">
-                        <h3 class="text-lg font-medium mb-2 text-base-content">商品描述</h3>
-                        <div class="form-control">
-                            <label class="label">商品描述</label>
-                            <textarea class="textarea textarea-bordered h-24 w-full" name="description"
-                                      placeholder="请输入商品描述" x-model="form.description"></textarea>
-                            <div class="label-text-alt">商品的详细描述信息</div>
-                        </div>
+                    <h3 class="text-lg font-medium mb-2 text-base-content">商品描述</h3>
+                    <div class="form-control">
+                        <label class="label">商品描述</label>
+                        <textarea class="textarea textarea-bordered h-24 w-full" name="description"
+                            placeholder="请输入商品描述" x-model="form.description"></textarea>
+                        <div class="label-text-alt">商品的详细描述信息</div>
                     </div>
                 </div>
-
-                <!-- 表单按钮 -->
-                <div class="flex justify-end gap-3 pt-6 border-t border-base-300">
-                    <a href="/products" class="btn btn-ghost" hx-get="/products" hx-target="#main-container"
-                       hx-swap="innerHTML" hx-push-url="true">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        返回列表
-                    </a>
-                    <button type="submit" class="btn btn-primary" :disabled="loading">
-                        <span x-show="loading" class="loading loading-spinner loading-sm mr-2"></span>
-                        <i class="fas fa-save mr-2" x-show="!loading"></i>
-                        创建商品
-                    </button>
-                </div>
-            </form>
         </div>
+
+        <!-- 表单按钮 -->
+        <div class="flex justify-end gap-3 pt-6 border-t border-base-300">
+            <a href="/products" class="btn btn-ghost" hx-get="/products" hx-target="#main-container" hx-swap="innerHTML"
+                hx-push-url="true">
+                <i class="fas fa-arrow-left mr-2"></i>
+                返回列表
+            </a>
+            <button type="submit" class="btn btn-primary" :disabled="loading">
+                <span x-show="loading" class="loading loading-spinner loading-sm mr-2"></span>
+                <i class="fas fa-save mr-2" x-show="!loading"></i>
+                创建商品
+            </button>
+        </div>
+        </form>
     </div>
+</div>
 </div>
 
 <script>
-function productForm() {
-    return {
-        loading: false,
-        errors: {},
-        form: {
-            name: '',
-            sku: '',
-            category: '',
-            price: '',
-            stock: '',
-            status: 'active',
-            description: ''
-        },
+    function productForm() {
+        return {
+            loading: false,
+            errors: {},
+            form: {
+                name: '',
+                sku: '',
+                category: '',
+                price: '',
+                stock: '',
+                status: 'active',
+                description: ''
+            },
 
-        validateForm() {
-            this.errors = {};
-            let isValid = true;
+            validateForm() {
+                this.errors = {};
+                let isValid = true;
 
-            if (!this.form.name) {
-                this.errors.name = '商品名称不能为空';
-                isValid = false;
+                if (!this.form.name) {
+                    this.errors.name = '商品名称不能为空';
+                    isValid = false;
+                }
+
+                if (!this.form.sku) {
+                    this.errors.sku = 'SKU不能为空';
+                    isValid = false;
+                }
+
+                if (!this.form.category) {
+                    this.errors.category = '请选择商品分类';
+                    isValid = false;
+                }
+
+                if (!this.form.price || parseFloat(this.form.price) < 0) {
+                    this.errors.price = '请输入有效的价格';
+                    isValid = false;
+                }
+
+                if (!this.form.stock || parseInt(this.form.stock) < 0) {
+                    this.errors.stock = '请输入有效的库存数量';
+                    isValid = false;
+                }
+
+                if (!this.form.status) {
+                    this.errors.status = '请选择商品状态';
+                    isValid = false;
+                }
+
+                return isValid;
+            },
+
+            submitForm(event) {
+                this.loading = true;
+
+                // 让 HTMX 处理表单提交
+                htmx.trigger(event.target, 'submit');
+
+                // 监听提交完成
+                setTimeout(() => {
+                    this.loading = false;
+                }, 500);
             }
-
-            if (!this.form.sku) {
-                this.errors.sku = 'SKU不能为空';
-                isValid = false;
-            }
-
-            if (!this.form.category) {
-                this.errors.category = '请选择商品分类';
-                isValid = false;
-            }
-
-            if (!this.form.price || parseFloat(this.form.price) < 0) {
-                this.errors.price = '请输入有效的价格';
-                isValid = false;
-            }
-
-            if (!this.form.stock || parseInt(this.form.stock) < 0) {
-                this.errors.stock = '请输入有效的库存数量';
-                isValid = false;
-            }
-
-            if (!this.form.status) {
-                this.errors.status = '请选择商品状态';
-                isValid = false;
-            }
-
-            return isValid;
-        },
-
-        submitForm(event) {
-            this.loading = true;
-
-            // 让 HTMX 处理表单提交
-            htmx.trigger(event.target, 'submit');
-
-            // 监听提交完成
-            setTimeout(() => {
-                this.loading = false;
-            }, 500);
         }
     }
-}
 </script>
 
 <style>
-.form-control {
-    @apply space-y-2;
-}
+    .form-control {
+        @apply space-y-2;
+    }
 
-.form-control label {
-    @apply block text-sm font-medium mb-2;
-}
+    .form-control label {
+        @apply block text-sm font-medium mb-2;
+    }
 
-.form-control .input,
-.form-control .textarea,
-.form-control .select {
-    @apply w-full;
-}
+    .form-control .input,
+    .form-control .textarea,
+    .form-control .select {
+        @apply w-full;
+    }
 
-.form-control .input-error {
-    @apply input-error;
-}
+    .form-control .input-error {
+        @apply input-error;
+    }
 
-.label-text-alt {
-    @apply text-xs text-base-content/60 mt-1;
-}
+    .label-text-alt {
+        @apply text-xs text-base-content/60 mt-1;
+    }
 </style>

@@ -3,16 +3,6 @@
     <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
     <div id="page-title" hx-swap-oob="true">商品管理</div>
 
-    <!-- 面包屑导航 -->
-    <div class="text-sm breadcrumbs">
-        <ul>
-            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
-                   hx-push-url="true">首页</a></li>
-            <li>商品管理</li>
-            <li>商品列表</li>
-        </ul>
-    </div>
-
     <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
             <!-- 页面头部 -->
@@ -23,7 +13,7 @@
                 </h2>
                 <!-- 新增商品按钮 -->
                 <a href="/products/new" class="btn btn-primary" hx-get="/products/new" hx-target="#main-container"
-                   hx-swap="innerHTML" hx-push-url="true">
+                    hx-swap="innerHTML" hx-push-url="true">
                     <i class="fas fa-plus"></i>
                     新增商品
                 </a>
@@ -33,10 +23,11 @@
             <div class="flex flex-col lg:flex-row gap-4 mb-6">
                 <div class="flex-1 relative">
                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
-                    <input class="input input-bordered w-full pl-10" type="search" name="keyword" placeholder="搜索商品名称、SKU..." value="{{.Query}}"
-                           hx-get="/products" hx-trigger="keyup changed delay:500ms, search"
-                           hx-target="#products-container" hx-swap="innerHTML" hx-select="#products-container > *"
-                           hx-include="[name='category']" hx-indicator="#search-indicator">
+                    <input class="input input-bordered w-full pl-10" type="search" name="keyword"
+                        placeholder="搜索商品名称、SKU..." value="{{.Query}}" hx-get="/products"
+                        hx-trigger="keyup changed delay:500ms, search" hx-target="#products-container"
+                        hx-swap="innerHTML" hx-select="#products-container > *" hx-include="[name='category']"
+                        hx-indicator="#search-indicator">
                     <span class="absolute right-3 top-1/2 -translate-y-1/2 htmx-indicator" id="search-indicator">
                         <div class="loading loading-spinner loading-sm"></div>
                     </span>
@@ -45,8 +36,8 @@
                 <!-- 分类筛选 -->
                 <div>
                     <select class="select select-bordered" name="category" hx-get="/products" hx-trigger="change"
-                            hx-target="#products-container" hx-swap="innerHTML" hx-select="#products-container > *"
-                            hx-include="[name='keyword']">
+                        hx-target="#products-container" hx-swap="innerHTML" hx-select="#products-container > *"
+                        hx-include="[name='keyword']">
                         <option value="">全部分类</option>
                         <option value="电子产品" {{if eq .Category "电子产品" }}selected{{end}}>电子产品</option>
                         <option value="数码配件" {{if eq .Category "数码配件" }}selected{{end}}>数码配件</option>
@@ -75,10 +66,9 @@
                     <div class="join">
                         {{if gt .PageInfo.Page 1}}
                         <a href="#"
-                           hx-get="/products?page={{sub .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&category={{.Category}}"
-                           hx-target="#products-container" hx-swap="innerHTML"
-                           hx-select="#products-container > *"
-                           class="join-item btn btn-sm">
+                            hx-get="/products?page={{sub .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&category={{.Category}}"
+                            hx-target="#products-container" hx-swap="innerHTML" hx-select="#products-container > *"
+                            class="join-item btn btn-sm">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                         {{else}}
@@ -93,10 +83,9 @@
                         {{else if or (eq $i 1) (eq $i $.PageInfo.TotalPages) (and (ge $i (sub $.PageInfo.Page 2))
                         (le $i (add $.PageInfo.Page 2)))}}
                         <a href="#"
-                           hx-get="/products?page={{$i}}&page_size={{$.PageInfo.PageSize}}&keyword={{$.Query}}&category={{$.Category}}"
-                           hx-target="#products-container" hx-swap="innerHTML"
-                           hx-select="#products-container > *"
-                           class="join-item btn btn-sm">
+                            hx-get="/products?page={{$i}}&page_size={{$.PageInfo.PageSize}}&keyword={{$.Query}}&category={{$.Category}}"
+                            hx-target="#products-container" hx-swap="innerHTML" hx-select="#products-container > *"
+                            class="join-item btn btn-sm">
                             {{$i}}
                         </a>
                         {{else if or (eq $i 2) (eq $i (sub $.PageInfo.TotalPages 1))}}
@@ -106,10 +95,9 @@
 
                         {{if lt .PageInfo.Page .PageInfo.TotalPages}}
                         <a href="#"
-                           hx-get="/products?page={{add .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&category={{.Category}}"
-                           hx-target="#products-container" hx-swap="innerHTML"
-                           hx-select="#products-container > *"
-                           class="join-item btn btn-sm">
+                            hx-get="/products?page={{add .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}&keyword={{.Query}}&category={{.Category}}"
+                            hx-target="#products-container" hx-swap="innerHTML" hx-select="#products-container > *"
+                            class="join-item btn btn-sm">
                             <i class="fas fa-chevron-right"></i>
                         </a>
                         {{else}}

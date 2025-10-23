@@ -414,20 +414,6 @@ body {
                 overflow-x: hidden;
             }
 
-            /* 面包屑导航 */
-            .uk-breadcrumb {
-                margin-bottom: 24px;
-                font-size: 14px;
-            }
-
-            .uk-breadcrumb>*>* {
-                color: var(--text-secondary);
-            }
-
-            .uk-breadcrumb> :last-child>* {
-                color: var(--text-primary);
-            }
-
             /* ============================================
    卡片样式
    ============================================ */
