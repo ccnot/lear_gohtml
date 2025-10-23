@@ -1,170 +1,169 @@
 <!-- 系统设置页面 -->
-<div>
+<div class="space-y-6">
     <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
     <div id="page-title" hx-swap-oob="true">系统设置</div>
 
-    <div class="content-card">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-cog" style="color: var(--warning-color);"></i>
-                系统配置
-            </h3>
-        </div>
+    <!-- 面包屑导航 -->
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                   hx-push-url="true">首页</a></li>
+            <li>系统设置</li>
+        </ul>
+    </div>
 
+    <!-- 系统配置卡片 -->
+    <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
+            <!-- 页面头部 -->
+            <h2 class="card-title text-lg font-medium flex items-center gap-2 mb-6">
+                <i class="fas fa-cog text-warning"></i>
+                系统配置
+            </h2>
+
             <!-- 设置表单 -->
             <form hx-post="/settings" hx-target="#settings-form-container" hx-swap="innerHTML" x-data="settingsForm()"
-                @submit.prevent="submitForm">
+                  @submit.prevent="submitForm">
 
                 <div id="settings-form-container">
                     <!-- Tab 导航 -->
                     <div x-data="{ activeTab: 'basic' }">
-                        <ul class="uk-tab">
-                            <li :class="{ 'uk-active': activeTab === 'basic' }">
-                                <a href="#" @click.prevent="activeTab = 'basic'">
-                                    <i class="fas fa-info-circle"></i> 基本信息
-                                </a>
-                            </li>
-                            <li :class="{ 'uk-active': activeTab === 'contact' }">
-                                <a href="#" @click.prevent="activeTab = 'contact'">
-                                    <i class="fas fa-address-book"></i> 联系方式
-                                </a>
-                            </li>
-                            <li :class="{ 'uk-active': activeTab === 'regional' }">
-                                <a href="#" @click.prevent="activeTab = 'regional'">
-                                    <i class="fas fa-globe"></i> 区域设置
-                                </a>
-                            </li>
-                        </ul>
+                        <div class="tabs tabs-boxed">
+                            <a class="tab tab-lg" :class="{ 'tab-active': activeTab === 'basic' }"
+                               @click.prevent="activeTab = 'basic'">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                基本信息
+                            </a>
+                            <a class="tab tab-lg" :class="{ 'tab-active': activeTab === 'contact' }"
+                               @click.prevent="activeTab = 'contact'">
+                                <i class="fas fa-address-book mr-2"></i>
+                                联系方式
+                            </a>
+                            <a class="tab tab-lg" :class="{ 'tab-active': activeTab === 'regional' }"
+                               @click.prevent="activeTab = 'regional'">
+                                <i class="fas fa-globe mr-2"></i>
+                                区域设置
+                            </a>
+                        </div>
 
                         <!-- Tab 内容 -->
-                        <div style="padding: 32px 16px;">
+                        <div class="mt-6">
                             <!-- 基本信息 Tab -->
                             <div x-show="activeTab === 'basic'" x-transition>
-                                <h4 style="font-size: 18px; font-weight: 500; margin-bottom: 24px;">基本信息</h4>
+                                <h3 class="text-lg font-medium mb-4">基本信息</h3>
 
-                                <div style="margin-bottom: 24px;">
-                                    <label class="uk-form-label">网站名称 <span class="required">*</span></label>
-                                    <div class="uk-form-controls uk-inline uk-width-1-1">
-                                        <span class="uk-form-icon" uk-icon="icon: pencil"></span>
-                                        <input class="uk-input" type="text" name="site_name" placeholder="请输入网站名称"
-                                            value="{{.SiteName}}" required>
+                                <div class="space-y-4">
+                                    <div class="form-control">
+                                        <label class="label">
+                                            网站名称 <span class="text-error">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <input class="input input-bordered w-full pl-10" type="text" name="site_name"
+                                                   placeholder="请输入网站名称" value="{{.SiteName}}" required>
+                                            <i class="fas fa-pencil absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                                        </div>
+                                        <div class="label-text-alt">网站的显示名称</div>
                                     </div>
-                                    <div class="uk-form-help">网站的显示名称</div>
-                                </div>
 
-                                <div style="margin-bottom: 24px;">
-                                    <label class="uk-form-label">网站描述</label>
-                                    <div class="uk-form-controls">
-                                        <textarea class="uk-textarea" name="site_description" placeholder="请输入网站描述"
-                                            rows="4">{{.SiteDescription}}</textarea>
+                                    <div class="form-control">
+                                        <label class="label">网站描述</label>
+                                        <textarea class="textarea textarea-bordered h-24" name="site_description"
+                                                  placeholder="请输入网站描述">{{.SiteDescription}}</textarea>
+                                        <div class="label-text-alt">简要描述网站的用途和功能</div>
                                     </div>
-                                    <div class="uk-form-help">简要描述网站的用途和功能</div>
                                 </div>
                             </div>
 
                             <!-- 联系方式 Tab -->
                             <div x-show="activeTab === 'contact'" x-transition>
-                                <h4 style="font-size: 18px; font-weight: 500; margin-bottom: 24px;">联系方式</h4>
+                                <h3 class="text-lg font-medium mb-4">联系方式</h3>
 
-                                <div style="margin-bottom: 24px;">
-                                    <label class="uk-form-label">联系邮箱 <span class="required">*</span></label>
-                                    <div class="uk-form-controls uk-inline uk-width-1-1">
-                                        <span class="uk-form-icon" uk-icon="icon: mail"></span>
-                                        <input class="uk-input" type="email" name="contact_email"
-                                            placeholder="admin@example.com" value="{{.ContactEmail}}" required>
+                                <div class="space-y-4">
+                                    <div class="form-control">
+                                        <label class="label">
+                                            联系邮箱 <span class="text-error">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <input class="input input-bordered w-full pl-10" type="email" name="contact_email"
+                                                   placeholder="admin@example.com" value="{{.ContactEmail}}" required>
+                                            <i class="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                                        </div>
+                                        <div class="label-text-alt">系统通知和联系邮箱</div>
                                     </div>
-                                    <div class="uk-form-help">系统通知和联系邮箱</div>
-                                </div>
 
-                                <div style="margin-bottom: 24px;">
-                                    <label class="uk-form-label">联系电话</label>
-                                    <div class="uk-form-controls uk-inline uk-width-1-1">
-                                        <span class="uk-form-icon" uk-icon="icon: receiver"></span>
-                                        <input class="uk-input" type="tel" name="contact_phone"
-                                            placeholder="400-123-4567" value="{{.ContactPhone}}">
+                                    <div class="form-control">
+                                        <label class="label">联系电话</label>
+                                        <div class="relative">
+                                            <input class="input input-bordered w-full pl-10" type="tel" name="contact_phone"
+                                                   placeholder="400-123-4567" value="{{.ContactPhone}}">
+                                            <i class="fas fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                                        </div>
+                                        <div class="label-text-alt">客服或技术支持电话</div>
                                     </div>
-                                    <div class="uk-form-help">客服或技术支持电话</div>
                                 </div>
                             </div>
 
                             <!-- 区域设置 Tab -->
                             <div x-show="activeTab === 'regional'" x-transition>
-                                <h4 style="font-size: 18px; font-weight: 500; margin-bottom: 24px;">区域设置</h4>
+                                <h3 class="text-lg font-medium mb-4">区域设置</h3>
 
-                                <div class="form-row">
-                                    <div>
-                                        <label class="uk-form-label">货币 <span class="required">*</span></label>
-                                        <div class="uk-form-controls">
-                                            <select class="uk-select" name="currency" required>
-                                                <option value="CNY" {{if eq .Currency "CNY" }}selected{{end}}>人民币 (CNY)
-                                                </option>
-                                                <option value="USD" {{if eq .Currency "USD" }}selected{{end}}>美元 (USD)
-                                                </option>
-                                                <option value="EUR" {{if eq .Currency "EUR" }}selected{{end}}>欧元 (EUR)
-                                                </option>
-                                                <option value="GBP" {{if eq .Currency "GBP" }}selected{{end}}>英镑 (GBP)
-                                                </option>
-                                                <option value="JPY" {{if eq .Currency "JPY" }}selected{{end}}>日元 (JPY)
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="uk-form-help">系统使用的默认货币</div>
-                                    </div>
-
-                                    <div>
-                                        <label class="uk-form-label">时区 <span class="required">*</span></label>
-                                        <div class="uk-form-controls">
-                                            <select class="uk-select" name="timezone" required>
-                                                <option value="Asia/Shanghai" {{if eq .Timezone "Asia/Shanghai"
-                                                    }}selected{{end}}>亚洲/上海 (GMT+8)</option>
-                                                <option value="Asia/Singapore" {{if eq .Timezone "Asia/Singapore"
-                                                    }}selected{{end}}>亚洲/新加坡 (GMT+8)</option>
-                                                <option value="Asia/Tokyo" {{if eq .Timezone "Asia/Tokyo"
-                                                    }}selected{{end}}>亚洲/东京 (GMT+9)</option>
-                                                <option value="America/New_York" {{if eq .Timezone "America/New_York"
-                                                    }}selected{{end}}>美国/纽约 (GMT-5)</option>
-                                                <option value="Europe/London" {{if eq .Timezone "Europe/London"
-                                                    }}selected{{end}}>欧洲/伦敦 (GMT+0)</option>
-                                            </select>
-                                        </div>
-                                        <div class="uk-form-help">系统使用的时区</div>
-                                    </div>
-                                </div>
-
-                                <div style="margin-bottom: 24px;">
-                                    <label class="uk-form-label">语言 <span class="required">*</span></label>
-                                    <div class="uk-form-controls">
-                                        <select class="uk-select" name="language" required>
-                                            <option value="zh-CN" {{if eq .Language "zh-CN" }}selected{{end}}>简体中文
-                                            </option>
-                                            <option value="zh-TW" {{if eq .Language "zh-TW" }}selected{{end}}>繁体中文
-                                            </option>
-                                            <option value="en-US" {{if eq .Language "en-US" }}selected{{end}}>English
-                                                (US)
-                                            </option>
-                                            <option value="ja-JP" {{if eq .Language "ja-JP" }}selected{{end}}>日本語
-                                            </option>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="form-control">
+                                        <label class="label">
+                                            货币 <span class="text-error">*</span>
+                                        </label>
+                                        <select class="select select-bordered w-full" name="currency" required>
+                                            <option value="CNY" {{if eq .Currency "CNY" }}selected{{end}}>人民币 (CNY)</option>
+                                            <option value="USD" {{if eq .Currency "USD" }}selected{{end}}>美元 (USD)</option>
+                                            <option value="EUR" {{if eq .Currency "EUR" }}selected{{end}}>欧元 (EUR)</option>
+                                            <option value="GBP" {{if eq .Currency "GBP" }}selected{{end}}>英镑 (GBP)</option>
+                                            <option value="JPY" {{if eq .Currency "JPY" }}selected{{end}}>日元 (JPY)</option>
                                         </select>
+                                        <div class="label-text-alt">系统使用的默认货币</div>
                                     </div>
-                                    <div class="uk-form-help">系统界面语言</div>
+
+                                    <div class="form-control">
+                                        <label class="label">
+                                            时区 <span class="text-error">*</span>
+                                        </label>
+                                        <select class="select select-bordered w-full" name="timezone" required>
+                                            <option value="Asia/Shanghai" {{if eq .Timezone "Asia/Shanghai" }}selected{{end}}>亚洲/上海 (GMT+8)</option>
+                                            <option value="Asia/Singapore" {{if eq .Timezone "Asia/Singapore" }}selected{{end}}>亚洲/新加坡 (GMT+8)</option>
+                                            <option value="Asia/Tokyo" {{if eq .Timezone "Asia/Tokyo" }}selected{{end}}>亚洲/东京 (GMT+9)</option>
+                                            <option value="America/New_York" {{if eq .Timezone "America/New_York" }}selected{{end}}>美国/纽约 (GMT-5)</option>
+                                            <option value="Europe/London" {{if eq .Timezone "Europe/London" }}selected{{end}}>欧洲/伦敦 (GMT+0)</option>
+                                        </select>
+                                        <div class="label-text-alt">系统使用的时区</div>
+                                    </div>
+
+                                    <div class="form-control">
+                                        <label class="label">
+                                            语言 <span class="text-error">*</span>
+                                        </label>
+                                        <select class="select select-bordered w-full" name="language" required>
+                                            <option value="zh-CN" {{if eq .Language "zh-CN" }}selected{{end}}>简体中文</option>
+                                            <option value="zh-TW" {{if eq .Language "zh-TW" }}selected{{end}}>繁体中文</option>
+                                            <option value="en-US" {{if eq .Language "en-US" }}selected{{end}}>English (US)</option>
+                                            <option value="ja-JP" {{if eq .Language "ja-JP" }}selected{{end}}>日本語</option>
+                                        </select>
+                                        <div class="label-text-alt">系统界面语言</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- 提交按钮 -->
-                    <div class="uk-flex uk-flex-right"
-                        style="gap: 12px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-light);">
-                        <button type="button" class="uk-button uk-button-default" onclick="location.reload()">
-                            <i class="fas fa-undo"></i>
-                            <span>重置</span>
-                        </button>
-                        <button type="submit" class="uk-button uk-button-primary" :disabled="loading">
-                            <span x-show="loading" uk-spinner="ratio: 0.5"></span>
-                            <i class="fas fa-save" x-show="!loading"></i>
-                            <span>保存设置</span>
-                        </button>
+                        <!-- 提交按钮 -->
+                        <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-base-300">
+                            <button type="button" class="btn btn-ghost" onclick="location.reload()">
+                                <i class="fas fa-undo mr-2"></i>
+                                重置
+                            </button>
+                            <button type="submit" class="btn btn-primary" :disabled="loading">
+                                <span x-show="loading" class="loading loading-spinner loading-sm mr-2"></span>
+                                <i class="fas fa-save mr-2" x-show="!loading"></i>
+                                保存设置
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -172,29 +171,28 @@
     </div>
 
     <!-- 危险操作区域 -->
-    <div class="content-card" style="margin-top: 24px;">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-exclamation-triangle" style="color: var(--error-color);"></i>
+    <div class="card bg-base-100 shadow-sm border border-base-300">
+        <div class="card-body">
+            <h3 class="card-title text-lg font-medium flex items-center gap-2 mb-4">
+                <i class="fas fa-exclamation-triangle text-error"></i>
                 危险操作
             </h3>
-        </div>
-        <div class="card-body">
-            <div class="uk-alert-warning" uk-alert>
-                <strong>警告：</strong> 以下操作可能会影响系统运行，请谨慎操作。
+
+            <div class="alert alert-warning mb-4">
+                <div class="flex items-start gap-2">
+                    <i class="fas fa-exclamation-triangle flex-shrink-0 mt-0.5"></i>
+                    <span>以下操作可能会影响系统运行，请谨慎操作。</span>
+                </div>
             </div>
 
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <button class="uk-button" style="background: var(--warning-color); color: white;" x-data
-                    @click="if(confirm('确定要清除缓存吗？')) { alert('缓存已清除（模拟操作）') }">
-                    <i class="fas fa-broom"></i>
-                    <span>清除缓存</span>
+            <div class="flex flex-wrap gap-3">
+                <button class="btn btn-warning" @click="if(confirm('确定要清除缓存吗？')) { alert('缓存已清除（模拟操作）') }">
+                    <i class="fas fa-broom mr-2"></i>
+                    清除缓存
                 </button>
-
-                <button class="uk-button uk-button-danger" x-data
-                    @click="if(confirm('确定要重置所有设置吗？此操作不可恢复！')) { alert('设置已重置（模拟操作）') }">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>重置所有设置</span>
+                <button class="btn btn-error" @click="if(confirm('确定要重置所有设置吗？此操作不可恢复！')) { alert('设置已重置（模拟操作）') }">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    重置所有设置
                 </button>
             </div>
         </div>

@@ -5,10 +5,7 @@ import (
 	"fmt"
 	"gohtml/domain/vo"
 	"gohtml/infra"
-	"math"
 	"math/rand"
-	"net/url"
-	"strings"
 	"time"
 
 	"github.com/8treenet/freedom"
@@ -23,8 +20,7 @@ func init() {
 
 // OrderController 订单管理控制器
 type OrderController struct {
-	Worker  freedom.Worker
-	Request *infra.Request
+	BaseController
 }
 
 // mockOrders 模拟订单数据库
@@ -83,41 +79,29 @@ func (c *OrderController) Get() freedom.Result {
 		params = vo.SearchParams{}
 	}
 
-	// 设置默认值
-	if params.Page <= 0 {
-		params.Page = 1
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = 10
-	}
-
-	// 过滤和搜索
+	// 使用基础控制器的搜索助手
+	params, pagination := c.SearchHelper(params)
 	filteredOrders := c.filterOrders(params)
 
-	// 分页
-	total := int64(len(filteredOrders))
-	totalPages := int(math.Ceil(float64(total) / float64(params.PageSize)))
-	start := (params.Page - 1) * params.PageSize
-	end := start + params.PageSize
-	if end > len(filteredOrders) {
-		end = len(filteredOrders)
-	}
-	if start > len(filteredOrders) {
-		start = len(filteredOrders)
+	// 转换为 interface{} 进行分页
+	orders := make([]interface{}, len(filteredOrders))
+	for i, order := range filteredOrders {
+		orders[i] = order
 	}
 
-	pageOrders := filteredOrders[start:end]
+	pagedOrders, pagination := c.Paginate(orders, pagination)
+
+	// 转换回订单类型
+	result := make([]vo.Order, len(pagedOrders))
+	for i, order := range pagedOrders {
+		result[i] = order.(vo.Order)
+	}
 
 	data := vo.OrderListData{
-		Orders: pageOrders,
-		PageInfo: vo.PageInfo{
-			Page:       params.Page,
-			PageSize:   params.PageSize,
-			Total:      total,
-			TotalPages: totalPages,
-		},
-		Query:  params.Keyword,
-		Status: params.Status,
+		Orders:   result,
+		PageInfo: c.CreatePageInfo(pagination),
+		Query:    params.Keyword,
+		Status:   params.Status,
 	}
 
 	return &infra.ViewResponse{
@@ -137,8 +121,14 @@ func (c *OrderController) GetBy(id int64) freedom.Result {
 		}
 	}
 
+	// 检查是否为模态框请求（通过检查请求头或查询参数）
+	hxTarget := c.Worker.IrisContext().GetHeader("HX-Target")
+	isModal := hxTarget == "order-modal-content" || hxTarget == "#order-modal-content" ||
+		c.Worker.IrisContext().URLParamExists("modal")
+
 	data := vo.OrderDetailData{
-		Order: *order,
+		Order:   *order,
+		IsModal: isModal,
 	}
 
 	return &infra.ViewResponse{
@@ -152,40 +142,39 @@ func (c *OrderController) GetBy(id int64) freedom.Result {
 func (c *OrderController) PutStatusBy(id int64) freedom.Result {
 	var statusData struct {
 		Status string `form:"status" validate:"required"`
+		Return string `form:"return"`
 	}
 
 	if err := c.Request.ReadForm(&statusData, true); err != nil {
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("状态更新失败: "+err.Error()))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
+		c.SetErrorToast("状态更新失败: " + err.Error())
 		return &infra.JSONResponse{Error: err}
 	}
 
 	// 查找并更新订单状态
-	found := false
-	for i, o := range mockOrders {
-		if o.ID == id {
-			mockOrders[i].Status = statusData.Status
-			mockOrders[i].UpdatedAt = time.Now()
-			found = true
-			break
-		}
+	if !c.updateOrderStatus(id, statusData.Status) {
+		return c.HandleNotFoundError("订单")
 	}
 
-	if !found {
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("订单不存在"))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
-		return &infra.JSONResponse{
-			Code:  404,
-			Error: fmt.Errorf("订单不存在"),
-		}
-	}
+	c.SetSuccessToast("订单状态更新成功")
 
-	// 设置成功提示
-	c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("订单状态更新成功"))
-	c.Worker.IrisContext().Header("X-Toast-Type", "success")
-
-	// 返回更新后的订单行
+	// 根据 return 参数决定返回订单行还是订单详情
 	order := c.findOrderByID(id)
+	if statusData.Return == "detail" {
+		// 检查是否为模态框请求
+		hxTarget := c.Worker.IrisContext().GetHeader("HX-Target")
+		isModal := hxTarget == "order-modal-content" || hxTarget == "#order-modal-content"
+
+		data := vo.OrderDetailData{
+			Order:   *order,
+			IsModal: isModal,
+		}
+		return &infra.ViewResponse{
+			Name: "orders/detail.html",
+			Data: data,
+		}
+	}
+
+	// 默认返回订单行（用于列表页面）
 	return &infra.ViewResponse{
 		Name: "orders/row.html",
 		Data: order,
@@ -195,29 +184,11 @@ func (c *OrderController) PutStatusBy(id int64) freedom.Result {
 // DeleteBy 取消订单
 // DELETE /orders/{id}
 func (c *OrderController) DeleteBy(id int64) freedom.Result {
-	// 查找并更新订单状态为已取消
-	found := false
-	for i, o := range mockOrders {
-		if o.ID == id {
-			mockOrders[i].Status = "cancelled"
-			mockOrders[i].UpdatedAt = time.Now()
-			found = true
-			break
-		}
+	if !c.updateOrderStatus(id, "cancelled") {
+		return c.HandleNotFoundError("订单")
 	}
 
-	if !found {
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("订单不存在"))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
-		return &infra.JSONResponse{
-			Code:  404,
-			Error: fmt.Errorf("订单不存在"),
-		}
-	}
-
-	// 设置成功提示
-	c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("订单已取消"))
-	c.Worker.IrisContext().Header("X-Toast-Type", "success")
+	c.SetSuccessToast("订单已取消")
 
 	// 返回更新后的订单行
 	order := c.findOrderByID(id)
@@ -239,12 +210,11 @@ func (c *OrderController) filterOrders(params vo.SearchParams) []vo.Order {
 	filtered := []vo.Order{}
 
 	for _, order := range mockOrders {
-		// 搜索过滤
+		// 使用基础控制器的过滤助手
 		if params.Keyword != "" {
-			keyword := strings.ToLower(params.Keyword)
-			if !strings.Contains(strings.ToLower(order.OrderNo), keyword) &&
-				!strings.Contains(strings.ToLower(order.CustomerName), keyword) &&
-				!strings.Contains(strings.ToLower(order.CustomerEmail), keyword) {
+			if !c.FilterHelper(params.Keyword, order.OrderNo) &&
+				!c.FilterHelper(params.Keyword, order.CustomerName) &&
+				!c.FilterHelper(params.Keyword, order.CustomerEmail) {
 				continue
 			}
 		}
@@ -268,4 +238,16 @@ func (c *OrderController) findOrderByID(id int64) *vo.Order {
 		}
 	}
 	return nil
+}
+
+// updateOrderStatus 更新订单状态
+func (c *OrderController) updateOrderStatus(id int64, status string) bool {
+	for i, order := range mockOrders {
+		if order.ID == id {
+			mockOrders[i].Status = status
+			mockOrders[i].UpdatedAt = time.Now()
+			return true
+		}
+	}
+	return false
 }

@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"gohtml/domain/vo"
 	"gohtml/infra"
-	"math"
-	"net/url"
-	"strings"
 	"time"
 
 	"github.com/8treenet/freedom"
@@ -22,8 +19,7 @@ func init() {
 
 // UserController 用户管理控制器
 type UserController struct {
-	Worker  freedom.Worker
-	Request *infra.Request
+	BaseController
 }
 
 // mockUsers 模拟用户数据库（使用 map 存储）
@@ -64,41 +60,29 @@ func (c *UserController) Get() freedom.Result {
 		params = vo.SearchParams{}
 	}
 
-	// 设置默认值
-	if params.Page <= 0 {
-		params.Page = 1
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = 10
-	}
-
-	// 过滤和搜索
+	// 使用基础控制器的搜索助手
+	params, pagination := c.SearchHelper(params)
 	filteredUsers := c.filterUsers(params)
 
-	// 分页
-	total := int64(len(filteredUsers))
-	totalPages := int(math.Ceil(float64(total) / float64(params.PageSize)))
-	start := (params.Page - 1) * params.PageSize
-	end := start + params.PageSize
-	if end > len(filteredUsers) {
-		end = len(filteredUsers)
-	}
-	if start > len(filteredUsers) {
-		start = len(filteredUsers)
+	// 转换为 interface{} 进行分页
+	users := make([]interface{}, len(filteredUsers))
+	for i, user := range filteredUsers {
+		users[i] = user
 	}
 
-	pageUsers := filteredUsers[start:end]
+	pagedUsers, pagination := c.Paginate(users, pagination)
+
+	// 转换回用户类型
+	result := make([]vo.User, len(pagedUsers))
+	for i, user := range pagedUsers {
+		result[i] = user.(vo.User)
+	}
 
 	data := vo.UserListData{
-		Users: pageUsers,
-		PageInfo: vo.PageInfo{
-			Page:       params.Page,
-			PageSize:   params.PageSize,
-			Total:      total,
-			TotalPages: totalPages,
-		},
-		Query:  params.Keyword,
-		Status: params.Status,
+		Users:    result,
+		PageInfo: c.CreatePageInfo(pagination),
+		Query:    params.Keyword,
+		Status:   params.Status,
 	}
 
 	return &infra.ViewResponse{
@@ -121,8 +105,7 @@ func (c *UserController) GetNew() freedom.Result {
 func (c *UserController) GetBy(id int64) freedom.Result {
 	user := c.findUserByID(id)
 	if user == nil {
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("用户不存在"))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
+		c.SetErrorToast("用户不存在")
 		return c.Get()
 	}
 
@@ -139,61 +122,26 @@ func (c *UserController) GetBy(id int64) freedom.Result {
 func (c *UserController) Post() freedom.Result {
 	var formData vo.UserFormData
 	if err := c.Request.ReadForm(&formData, true); err != nil {
-		// 设置 Toast 消息
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("表单验证失败: "+err.Error()))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
-		// 返回带数据的表单，保留用户输入
-		return &infra.ViewResponse{
-			Name: "users/new.html",
-			Data: map[string]interface{}{
-				"FormData": formData,
-				"Error":    "表单验证失败: " + err.Error(),
-			},
-		}
+		return c.HandleValidationError(err, "users/new.html", formData)
 	}
 
 	// 检查用户名是否已存在
-	for _, u := range mockUsers {
-		if u.Username == formData.Username {
-			// 设置 Toast 消息
-			c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("用户名已存在"))
-			c.Worker.IrisContext().Header("X-Toast-Type", "error")
-			// 返回带数据的表单，保留用户输入
-			return &infra.ViewResponse{
-				Name: "users/new.html",
-				Data: map[string]interface{}{
-					"FormData": formData,
-					"Error":    "用户名已存在，请使用其他用户名",
-				},
-			}
+	if c.isUsernameExists(formData.Username) {
+		c.SetErrorToast("用户名已存在")
+		return &infra.ViewResponse{
+			Name: "users/new.html",
+			Data: formData,
 		}
 	}
 
-	// 生成新 ID
-	userIDCounter++
-	newID := userIDCounter
-
 	// 创建新用户
-	newUser := vo.User{
-		ID:        newID,
-		Username:  formData.Username,
-		Email:     formData.Email,
-		RealName:  formData.RealName,
-		Phone:     formData.Phone,
-		Role:      formData.Role,
-		Status:    formData.Status,
-		Avatar:    fmt.Sprintf("https://i.pravatar.cc/150?img=%d", (newID%70)+1),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-
+	newID := c.generateUserID()
+	newUser := c.createUser(formData, newID)
 	mockUsers[newID] = newUser
 
-	// 设置成功提示并使用 HX-Location 进行 SPA 导航
-	// 使用 JSON 格式指定目标容器和其他选项
-	c.Worker.IrisContext().Header("HX-Location", `{"path":"/users","target":"#main-container","swap":"innerHTML"}`)
-	c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("用户创建成功"))
-	c.Worker.IrisContext().Header("X-Toast-Type", "success")
+	// 设置成功提示并导航
+	c.NavigateTo("/users")
+	c.SetSuccessToast("用户创建成功")
 
 	return &infra.JSONResponse{
 		Object: map[string]interface{}{
@@ -208,47 +156,27 @@ func (c *UserController) Post() freedom.Result {
 func (c *UserController) PutBy(id int64) freedom.Result {
 	var formData vo.UserFormData
 	if err := c.Request.ReadForm(&formData, true); err != nil {
-		// 设置 Toast 消息
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("表单验证失败: "+err.Error()))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
-		// 返回带数据的编辑表单，保留用户输入
 		user, _ := mockUsers[id]
-		return &infra.ViewResponse{
-			Name: "users/edit.html",
-			Data: map[string]interface{}{
-				"User":     user,
-				"FormData": formData,
-				"Error":    "表单验证失败: " + err.Error(),
-			},
-		}
+		return c.HandleValidationError(err, "users/edit.html", map[string]interface{}{
+			"User":     user,
+			"FormData": formData,
+		})
 	}
 
 	// 查找并更新用户
 	user, exists := mockUsers[id]
 	if !exists {
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("用户不存在"))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
 		c.Worker.IrisContext().Header("HX-Redirect", "/users")
-		return &infra.JSONResponse{
-			Code:  404,
-			Error: fmt.Errorf("用户不存在"),
-		}
+		return c.HandleNotFoundError("用户")
 	}
 
 	// 更新用户信息
-	user.Email = formData.Email
-	user.RealName = formData.RealName
-	user.Phone = formData.Phone
-	user.Role = formData.Role
-	user.Status = formData.Status
-	user.UpdatedAt = time.Now()
+	c.updateUser(&user, formData)
 	mockUsers[id] = user
 
-	// 设置成功提示并使用 HX-Location 进行 SPA 导航
-	// 使用 JSON 格式指定目标容器和其他选项
-	c.Worker.IrisContext().Header("HX-Location", `{"path":"/users","target":"#main-container","swap":"innerHTML"}`)
-	c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("用户更新成功"))
-	c.Worker.IrisContext().Header("X-Toast-Type", "success")
+	// 设置成功提示并导航
+	c.NavigateTo("/users")
+	c.SetSuccessToast("用户更新成功")
 
 	return &infra.JSONResponse{
 		Object: map[string]interface{}{
@@ -263,21 +191,15 @@ func (c *UserController) PutBy(id int64) freedom.Result {
 func (c *UserController) DeleteBy(id int64) freedom.Result {
 	// 检查用户是否存在
 	if _, exists := mockUsers[id]; !exists {
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("用户不存在"))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
 		c.Worker.IrisContext().StatusCode(404)
-		return &infra.JSONResponse{
-			Code:  404,
-			Error: fmt.Errorf("用户不存在"),
-		}
+		return c.HandleNotFoundError("用户")
 	}
 
 	// 删除用户
 	delete(mockUsers, id)
 
-	// 设置成功提示和状态码
-	c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("用户删除成功"))
-	c.Worker.IrisContext().Header("X-Toast-Type", "success")
+	// 设置成功提示
+	c.SetSuccessToast("用户删除成功")
 	c.Worker.IrisContext().StatusCode(200)
 
 	// 返回空响应，让 HTMX 用空内容替换目标元素（实现删除行的效果）
@@ -320,12 +242,11 @@ func (c *UserController) filterUsers(params vo.SearchParams) []vo.User {
 	filtered := []vo.User{}
 
 	for _, user := range mockUsers {
-		// 搜索过滤
+		// 使用基础控制器的过滤助手
 		if params.Keyword != "" {
-			keyword := strings.ToLower(params.Keyword)
-			if !strings.Contains(strings.ToLower(user.Username), keyword) &&
-				!strings.Contains(strings.ToLower(user.Email), keyword) &&
-				!strings.Contains(strings.ToLower(user.RealName), keyword) {
+			if !c.FilterHelper(params.Keyword, user.Username) &&
+				!c.FilterHelper(params.Keyword, user.Email) &&
+				!c.FilterHelper(params.Keyword, user.RealName) {
 				continue
 			}
 		}
@@ -339,13 +260,7 @@ func (c *UserController) filterUsers(params vo.SearchParams) []vo.User {
 	}
 
 	// 按 ID 降序排序（最新的在前面）
-	for i := 0; i < len(filtered)-1; i++ {
-		for j := i + 1; j < len(filtered); j++ {
-			if filtered[i].ID < filtered[j].ID {
-				filtered[i], filtered[j] = filtered[j], filtered[i]
-			}
-		}
-	}
+	c.sortUsersByID(filtered)
 
 	return filtered
 }
@@ -356,4 +271,57 @@ func (c *UserController) findUserByID(id int64) *vo.User {
 		return &user
 	}
 	return nil
+}
+
+// isUsernameExists 检查用户名是否已存在
+func (c *UserController) isUsernameExists(username string) bool {
+	for _, user := range mockUsers {
+		if user.Username == username {
+			return true
+		}
+	}
+	return false
+}
+
+// generateUserID 生成新的用户ID
+func (c *UserController) generateUserID() int64 {
+	userIDCounter++
+	return userIDCounter
+}
+
+// createUser 创建用户对象
+func (c *UserController) createUser(formData vo.UserFormData, id int64) vo.User {
+	return vo.User{
+		ID:        id,
+		Username:  formData.Username,
+		Email:     formData.Email,
+		RealName:  formData.RealName,
+		Phone:     formData.Phone,
+		Role:      formData.Role,
+		Status:    formData.Status,
+		Avatar:    fmt.Sprintf("https://i.pravatar.cc/150?img=%d", (id%70)+1),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+}
+
+// updateUser 更新用户信息
+func (c *UserController) updateUser(user *vo.User, formData vo.UserFormData) {
+	user.Email = formData.Email
+	user.RealName = formData.RealName
+	user.Phone = formData.Phone
+	user.Role = formData.Role
+	user.Status = formData.Status
+	user.UpdatedAt = time.Now()
+}
+
+// sortUsersByID 按 ID 降序排序用户
+func (c *UserController) sortUsersByID(users []vo.User) {
+	for i := 0; i < len(users)-1; i++ {
+		for j := i + 1; j < len(users); j++ {
+			if users[i].ID < users[j].ID {
+				users[i], users[j] = users[j], users[i]
+			}
+		}
+	}
 }

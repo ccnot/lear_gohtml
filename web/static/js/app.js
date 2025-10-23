@@ -14,167 +14,184 @@ document.addEventListener('alpine:init', () => {
     // ============================================
     Alpine.data('deleteConfirm', (options) => ({
         confirmDelete() {
+            // 采用统一的 confirm-dialog 配置，交由组件使用 HTMX 范式发起请求
             window.dispatchEvent(new CustomEvent('confirm-dialog', {
                 detail: {
                     title: options.title || '确认删除',
                     message: options.message,
                     confirmText: options.confirmText || '确定删除',
-                    onConfirm: () => {
-                        htmx.ajax('DELETE', options.url, {
-                            target: options.target,
-                            swap: 'outerHTML swap:300ms'
-                        });
-                    }
+                    // 使用 config 字段描述 HTMX 请求参数（confirm-dialog 会创建临时 hx-* 元素）
+                    url: options.url,
+                    method: 'DELETE',
+                    data: null,
+                    target: options.target,
+                    swap: 'outerHTML swap:300ms'
                 }
             }));
         }
     }));
 
     // ============================================
-    // 用户表单组件
+    // 通用表单验证器
     // ============================================
-    Alpine.data('userForm', (isEdit = false) => ({
-        loading: false,
-        errors: {},
-        form: {
+    function createValidator(rules) {
+        return function(formData) {
+            const errors = {};
+
+            for (const [field, rule] of Object.entries(rules)) {
+                const value = formData[field];
+
+                if (rule.required && !value) {
+                    errors[field] = rule.message || `${field}不能为空`;
+                    continue;
+                }
+
+                if (rule.pattern && value && !rule.pattern.test(value)) {
+                    errors[field] = rule.patternMessage || `${field}格式不正确`;
+                }
+
+                if (rule.validator && value) {
+                    const customError = rule.validator(value);
+                    if (customError) {
+                        errors[field] = customError;
+                    }
+                }
+            }
+
+            return errors;
+        };
+    }
+
+    // 验证规则
+    const validationRules = {
+        username: {
+            required: true,
+            pattern: /^[a-zA-Z0-9_]{3,20}$/,
+            message: '用户名不能为空',
+            patternMessage: '用户名只能包含字母、数字和下划线，长度3-20位'
+        },
+        email: {
+            required: true,
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: '邮箱不能为空',
+            patternMessage: '邮箱格式不正确'
+        },
+        realName: {
+            required: true,
+            message: '真实姓名不能为空'
+        },
+        siteName: {
+            required: true,
+            message: '网站名称不能为空'
+        },
+        name: {
+            required: true,
+            message: '商品名称不能为空'
+        },
+        sku: {
+            required: true,
+            message: 'SKU不能为空'
+        },
+        price: {
+            validator: (value) => {
+                const price = parseFloat(value);
+                if (isNaN(price) || price < 0) {
+                    return '请输入有效的价格';
+                }
+            }
+        },
+        stock: {
+            validator: (value) => {
+                const stock = parseInt(value);
+                if (isNaN(stock) || stock < 0) {
+                    return '请输入有效的库存数量';
+                }
+            }
+        }
+    };
+
+    // ============================================
+    // 通用表单组件
+    // ============================================
+    function createFormComponent(defaultForm, rules, options = {}) {
+        return {
+            loading: false,
+            errors: {},
+            form: { ...defaultForm },
+
+            validate() {
+                const validator = createValidator(rules);
+                this.errors = validator(this.form);
+                return Object.keys(this.errors).length === 0;
+            },
+
+            submitForm(event) {
+                if (!this.validate()) {
+                    event.preventDefault();
+                    return false;
+                }
+                this.loading = true;
+
+                if (options.customSubmit) {
+                    options.customSubmit.call(this, event);
+                }
+            },
+
+            clearErrors() {
+                this.errors = {};
+            }
+        };
+    }
+
+    // 用户表单组件
+    Alpine.data('userForm', (isEdit = false) => {
+        const rules = { ...validationRules };
+        if (isEdit) {
+            delete rules.username; // 编辑时用户名不是必填
+        }
+
+        return createFormComponent({
             username: '',
             email: '',
             realName: '',
             phone: '',
             role: 'viewer',
             status: 'active'
-        },
+        }, rules);
+    });
 
-        validateForm() {
-            this.errors = {};
-            let isValid = true;
-
-            if (!this.form.username && !isEdit) {
-                this.errors.username = '用户名不能为空';
-                isValid = false;
-            } else if (this.form.username && !/^[a-zA-Z0-9_]{3,20}$/.test(this.form.username)) {
-                this.errors.username = '用户名只能包含字母、数字和下划线，长度3-20位';
-                isValid = false;
-            }
-
-            if (!this.form.email) {
-                this.errors.email = '邮箱不能为空';
-                isValid = false;
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) {
-                this.errors.email = '邮箱格式不正确';
-                isValid = false;
-            }
-
-            if (!this.form.realName) {
-                this.errors.realName = '真实姓名不能为空';
-                isValid = false;
-            }
-
-            return isValid;
-        },
-
-        submitForm(event) {
-            if (!this.validateForm()) {
-                event.preventDefault();
-                return false;
-            }
-            this.loading = true;
-            // 验证通过，让 HTMX 处理表单提交
-        }
-    }));
-
-    // ============================================
     // 商品表单组件
-    // ============================================
-    Alpine.data('productForm', () => ({
-        loading: false,
-        errors: {},
-        form: {
-            name: '',
-            sku: '',
-            category: '',
-            price: '',
-            stock: '',
-            status: 'active',
-            description: ''
-        },
-
-        validateForm() {
-            this.errors = {};
-            let isValid = true;
-
-            if (!this.form.name) {
-                this.errors.name = '商品名称不能为空';
-                isValid = false;
-            }
-
-            if (!this.form.sku) {
-                this.errors.sku = 'SKU不能为空';
-                isValid = false;
-            }
-
-            if (!this.form.price || parseFloat(this.form.price) < 0) {
-                this.errors.price = '请输入有效的价格';
-                isValid = false;
-            }
-
-            if (!this.form.stock || parseInt(this.form.stock) < 0) {
-                this.errors.stock = '请输入有效的库存数量';
-                isValid = false;
-            }
-
-            return isValid;
-        },
-
-        submitForm(event) {
-            if (!this.validateForm()) {
-                event.preventDefault();
-                return false;
-            }
-            this.loading = true;
-            // 验证通过，让 HTMX 处理表单提交
-        }
+    Alpine.data('productForm', () => createFormComponent({
+        name: '',
+        sku: '',
+        category: '',
+        price: '',
+        stock: '',
+        status: 'active',
+        description: ''
+    }, {
+        name: validationRules.name,
+        sku: validationRules.sku,
+        price: validationRules.price,
+        stock: validationRules.stock
     }));
 
-    // ============================================
     // 设置表单组件
-    // ============================================
-    Alpine.data('settingsForm', () => ({
-        loading: false,
-        errors: {},
-        form: {
-            siteName: '',
-            siteUrl: '',
-            email: '',
-            description: '',
-            enableRegistration: true,
-            enableComments: true,
-            itemsPerPage: 10,
-            maintenanceMode: false
-        },
-
-        validateForm() {
-            this.errors = {};
-            let isValid = true;
-
-            if (!this.form.siteName) {
-                this.errors.siteName = '网站名称不能为空';
-                isValid = false;
-            }
-
-            if (!this.form.email) {
-                this.errors.email = '管理员邮箱不能为空';
-                isValid = false;
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) {
-                this.errors.email = '邮箱格式不正确';
-                isValid = false;
-            }
-
-            return isValid;
-        },
-
-        submitForm(event) {
-            if (this.validateForm()) {
+    Alpine.data('settingsForm', () => createFormComponent({
+        siteName: '',
+        siteUrl: '',
+        email: '',
+        description: '',
+        enableRegistration: true,
+        enableComments: true,
+        itemsPerPage: 10,
+        maintenanceMode: false
+    }, {
+        siteName: validationRules.siteName,
+        email: validationRules.email
+    }, {
+        customSubmit(event) {
+            if (this.validate()) {
                 this.loading = true;
                 htmx.trigger(event.target, 'submit');
             }

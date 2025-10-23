@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"gohtml/domain/vo"
 	"gohtml/infra"
-	"math"
-	"net/url"
-	"strings"
 	"time"
 
 	"github.com/8treenet/freedom"
@@ -22,8 +19,7 @@ func init() {
 
 // ProductController 商品管理控制器
 type ProductController struct {
-	Worker  freedom.Worker
-	Request *infra.Request
+	BaseController
 }
 
 // mockProducts 模拟商品数据库（使用 map 存储）
@@ -70,39 +66,28 @@ func (c *ProductController) Get() freedom.Result {
 		params = vo.SearchParams{}
 	}
 
-	// 设置默认值
-	if params.Page <= 0 {
-		params.Page = 1
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = 12
-	}
-
-	// 过滤和搜索
+	// 使用基础控制器的搜索助手，设置商品默认页面大小
+	params.PageSize = 12 // 商品默认页面大小
+	params, pagination := c.SearchHelper(params)
 	filteredProducts := c.filterProducts(params)
 
-	// 分页
-	total := int64(len(filteredProducts))
-	totalPages := int(math.Ceil(float64(total) / float64(params.PageSize)))
-	start := (params.Page - 1) * params.PageSize
-	end := start + params.PageSize
-	if end > len(filteredProducts) {
-		end = len(filteredProducts)
-	}
-	if start > len(filteredProducts) {
-		start = len(filteredProducts)
+	// 转换为 interface{} 进行分页
+	products := make([]interface{}, len(filteredProducts))
+	for i, product := range filteredProducts {
+		products[i] = product
 	}
 
-	pageProducts := filteredProducts[start:end]
+	pagedProducts, pagination := c.Paginate(products, pagination)
+
+	// 转换回商品类型
+	result := make([]vo.Product, len(pagedProducts))
+	for i, product := range pagedProducts {
+		result[i] = product.(vo.Product)
+	}
 
 	data := vo.ProductListData{
-		Products: pageProducts,
-		PageInfo: vo.PageInfo{
-			Page:       params.Page,
-			PageSize:   params.PageSize,
-			Total:      total,
-			TotalPages: totalPages,
-		},
+		Products: result,
+		PageInfo: c.CreatePageInfo(pagination),
 		Query:    params.Keyword,
 		Category: params.Status, // 这里复用 Status 字段作为分类筛选
 	}
@@ -127,8 +112,7 @@ func (c *ProductController) GetNew() freedom.Result {
 func (c *ProductController) GetBy(id int64) freedom.Result {
 	product := c.findProductByID(id)
 	if product == nil {
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("商品不存在"))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
+		c.SetErrorToast("商品不存在")
 		return c.Get()
 	}
 
@@ -145,62 +129,31 @@ func (c *ProductController) GetBy(id int64) freedom.Result {
 func (c *ProductController) Post() freedom.Result {
 	var formData vo.ProductFormData
 	if err := c.Request.ReadForm(&formData, true); err != nil {
-		// 设置 Toast 消息
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("表单验证失败: "+err.Error()))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
-		// 返回带数据的表单，保留用户输入
+		return c.HandleValidationError(err, "products/new.html", map[string]interface{}{
+			"FormData": formData,
+		})
+	}
+
+	// 检查 SKU 是否已存在
+	if c.isSKUExists(formData.SKU) {
+		c.SetErrorToast("SKU 已存在，请使用其他 SKU")
 		return &infra.ViewResponse{
 			Name: "products/new.html",
 			Data: map[string]interface{}{
 				"FormData": formData,
-				"Error":    "表单验证失败: " + err.Error(),
+				"Error":    "SKU 已存在，请使用其他 SKU",
 			},
 		}
 	}
 
-	// 检查 SKU 是否已存在
-	for _, p := range mockProducts {
-		if p.SKU == formData.SKU {
-			// 设置 Toast 消息
-			c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("SKU 已存在"))
-			c.Worker.IrisContext().Header("X-Toast-Type", "error")
-			// 返回带数据的表单，保留用户输入
-			return &infra.ViewResponse{
-				Name: "products/new.html",
-				Data: map[string]interface{}{
-					"FormData": formData,
-					"Error":    "SKU 已存在，请使用其他 SKU",
-				},
-			}
-		}
-	}
-
-	// 生成新 ID
-	productIDCounter++
-	newID := productIDCounter
-
 	// 创建新商品
-	newProduct := vo.Product{
-		ID:          newID,
-		Name:        formData.Name,
-		SKU:         formData.SKU,
-		Category:    formData.Category,
-		Price:       formData.Price,
-		Stock:       formData.Stock,
-		Status:      formData.Status,
-		Image:       fmt.Sprintf("https://via.placeholder.com/300x200?text=%s", formData.Name),
-		Description: formData.Description,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
-	}
-
+	newID := c.generateProductID()
+	newProduct := c.createProduct(formData, newID)
 	mockProducts[newID] = newProduct
 
-	// 设置成功提示并使用 HX-Location 进行 SPA 导航
-	// 使用 JSON 格式指定目标容器和其他选项
-	c.Worker.IrisContext().Header("HX-Location", `{"path":"/products","target":"#main-container","swap":"innerHTML"}`)
-	c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("商品创建成功"))
-	c.Worker.IrisContext().Header("X-Toast-Type", "success")
+	// 设置成功提示并导航
+	c.NavigateTo("/products")
+	c.SetSuccessToast("商品创建成功")
 
 	return &infra.JSONResponse{
 		Object: map[string]interface{}{
@@ -215,48 +168,27 @@ func (c *ProductController) Post() freedom.Result {
 func (c *ProductController) PutBy(id int64) freedom.Result {
 	var formData vo.ProductFormData
 	if err := c.Request.ReadForm(&formData, true); err != nil {
-		// 设置 Toast 消息
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("表单验证失败: "+err.Error()))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
-		// 返回带数据的编辑表单，保留用户输入
 		product, _ := mockProducts[id]
-		return &infra.ViewResponse{
-			Name: "products/edit.html",
-			Data: map[string]interface{}{
-				"Product":  product,
-				"FormData": formData,
-				"Error":    "表单验证失败: " + err.Error(),
-			},
-		}
+		return c.HandleValidationError(err, "products/edit.html", map[string]interface{}{
+			"Product":  product,
+			"FormData": formData,
+		})
 	}
 
 	// 查找并更新商品
 	product, exists := mockProducts[id]
 	if !exists {
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("商品不存在"))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
 		c.Worker.IrisContext().Header("HX-Redirect", "/products")
-		return &infra.JSONResponse{
-			Code:  404,
-			Error: fmt.Errorf("商品不存在"),
-		}
+		return c.HandleNotFoundError("商品")
 	}
 
 	// 更新商品信息
-	product.Name = formData.Name
-	product.Category = formData.Category
-	product.Price = formData.Price
-	product.Stock = formData.Stock
-	product.Status = formData.Status
-	product.Description = formData.Description
-	product.UpdatedAt = time.Now()
+	c.updateProduct(&product, formData)
 	mockProducts[id] = product
 
-	// 设置成功提示并使用 HX-Location 进行 SPA 导航
-	// 使用 JSON 格式指定目标容器和其他选项
-	c.Worker.IrisContext().Header("HX-Location", `{"path":"/products","target":"#main-container","swap":"innerHTML"}`)
-	c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("商品更新成功"))
-	c.Worker.IrisContext().Header("X-Toast-Type", "success")
+	// 设置成功提示并导航
+	c.NavigateTo("/products")
+	c.SetSuccessToast("商品更新成功")
 
 	return &infra.JSONResponse{
 		Object: map[string]interface{}{
@@ -271,21 +203,15 @@ func (c *ProductController) PutBy(id int64) freedom.Result {
 func (c *ProductController) DeleteBy(id int64) freedom.Result {
 	// 检查商品是否存在
 	if _, exists := mockProducts[id]; !exists {
-		c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("商品不存在"))
-		c.Worker.IrisContext().Header("X-Toast-Type", "error")
 		c.Worker.IrisContext().StatusCode(404)
-		return &infra.JSONResponse{
-			Code:  404,
-			Error: fmt.Errorf("商品不存在"),
-		}
+		return c.HandleNotFoundError("商品")
 	}
 
 	// 删除商品
 	delete(mockProducts, id)
 
-	// 设置成功提示和状态码
-	c.Worker.IrisContext().Header("X-Toast-Message", url.QueryEscape("商品删除成功"))
-	c.Worker.IrisContext().Header("X-Toast-Type", "success")
+	// 设置成功提示
+	c.SetSuccessToast("商品删除成功")
 	c.Worker.IrisContext().StatusCode(200)
 
 	// 返回空响应，让 HTMX 用空内容替换目标元素（实现删除卡片的效果）
@@ -308,12 +234,11 @@ func (c *ProductController) filterProducts(params vo.SearchParams) []vo.Product 
 	filtered := []vo.Product{}
 
 	for _, product := range mockProducts {
-		// 搜索过滤
+		// 使用基础控制器的过滤助手
 		if params.Keyword != "" {
-			keyword := strings.ToLower(params.Keyword)
-			if !strings.Contains(strings.ToLower(product.Name), keyword) &&
-				!strings.Contains(strings.ToLower(product.SKU), keyword) &&
-				!strings.Contains(strings.ToLower(product.Description), keyword) {
+			if !c.FilterHelper(params.Keyword, product.Name) &&
+				!c.FilterHelper(params.Keyword, product.SKU) &&
+				!c.FilterHelper(params.Keyword, product.Description) {
 				continue
 			}
 		}
@@ -327,13 +252,7 @@ func (c *ProductController) filterProducts(params vo.SearchParams) []vo.Product 
 	}
 
 	// 按 ID 降序排序（最新的在前面）
-	for i := 0; i < len(filtered)-1; i++ {
-		for j := i + 1; j < len(filtered); j++ {
-			if filtered[i].ID < filtered[j].ID {
-				filtered[i], filtered[j] = filtered[j], filtered[i]
-			}
-		}
-	}
+	c.sortProductsByID(filtered)
 
 	return filtered
 }
@@ -344,4 +263,59 @@ func (c *ProductController) findProductByID(id int64) *vo.Product {
 		return &product
 	}
 	return nil
+}
+
+// isSKUExists 检查 SKU 是否已存在
+func (c *ProductController) isSKUExists(sku string) bool {
+	for _, product := range mockProducts {
+		if product.SKU == sku {
+			return true
+		}
+	}
+	return false
+}
+
+// generateProductID 生成新的商品ID
+func (c *ProductController) generateProductID() int64 {
+	productIDCounter++
+	return productIDCounter
+}
+
+// createProduct 创建商品对象
+func (c *ProductController) createProduct(formData vo.ProductFormData, id int64) vo.Product {
+	return vo.Product{
+		ID:          id,
+		Name:        formData.Name,
+		SKU:         formData.SKU,
+		Category:    formData.Category,
+		Price:       formData.Price,
+		Stock:       formData.Stock,
+		Status:      formData.Status,
+		Image:       fmt.Sprintf("https://via.placeholder.com/300x200?text=%s", formData.Name),
+		Description: formData.Description,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+}
+
+// updateProduct 更新商品信息
+func (c *ProductController) updateProduct(product *vo.Product, formData vo.ProductFormData) {
+	product.Name = formData.Name
+	product.Category = formData.Category
+	product.Price = formData.Price
+	product.Stock = formData.Stock
+	product.Status = formData.Status
+	product.Description = formData.Description
+	product.UpdatedAt = time.Now()
+}
+
+// sortProductsByID 按 ID 降序排序商品
+func (c *ProductController) sortProductsByID(products []vo.Product) {
+	for i := 0; i < len(products)-1; i++ {
+		for j := i + 1; j < len(products); j++ {
+			if products[i].ID < products[j].ID {
+				products[i], products[j] = products[j], products[i]
+			}
+		}
+	}
 }

@@ -1,103 +1,104 @@
 <!-- 角色管理页面 -->
-<div>
-    <!-- 页面标题 -->
+<div class="space-y-6">
+    <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
     <div id="page-title" hx-swap-oob="true">角色管理</div>
 
     <!-- 面包屑导航 -->
-    <ul class="uk-breadcrumb" style="margin-bottom: 24px;">
-        <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
-                hx-push-url="true">首页</a></li>
-        <li><span>用户管理</span></li>
-        <li class="uk-disabled"><span>角色管理</span></li>
-    </ul>
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                    hx-push-url="true">首页</a></li>
+            <li>用户管理</li>
+            <li>角色管理</li>
+        </ul>
+    </div>
 
-    <!-- 内容卡片 -->
-    <div class="content-card">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-user-tag" style="color: var(--info-color);"></i>
-                角色列表
-            </h3>
-            <button class="uk-button uk-button-primary">
-                <i class="fas fa-plus"></i>
-                <span>新增角色</span>
-            </button>
-        </div>
-
+    <!-- 角色列表卡片 -->
+    <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
-            <!-- 角色列表 -->
-            <div class="table-container">
-                <table class="uk-table uk-table-hover uk-table-divider uk-table-middle">
+            <!-- 页面头部 -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="card-title text-lg font-medium flex items-center gap-2">
+                    <i class="fas fa-user-tag text-info"></i>
+                    角色列表
+                </h2>
+                <button class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    新增角色
+                </button>
+            </div>
+
+            <!-- 角色表格 -->
+            <div class="overflow-x-auto">
+                <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th style="width: 60px;">ID</th>
+                            <th>ID</th>
                             <th>角色名称</th>
                             <th>角色标识</th>
                             <th>描述</th>
-                            <th style="width: 100px;">用户数</th>
+                            <th>用户数</th>
                             <th>创建时间</th>
-                            <th style="width: 150px;">操作</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- 管理员 -->
-                        <tr>
+                        <tr class="hover">
                             <td>1</td>
-                            <td><span class="badge danger">管理员</span></td>
-                            <td><code>admin</code></td>
+                            <td><span class="badge badge-error">管理员</span></td>
+                            <td><code class="bg-base-200 px-2 py-1 rounded text-sm font-mono">admin</code></td>
                             <td>系统管理员，拥有所有权限</td>
                             <td><strong>5</strong></td>
                             <td>2024-01-01</td>
                             <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon" title="编辑" uk-tooltip>
+                                <div class="flex gap-1">
+                                    <button class="btn btn-ghost btn-xs" title="编辑">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn-icon" title="权限设置" uk-tooltip
-                                        style="color: var(--primary-color); border-color: var(--primary-color);">
-                                        <i class="fas fa-key"></i>
+                                    <button class="btn btn-ghost btn-xs" title="权限设置">
+                                        <i class="fas fa-key text-primary"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
                         <!-- 编辑 -->
-                        <tr>
+                        <tr class="hover">
                             <td>2</td>
-                            <td><span class="badge info">编辑</span></td>
-                            <td><code>editor</code></td>
+                            <td><span class="badge badge-info">编辑</span></td>
+                            <td><code class="bg-base-200 px-2 py-1 rounded text-sm font-mono">editor</code></td>
                             <td>内容编辑，可以管理用户和商品</td>
                             <td><strong>12</strong></td>
                             <td>2024-01-01</td>
                             <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon" title="编辑" uk-tooltip>
+                                <div class="flex gap-1">
+                                    <button class="btn btn-ghost btn-xs" title="编辑">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn-icon" title="权限设置" uk-tooltip
-                                        style="color: var(--primary-color); border-color: var(--primary-color);">
-                                        <i class="fas fa-key"></i>
+                                    <button class="btn btn-ghost btn-xs" title="权限设置">
+                                        <i class="fas fa-key text-primary"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
                         <!-- 访客 -->
-                        <tr>
+                        <tr class="hover">
                             <td>3</td>
-                            <td><span class="badge">访客</span></td>
-                            <td><code>viewer</code></td>
+                            <td><span class="badge badge-outline">访客</span></td>
+                            <td><code class="bg-base-200 px-2 py-1 rounded text-sm font-mono">viewer</code></td>
                             <td>只读权限，只能查看内容</td>
                             <td><strong>83</strong></td>
                             <td>2024-01-01</td>
                             <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon" title="编辑" uk-tooltip>
+                                <div class="flex gap-1">
+                                    <button class="btn btn-ghost btn-xs" title="编辑">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn-icon" title="权限设置" uk-tooltip
-                                        style="color: var(--primary-color); border-color: var(--primary-color);">
-                                        <i class="fas fa-key"></i>
+                                    <button class="btn btn-ghost btn-xs" title="权限设置">
+                                        <i class="fas fa-key text-primary"></i>
                                     </button>
-                                    <button class="btn-icon danger" title="删除" uk-tooltip>
+                                    <button class="btn btn-ghost btn-xs text-error" hx-delete="/roles/3"
+                                        hx-target="closest tr" hx-swap="outerHTML swap:300ms" title="删除">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -109,35 +110,27 @@
         </div>
     </div>
 
-    <!-- 说明卡片 -->
-    <div class="content-card" style="margin-top: 24px;">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-info-circle" style="color: var(--primary-color);"></i>
+    <!-- 角色说明卡片 -->
+    <div class="card bg-base-100 shadow-sm border border-base-300">
+        <div class="card-body">
+            <h3 class="card-title text-lg font-medium flex items-center gap-2 mb-4">
+                <i class="fas fa-info-circle text-primary"></i>
                 角色说明
             </h3>
-        </div>
-        <div class="card-body">
-            <div class="uk-alert-primary" uk-alert>
-                <p><strong>💡 提示：</strong></p>
-                <ul style="margin-left: 24px; margin-top: 8px;">
-                    <li>管理员角色拥有系统所有权限，不可删除</li>
-                    <li>每个角色可以关联多个用户</li>
-                    <li>删除角色前需要先将该角色下的用户转移到其他角色</li>
-                    <li>角色权限修改会立即生效，无需用户重新登录</li>
-                </ul>
+            <div class="alert alert-info">
+                <div class="flex items-start gap-2">
+                    <i class="fas fa-info-circle flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <p class="font-semibold mb-2">💡 提示：</p>
+                        <ul class="list-disc list-inside space-y-1 text-sm">
+                            <li>管理员角色拥有系统所有权限，不可删除</li>
+                            <li>每个角色可以关联多个用户</li>
+                            <li>删除角色前需要先将该角色下的用户转移到其他角色</li>
+                            <li>角色权限修改会立即生效，无需用户重新登录</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    code {
-        background: #f5f5f5;
-        padding: 4px 8px;
-        border-radius: 3px;
-        font-family: 'Courier New', monospace;
-        font-size: 13px;
-        color: #e74c3c;
-    }
-</style>

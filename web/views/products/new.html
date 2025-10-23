@@ -1,78 +1,93 @@
 <!-- 商品新增页面 -->
-<div>
-    <!-- 页面标题 -->
+<div class="space-y-6">
+    <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
     <div id="page-title" hx-swap-oob="true">新增商品</div>
 
-    <!-- 面包屑 -->
-    <ul class="uk-breadcrumb" style="margin-bottom: 24px;">
-        <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
-                hx-push-url="true">首页</a></li>
-        <li><a href="/products" hx-get="/products" hx-target="#main-container" hx-swap="innerHTML"
-                hx-push-url="true">商品管理</a></li>
-        <li class="uk-disabled"><span>新增商品</span></li>
-    </ul>
+    <!-- 面包屑导航 -->
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                   hx-push-url="true">首页</a></li>
+            <li>商品管理</li>
+            <li>新增商品</li>
+        </ul>
+    </div>
 
-    <!-- 表单卡片 -->
-    <div class="content-card" style="max-width: 900px;">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-plus-circle" style="color: var(--primary-color);"></i>
-                新增商品
-            </h3>
-        </div>
+    <!-- 新增商品表单卡片 -->
+    <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
-            <!-- 错误提示框 -->
-            {{if .Error}}
-            <div class="uk-alert-danger" uk-alert>
-                <a class="uk-alert-close" uk-close></a>
-                <strong><i class="fas fa-exclamation-triangle"></i> 验证错误</strong>
-                <p style="margin-top: 8px;">{{.Error}}</p>
+            <!-- 页面头部 -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="card-title text-lg font-medium flex items-center gap-2">
+                    <i class="fas fa-plus-circle text-success"></i>
+                    新增商品
+                </h2>
             </div>
-            {{end}}
 
-            <form hx-post="/products" hx-target="#main-container" hx-swap="innerHTML" x-data="productForm()"
-                @submit="submitForm($event)" x-init="
-                    {{if .FormData}}
-                    form.name = '{{.FormData.Name}}';
-                    form.sku = '{{.FormData.SKU}}';
-                    form.category = '{{.FormData.Category}}';
-                    form.price = {{.FormData.Price}};
-                    form.stock = {{.FormData.Stock}};
-                    form.status = '{{.FormData.Status}}';
-                    form.description = '{{.FormData.Description}}';
-                    {{end}}
-                ">
+            <!-- 商品表单 -->
+            <form hx-post="/products" hx-target="#main-container" hx-swap="innerHTML"
+                  @submit="submitForm($event)"
+                  x-data="productForm()">
 
-                <div class="form-row">
-                    <!-- 商品名称 -->
-                    <div>
-                        <label class="uk-form-label">商品名称 <span class="required">*</span></label>
-                        <div class="uk-form-controls uk-inline uk-width-1-1">
-                            <span class="uk-form-icon" uk-icon="icon: tag"></span>
-                            <input class="uk-input" type="text" name="name" placeholder="请输入商品名称" required
-                                x-model="form.name" :class="{'uk-form-danger': errors.name}">
+                <!-- 错误提示框 -->
+                <div x-show="errors.length > 0" class="alert alert-error mb-4">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-exclamation-circle flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="font-semibold">请修正以下错误：</p>
+                            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+                                <template x-for="error in errors">
+                                    <li x-text="error"></li>
+                                </template>
+                            </ul>
                         </div>
-                        <div class="uk-form-help uk-text-danger" x-show="errors.name" x-text="errors.name"></div>
-                    </div>
-
-                    <!-- SKU -->
-                    <div>
-                        <label class="uk-form-label">SKU <span class="required">*</span></label>
-                        <div class="uk-form-controls uk-inline uk-width-1-1">
-                            <span class="uk-form-icon" uk-icon="icon: link"></span>
-                            <input class="uk-input" type="text" name="sku" placeholder="请输入SKU编号" required
-                                x-model="form.sku" :class="{'uk-form-danger': errors.sku}">
-                        </div>
-                        <div class="uk-form-help uk-text-danger" x-show="errors.sku" x-text="errors.sku"></div>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <!-- 分类 -->
-                    <div>
-                        <label class="uk-form-label">分类 <span class="required">*</span></label>
-                        <div class="uk-form-controls">
-                            <select class="uk-select" name="category" required x-model="form.category">
+                <!-- 表单字段 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 左列：基本信息 -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-medium mb-4 text-base-content">基本信息</h3>
+
+                        <!-- 商品名称 -->
+                        <div class="form-control">
+                            <label class="label">
+                                商品名称 <span class="text-error">*</span>
+                            </label>
+                            <div class="relative">
+                                <input class="input input-bordered w-full pl-10" type="text" name="name"
+                                       placeholder="请输入商品名称" required
+                                       x-model="form.name"
+                                       :class="{ 'input-error': errors.name }">
+                                <i class="fas fa-box absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                            </div>
+                            <div class="label-text-alt">商品的显示名称</div>
+                        </div>
+
+                        <!-- SKU -->
+                        <div class="form-control">
+                            <label class="label">
+                                SKU <span class="text-error">*</span>
+                            </label>
+                            <div class="relative">
+                                <input class="input input-bordered w-full pl-10" type="text" name="sku"
+                                       placeholder="请输入SKU编号" required
+                                       x-model="form.sku"
+                                       :class="{ 'input-error': errors.sku }">
+                                <i class="fas fa-barcode absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                            </div>
+                            <div class="label-text-alt">商品唯一标识符</div>
+                        </div>
+
+                        <!-- 分类 -->
+                        <div class="form-control">
+                            <label class="label">
+                                分类 <span class="text-error">*</span>
+                            </label>
+                            <select class="select select-bordered w-full" name="category" required
+                                    x-model="form.category"
+                                    :class="{ 'input-error': errors.category }">
                                 <option value="">请选择分类</option>
                                 <option value="电子产品">电子产品</option>
                                 <option value="数码配件">数码配件</option>
@@ -80,67 +95,89 @@
                                 <option value="智能设备">智能设备</option>
                                 <option value="电脑配件">电脑配件</option>
                             </select>
+                            <div class="label-text-alt">选择商品所属的分类</div>
                         </div>
                     </div>
 
-                    <!-- 价格 -->
-                    <div>
-                        <label class="uk-form-label">价格 <span class="required">*</span></label>
-                        <div class="uk-form-controls uk-inline uk-width-1-1">
-                            <span class="uk-form-icon">¥</span>
-                            <input class="uk-input" type="number" name="price" placeholder="请输入价格" required step="0.01"
-                                min="0" x-model="form.price" :class="{'uk-form-danger': errors.price}">
+                    <!-- 右列：价格和库存 -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-medium mb-4 text-base-content">库存与定价</h3>
+
+                        <!-- 价格 -->
+                        <div class="form-control">
+                            <label class="label">
+                                价格 <span class="text-error">*</span>
+                            </label>
+                            <div class="relative">
+                                <input class="input input-bordered w-full pl-10" type="number" name="price"
+                                       placeholder="请输入价格" required step="0.01" min="0"
+                                       x-model="form.price"
+                                       :class="{ 'input-error': errors.price }">
+                                <i class="fas fa-yen-sign absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                            </div>
+                            <div class="label-text-alt">商品销售价格</div>
                         </div>
-                        <div class="uk-form-help uk-text-danger" x-show="errors.price" x-text="errors.price"></div>
+
+                        <!-- 库存 -->
+                        <div class="form-control">
+                            <label class="label">
+                                库存 <span class="text-error">*</span>
+                            </label>
+                            <div class="relative">
+                                <input class="input input-bordered w-full pl-10" type="number" name="stock"
+                                       placeholder="请输入库存数量" required min="0"
+                                       x-model="form.stock"
+                                       :class="{ 'input-error': errors.stock }">
+                                <i class="fas fa-database absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                            </div>
+                            <div class="label-text-alt">当前库存数量</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <!-- 库存 -->
-                    <div>
-                        <label class="uk-form-label">库存 <span class="required">*</span></label>
-                        <div class="uk-form-controls uk-inline uk-width-1-1">
-                            <span class="uk-form-icon" uk-icon="icon: database"></span>
-                            <input class="uk-input" type="number" name="stock" placeholder="请输入库存数量" required min="0"
-                                x-model="form.stock" :class="{'uk-form-danger': errors.stock}">
-                        </div>
-                        <div class="uk-form-help uk-text-danger" x-show="errors.stock" x-text="errors.stock"></div>
-                    </div>
+                <!-- 状态 -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium mb-4 text-base-content">商品状态</h3>
 
-                    <!-- 状态 -->
-                    <div>
-                        <label class="uk-form-label">状态 <span class="required">*</span></label>
-                        <div class="uk-form-controls">
-                            <select class="uk-select" name="status" required x-model="form.status">
+                    <div class="form-control">
+                        <label class="label">
+                                状态 <span class="text-error">*</span>
+                            </label>
+                            <select class="select select-bordered w-full" name="status" required
+                                    x-model="form.status"
+                                    :class="{ 'input-error': errors.status }">
                                 <option value="">请选择状态</option>
                                 <option value="active">上架</option>
                                 <option value="inactive">下架</option>
                                 <option value="out_of_stock">缺货</option>
                             </select>
+                            <div class="label-text-alt">商品的销售状态</div>
+                        </div>
+                    </div>
+
+                <!-- 描述 -->
+                <div class="space-y-4">
+                        <h3 class="text-lg font-medium mb-2 text-base-content">商品描述</h3>
+                        <div class="form-control">
+                            <label class="label">商品描述</label>
+                            <textarea class="textarea textarea-bordered h-24 w-full" name="description"
+                                      placeholder="请输入商品描述" x-model="form.description"></textarea>
+                            <div class="label-text-alt">商品的详细描述信息</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 描述 -->
-                <div style="margin-bottom: 24px;">
-                    <label class="uk-form-label">商品描述</label>
-                    <div class="uk-form-controls">
-                        <textarea class="uk-textarea" name="description" placeholder="请输入商品描述" rows="4"
-                            x-model="form.description"></textarea>
-                    </div>
-                </div>
-
-                <!-- 提交按钮 -->
-                <div class="uk-flex uk-flex-right" style="gap: 12px; margin-top: 32px;">
-                    <a href="/products" hx-get="/products" hx-target="#main-container" hx-swap="innerHTML"
-                        hx-push-url="true" class="uk-button uk-button-default">
-                        <i class="fas fa-times"></i>
-                        <span>取消</span>
+                <!-- 表单按钮 -->
+                <div class="flex justify-end gap-3 pt-6 border-t border-base-300">
+                    <a href="/products" class="btn btn-ghost" hx-get="/products" hx-target="#main-container"
+                       hx-swap="innerHTML" hx-push-url="true">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        返回列表
                     </a>
-                    <button type="submit" class="uk-button uk-button-primary" :disabled="loading">
-                        <span x-show="loading" uk-spinner="ratio: 0.5"></span>
-                        <i class="fas fa-save" x-show="!loading"></i>
-                        <span>创建商品</span>
+                    <button type="submit" class="btn btn-primary" :disabled="loading">
+                        <span x-show="loading" class="loading loading-spinner loading-sm mr-2"></span>
+                        <i class="fas fa-save mr-2" x-show="!loading"></i>
+                        创建商品
                     </button>
                 </div>
             </form>
@@ -149,53 +186,92 @@
 </div>
 
 <script>
-    function productForm() {
-        return {
-            loading: false,
-            errors: {},
-            form: {
-                name: '',
-                sku: '',
-                category: '',
-                price: '',
-                stock: '',
-                status: 'active',
-                description: ''
-            },
+function productForm() {
+    return {
+        loading: false,
+        errors: {},
+        form: {
+            name: '',
+            sku: '',
+            category: '',
+            price: '',
+            stock: '',
+            status: 'active',
+            description: ''
+        },
 
-            validateForm() {
-                this.errors = {};
-                let isValid = true;
+        validateForm() {
+            this.errors = {};
+            let isValid = true;
 
-                if (!this.form.name) {
-                    this.errors.name = '商品名称不能为空';
-                    isValid = false;
-                }
-
-                if (!this.form.sku) {
-                    this.errors.sku = 'SKU不能为空';
-                    isValid = false;
-                }
-
-                if (!this.form.price || parseFloat(this.form.price) < 0) {
-                    this.errors.price = '请输入有效的价格';
-                    isValid = false;
-                }
-
-                if (!this.form.stock || parseInt(this.form.stock) < 0) {
-                    this.errors.stock = '请输入有效的库存数量';
-                    isValid = false;
-                }
-
-                return isValid;
-            },
-
-            submitForm(event) {
-                if (this.validateForm()) {
-                    this.loading = true;
-                    htmx.trigger(event.target, 'submit');
-                }
+            if (!this.form.name) {
+                this.errors.name = '商品名称不能为空';
+                isValid = false;
             }
-        };
+
+            if (!this.form.sku) {
+                this.errors.sku = 'SKU不能为空';
+                isValid = false;
+            }
+
+            if (!this.form.category) {
+                this.errors.category = '请选择商品分类';
+                isValid = false;
+            }
+
+            if (!this.form.price || parseFloat(this.form.price) < 0) {
+                this.errors.price = '请输入有效的价格';
+                isValid = false;
+            }
+
+            if (!this.form.stock || parseInt(this.form.stock) < 0) {
+                this.errors.stock = '请输入有效的库存数量';
+                isValid = false;
+            }
+
+            if (!this.form.status) {
+                this.errors.status = '请选择商品状态';
+                isValid = false;
+            }
+
+            return isValid;
+        },
+
+        submitForm(event) {
+            this.loading = true;
+
+            // 让 HTMX 处理表单提交
+            htmx.trigger(event.target, 'submit');
+
+            // 监听提交完成
+            setTimeout(() => {
+                this.loading = false;
+            }, 500);
+        }
     }
+}
 </script>
+
+<style>
+.form-control {
+    @apply space-y-2;
+}
+
+.form-control label {
+    @apply block text-sm font-medium mb-2;
+}
+
+.form-control .input,
+.form-control .textarea,
+.form-control .select {
+    @apply w-full;
+}
+
+.form-control .input-error {
+    @apply input-error;
+}
+
+.label-text-alt {
+    @apply text-xs text-base-content/60 mt-1;
+}
+</style>

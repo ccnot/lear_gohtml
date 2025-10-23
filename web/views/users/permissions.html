@@ -1,87 +1,125 @@
 <!-- 权限管理页面 -->
-<div>
-    <!-- 页面标题 -->
+<div class="space-y-6">
+    <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
     <div id="page-title" hx-swap-oob="true">权限管理</div>
 
     <!-- 面包屑导航 -->
-    <ul class="uk-breadcrumb" style="margin-bottom: 24px;">
-        <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
-                hx-push-url="true">首页</a></li>
-        <li><span>用户管理</span></li>
-        <li class="uk-disabled"><span>权限管理</span></li>
-    </ul>
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                   hx-push-url="true">首页</a></li>
+            <li>用户管理</li>
+            <li>权限管理</li>
+        </ul>
+    </div>
 
-    <!-- 权限矩阵 -->
-    <div class="content-card">
-        <div class="card-header">
-            <h3 class="card-title">
-                <i class="fas fa-shield-alt" style="color: var(--success-color);"></i>
-                权限配置矩阵
-            </h3>
-        </div>
-
+    <!-- 权限配置矩阵卡片 -->
+    <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
-            <div class="table-container">
-                <table class="uk-table uk-table-divider uk-table-middle">
+            <!-- 页面头部 -->
+            <h2 class="card-title text-lg font-medium flex items-center gap-2 mb-6">
+                <i class="fas fa-shield-alt text-success"></i>
+                权限配置矩阵
+            </h2>
+
+            <!-- 权限矩阵表格 -->
+            <div class="overflow-x-auto">
+                <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th style="width: 200px;">功能模块</th>
-                            <th style="text-align: center;">管理员</th>
-                            <th style="text-align: center;">编辑</th>
-                            <th style="text-align: center;">访客</th>
+                            <th class="w-48">功能模块</th>
+                            <th class="text-center">管理员</th>
+                            <th class="text-center">编辑</th>
+                            <th class="text-center">访客</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- 用户管理 -->
-                        <tr>
-                            <td><strong>用户管理</strong></td>
-                            <td style="text-align: center; background: #f6ffed;">
-                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
+                        <tr class="hover">
+                            <td class="font-medium">用户管理</td>
+                            <td class="text-center bg-success/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="text-sm">完全权限</span>
+                                </div>
                             </td>
-                            <td style="text-align: center; background: #fffbe6;">
-                                <i class="fas fa-check" style="color: #faad14;"></i> 查看/编辑
+                            <td class="text-center bg-warning/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-check text-warning"></i>
+                                    <span class="text-sm">查看/编辑</span>
+                                </div>
                             </td>
-                            <td style="text-align: center; background: #fff2f0;">
-                                <i class="fas fa-times-circle" style="color: #f5222d;"></i> 无权限
+                            <td class="text-center bg-error/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-times-circle text-error"></i>
+                                    <span class="text-sm">无权限</span>
+                                </div>
                             </td>
                         </tr>
                         <!-- 商品管理 -->
-                        <tr>
-                            <td><strong>商品管理</strong></td>
-                            <td style="text-align: center; background: #f6ffed;">
-                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
+                        <tr class="hover">
+                            <td class="font-medium">商品管理</td>
+                            <td class="text-center bg-success/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="text-sm">完全权限</span>
+                                </div>
                             </td>
-                            <td style="text-align: center; background: #f6ffed;">
-                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
+                            <td class="text-center bg-success/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="text-sm">完全权限</span>
+                                </div>
                             </td>
-                            <td style="text-align: center; background: #e6f7ff;">
-                                <i class="fas fa-eye" style="color: #1890ff;"></i> 只读
+                            <td class="text-center bg-info/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-eye text-info"></i>
+                                    <span class="text-sm">只读</span>
+                                </div>
                             </td>
                         </tr>
                         <!-- 订单管理 -->
-                        <tr>
-                            <td><strong>订单管理</strong></td>
-                            <td style="text-align: center; background: #f6ffed;">
-                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
+                        <tr class="hover">
+                            <td class="font-medium">订单管理</td>
+                            <td class="text-center bg-success/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="text-sm">完全权限</span>
+                                </div>
                             </td>
-                            <td style="text-align: center; background: #fffbe6;">
-                                <i class="fas fa-check" style="color: #faad14;"></i> 查看/编辑
+                            <td class="text-center bg-warning/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-check text-warning"></i>
+                                    <span class="text-sm">查看/编辑</span>
+                                </div>
                             </td>
-                            <td style="text-align: center; background: #e6f7ff;">
-                                <i class="fas fa-eye" style="color: #1890ff;"></i> 只读
+                            <td class="text-center bg-info/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-eye text-info"></i>
+                                    <span class="text-sm">只读</span>
+                                </div>
                             </td>
                         </tr>
                         <!-- 系统设置 -->
-                        <tr>
-                            <td><strong>系统设置</strong></td>
-                            <td style="text-align: center; background: #f6ffed;">
-                                <i class="fas fa-check-circle" style="color: #52c41a;"></i> 完全权限
+                        <tr class="hover">
+                            <td class="font-medium">系统设置</td>
+                            <td class="text-center bg-success/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="text-sm">完全权限</span>
+                                </div>
                             </td>
-                            <td style="text-align: center; background: #fff2f0;">
-                                <i class="fas fa-times-circle" style="color: #f5222d;"></i> 无权限
+                            <td class="text-center bg-error/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-times-circle text-error"></i>
+                                    <span class="text-sm">无权限</span>
+                                </div>
                             </td>
-                            <td style="text-align: center; background: #fff2f0;">
-                                <i class="fas fa-times-circle" style="color: #f5222d;"></i> 无权限
+                            <td class="text-center bg-error/10">
+                                <div class="flex flex-col items-center gap-1 py-2">
+                                    <i class="fas fa-times-circle text-error"></i>
+                                    <span class="text-sm">无权限</span>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -89,20 +127,41 @@
             </div>
 
             <!-- 权限说明 -->
-            <div class="uk-alert-warning" uk-alert style="margin-top: 24px;">
-                <p><strong>🔑 权限级别说明：</strong></p>
-                <div class="uk-grid-small uk-child-width-1-2@s" uk-grid style="margin-top: 12px;">
+            <div class="alert alert-warning mt-6">
+                <div class="flex items-start gap-2">
+                    <i class="fas fa-shield-alt flex-shrink-0 mt-0.5"></i>
                     <div>
-                        <i class="fas fa-check-circle" style="color: #52c41a;"></i> <strong>完全权限：</strong>增删改查所有操作
-                    </div>
-                    <div>
-                        <i class="fas fa-check" style="color: #faad14;"></i> <strong>部分权限：</strong>查看和编辑，不能删除
-                    </div>
-                    <div>
-                        <i class="fas fa-eye" style="color: #1890ff;"></i> <strong>只读权限：</strong>只能查看，不能修改
-                    </div>
-                    <div>
-                        <i class="fas fa-times-circle" style="color: #f5222d;"></i> <strong>无权限：</strong>完全不可访问
+                        <p class="font-semibold mb-3">🔑 权限级别说明：</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div class="flex items-center gap-2 p-3 bg-success/10 rounded">
+                                <i class="fas fa-check-circle text-success flex-shrink-0"></i>
+                                <div>
+                                    <strong class="block">完全权限：</strong>
+                                    增删改查所有操作
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-warning/10 rounded">
+                                <i class="fas fa-check text-warning flex-shrink-0"></i>
+                                <div>
+                                    <strong class="block">部分权限：</strong>
+                                    查看和编辑，不能删除
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-info/10 rounded">
+                                <i class="fas fa-eye text-info flex-shrink-0"></i>
+                                <div>
+                                    <strong class="block">只读权限：</strong>
+                                    只能查看，不能修改
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 p-3 bg-error/10 rounded">
+                                <i class="fas fa-times-circle text-error flex-shrink-0"></i>
+                                <div>
+                                    <strong class="block">无权限：</strong>
+                                    完全不可访问
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

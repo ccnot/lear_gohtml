@@ -1,133 +1,322 @@
-<!-- 订单详情 -->
-<div>
-    <!-- 订单基本信息 -->
-    <div style="background: var(--bg-hover); padding: 24px; border-radius: var(--radius-lg); margin-bottom: 24px;">
-        <div class="uk-grid-small uk-child-width-1-2" uk-grid>
-            <div>
-                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">订单号</div>
-                <div style="font-weight: 600; color: var(--text-primary);">{{.Order.OrderNo}}</div>
+<!-- 订单详情内容 - 支持模态框和独立页面显示 -->
+<div class="space-y-4 {{if .IsModal}}p-2{{end}}">
+    {{if not .IsModal}}
+    <!-- 独立页面模式：显示页面标题和面包屑 -->
+    <!-- 页面标题 - 使用 hx-swap-oob 更新顶部标题 -->
+    <div id="page-title" hx-swap-oob="true">订单详情</div>
+
+    <!-- 面包屑导航 -->
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a href="/dashboard" hx-get="/dashboard" hx-target="#main-container" hx-swap="innerHTML"
+                    hx-push-url="true">首页</a></li>
+            <li><a href="/orders" hx-get="/orders" hx-target="#main-container" hx-swap="innerHTML"
+                    hx-push-url="true">订单管理</a></li>
+            <li>订单详情</li>
+        </ul>
+    </div>
+    {{end}}
+
+    <!-- 订单基本信息卡片 -->
+    <div class="card bg-base-100 shadow-sm border border-base-300">
+        <div class="card-body">
+            <div class="flex items-center gap-2 mb-4">
+                <i class="fas fa-receipt text-info text-lg"></i>
+                <h2 class="card-title text-lg font-medium">订单基本信息</h2>
             </div>
-            <div>
-                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">订单状态</div>
-                <div>
-                    {{if eq .Order.Status "pending"}}
-                    <span class="badge warning">待处理</span>
-                    {{else if eq .Order.Status "paid"}}
-                    <span class="badge info">已支付</span>
-                    {{else if eq .Order.Status "shipped"}}
-                    <span class="badge primary">已发货</span>
-                    {{else if eq .Order.Status "completed"}}
-                    <span class="badge success">已完成</span>
-                    {{else if eq .Order.Status "cancelled"}}
-                    <span class="badge danger">已取消</span>
-                    {{end}}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 订单号 -->
+                <div class="space-y-1">
+                    <div class="text-sm text-base-content/60">订单号</div>
+                    <div class="font-semibold text-base-content font-mono">{{.Order.OrderNo}}</div>
+                </div>
+
+                <!-- 订单状态 -->
+                <div class="space-y-1">
+                    <div class="text-sm text-base-content/60">订单状态</div>
+                    <div>
+                        {{if eq .Order.Status "pending"}}
+                        <span class="badge badge-warning">待处理</span>
+                        {{else if eq .Order.Status "paid"}}
+                        <span class="badge badge-info">已支付</span>
+                        {{else if eq .Order.Status "shipped"}}
+                        <span class="badge badge-primary">已发货</span>
+                        {{else if eq .Order.Status "completed"}}
+                        <span class="badge badge-success">已完成</span>
+                        {{else if eq .Order.Status "cancelled"}}
+                        <span class="badge badge-error">已取消</span>
+                        {{end}}
+                    </div>
+                </div>
+
+                <!-- 客户名称 -->
+                <div class="space-y-1">
+                    <div class="text-sm text-base-content/60">客户名称</div>
+                    <div class="font-semibold text-base-content">{{.Order.CustomerName}}</div>
+                </div>
+
+                <!-- 联系邮箱 -->
+                <div class="space-y-1">
+                    <div class="text-sm text-base-content/60">联系邮箱</div>
+                    <div class="text-base-content">{{.Order.CustomerEmail}}</div>
+                </div>
+
+                <!-- 支付方式 -->
+                <div class="space-y-1">
+                    <div class="text-sm text-base-content/60">支付方式</div>
+                    <div class="text-base-content">{{.Order.PaymentMethod}}</div>
+                </div>
+
+                <!-- 创建时间 -->
+                <div class="space-y-1">
+                    <div class="text-sm text-base-content/60">创建时间</div>
+                    <div class="text-base-content">{{formatDateTimeFull .Order.CreatedAt}}</div>
                 </div>
             </div>
-            <div>
-                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">客户名称</div>
-                <div style="font-weight: 600; color: var(--text-primary);">{{.Order.CustomerName}}</div>
+        </div>
+    </div>
+
+    <!-- 订单商品列表卡片 -->
+    <div class="card bg-base-100 shadow-sm border border-base-300">
+        <div class="card-body">
+            <div class="flex items-center gap-2 mb-4">
+                <i class="fas fa-box text-success text-lg"></i>
+                <h2 class="card-title text-lg font-medium">订单商品</h2>
             </div>
-            <div>
-                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">联系邮箱</div>
-                <div style="color: var(--text-primary);">{{.Order.CustomerEmail}}</div>
+
+            {{if .Order.Items}}
+            <div class="overflow-x-auto">
+                <table class="table table-zebra table-compact w-full">
+                    <thead>
+                        <tr>
+                            <th>商品名称</th>
+                            <th>SKU</th>
+                            <th>单价</th>
+                            <th>数量</th>
+                            <th>小计</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Order.Items}}
+                        <tr>
+                            <td class="font-medium">{{.ProductName}}</td>
+                            <td>
+                                <span class="badge badge-outline badge-sm">{{.SKU}}</span>
+                            </td>
+                            <td>¥{{printf "%.2f" .Price}}</td>
+                            <td>×{{.Quantity}}</td>
+                            <td class="font-semibold">¥{{printf "%.2f" .Subtotal}}</td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-right font-semibold">订单总额：</td>
+                            <td class="font-bold text-error text-lg">¥{{printf "%.2f" .Order.TotalAmount}}</td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-            <div>
-                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">支付方式</div>
-                <div style="color: var(--text-primary);">{{.Order.PaymentMethod}}</div>
+            {{else}}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <span>暂无商品信息</span>
             </div>
-            <div>
-                <div style="font-size: 14px; color: var(--text-tertiary); margin-bottom: 4px;">创建时间</div>
-                <div style="color: var(--text-primary);">{{.Order.CreatedAt.Format "2006-01-02 15:04:05"}}</div>
+            {{end}}
+        </div>
+    </div>
+
+    <!-- 订单时间线卡片 -->
+    <div class="card bg-base-100 shadow-sm border border-base-300">
+        <div class="card-body">
+            <div class="flex items-center gap-2 mb-6">
+                <i class="fas fa-history text-primary text-lg"></i>
+                <h2 class="card-title text-lg font-medium">订单时间线</h2>
+            </div>
+
+            <div class="relative">
+                <!-- 时间线连接线 -->
+                <div class="absolute left-6 top-8 bottom-8 w-0.5 bg-base-300"></div>
+
+                <!-- 时间线项目 -->
+                <div class="space-y-6">
+                        <!-- 订单创建 -->
+                        <div class="relative flex items-start gap-4">
+                            <div class="relative z-10 flex items-center justify-center w-12 h-12 bg-primary text-primary-content rounded-full">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pb-2">
+                                <div class="bg-base-200 rounded-lg p-4 border border-base-300">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                        <h3 class="font-semibold text-base-content">订单创建</h3>
+                                        <span class="badge badge-primary badge-sm">已完成</span>
+                                    </div>
+                                    <p class="text-sm text-base-content/60 mt-1">{{formatDateTimeFull .Order.CreatedAt}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 订单支付 -->
+                        <div class="relative flex items-start gap-4">
+                            {{if ne .Order.Status "pending"}}
+                            <div class="relative z-10 flex items-center justify-center w-12 h-12 bg-info text-info-content rounded-full">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pb-2">
+                                <div class="bg-base-200 rounded-lg p-4 border border-base-300">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                        <h3 class="font-semibold text-base-content">订单支付</h3>
+                                        <span class="badge badge-info badge-sm">已完成</span>
+                                    </div>
+                                    <p class="text-sm text-base-content/60 mt-1">{{formatDateTimeFull .Order.UpdatedAt}}</p>
+                                </div>
+                            </div>
+                            {{else}}
+                            <div class="relative z-10 flex items-center justify-center w-12 h-12 bg-base-200 text-base-content/60 rounded-full border border-base-300">
+                                <i class="fas fa-clock text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pb-2">
+                                <div class="bg-base-100 rounded-lg p-4 border border-base-300 opacity-60">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                        <h3 class="font-semibold text-base-content/60">订单支付</h3>
+                                        <span class="badge badge-outline badge-sm text-base-content/50 border-base-300">待支付</span>
+                                    </div>
+                                    <p class="text-sm text-base-content/40 mt-1">等待客户完成支付</p>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+
+                        <!-- 订单发货 -->
+                        <div class="relative flex items-start gap-4">
+                            {{if or (eq .Order.Status "shipped") (eq .Order.Status "completed")}}
+                            <div class="relative z-10 flex items-center justify-center w-12 h-12 bg-warning text-warning-content rounded-full">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pb-2">
+                                <div class="bg-base-200 rounded-lg p-4 border border-base-300">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                        <h3 class="font-semibold text-base-content">订单发货</h3>
+                                        <span class="badge badge-warning badge-sm">已完成</span>
+                                    </div>
+                                    <p class="text-sm text-base-content/60 mt-1">{{formatDateTimeFull .Order.UpdatedAt}}</p>
+                                </div>
+                            </div>
+                            {{else if ne .Order.Status "cancelled"}}
+                            <div class="relative z-10 flex items-center justify-center w-12 h-12 bg-base-200 text-base-content/60 rounded-full border border-base-300">
+                                <i class="fas fa-clock text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pb-2">
+                                <div class="bg-base-100 rounded-lg p-4 border border-base-300 opacity-60">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                        <h3 class="font-semibold text-base-content/60">订单发货</h3>
+                                        <span class="badge badge-outline badge-sm text-base-content/50 border-base-300">
+                                            {{if eq .Order.Status "pending"}}待支付{{else if eq .Order.Status "paid"}}待发货{{end}}
+                                        </span>
+                                    </div>
+                                    <p class="text-sm text-base-content/40 mt-1">
+                                        {{if eq .Order.Status "pending"}}需要先完成支付{{else if eq .Order.Status "paid"}}等待商家发货{{end}}
+                                    </p>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+
+                        <!-- 订单完成 -->
+                        <div class="relative flex items-start gap-4">
+                            {{if eq .Order.Status "completed"}}
+                            <div class="relative z-10 flex items-center justify-center w-12 h-12 bg-success text-success-content rounded-full">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pb-2">
+                                <div class="bg-base-200 rounded-lg p-4 border border-base-300">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                        <h3 class="font-semibold text-base-content">订单完成</h3>
+                                        <span class="badge badge-success badge-sm">已完成</span>
+                                    </div>
+                                    <p class="text-sm text-base-content/60 mt-1">{{formatDateTimeFull .Order.UpdatedAt}}</p>
+                                </div>
+                            </div>
+                            {{else if ne .Order.Status "cancelled"}}
+                            <div class="relative z-10 flex items-center justify-center w-12 h-12 bg-base-200 text-base-content/60 rounded-full border border-base-300">
+                                <i class="fas fa-clock text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pb-2">
+                                <div class="bg-base-100 rounded-lg p-4 border border-base-300 opacity-60">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                        <h3 class="font-semibold text-base-content/60">订单完成</h3>
+                                        <span class="badge badge-outline badge-sm text-base-content/50 border-base-300">待完成</span>
+                                    </div>
+                                    <p class="text-sm text-base-content/40 mt-1">等待订单完成</p>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+
+                        <!-- 订单取消 -->
+                        {{if eq .Order.Status "cancelled"}}
+                        <div class="relative flex items-start gap-4">
+                            <div class="relative z-10 flex items-center justify-center w-12 h-12 bg-error text-error-content rounded-full">
+                                <i class="fas fa-times text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 pb-2">
+                                <div class="bg-base-200 rounded-lg p-4 border border-base-300">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                        <h3 class="font-semibold text-error">订单取消</h3>
+                                        <span class="badge badge-error badge-sm">已取消</span>
+                                    </div>
+                                    <p class="text-sm text-base-content/60 mt-1">{{formatDateTimeFull .Order.UpdatedAt}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 订单商品列表 -->
-    <div style="margin-bottom: 24px;">
-        <h4
-            style="font-weight: 500; margin-bottom: 16px; display: flex; align-items: center; color: var(--text-primary); font-size: 16px;">
-            <i class="fas fa-box" style="margin-right: 8px; color: var(--info-color);"></i>
-            订单商品
-        </h4>
-        {{if .Order.Items}}
-        <table class="uk-table uk-table-divider uk-table-middle">
-            <thead>
-                <tr>
-                    <th>商品名称</th>
-                    <th>SKU</th>
-                    <th>单价</th>
-                    <th>数量</th>
-                    <th>小计</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{range .Order.Items}}
-                <tr>
-                    <td>{{.ProductName}}</td>
-                    <td><span class="uk-label" style="font-size: 11px;">{{.SKU}}</span></td>
-                    <td>¥{{printf "%.2f" .Price}}</td>
-                    <td>×{{.Quantity}}</td>
-                    <td style="font-weight: 600;">¥{{printf "%.2f" .Subtotal}}</td>
-                </tr>
-                {{end}}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="4" style="text-align: right; font-weight: 600;">订单总额：</td>
-                    <td style="font-weight: 600; color: var(--error-color); font-size: 18px;">
-                        ¥{{printf "%.2f" .Order.TotalAmount}}
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
+    <!-- 操作按钮 -->
+    <div class="flex justify-end gap-3 items-center">
+        {{if .IsModal}}
+        <!-- 模态框模式：显示关闭按钮 -->
+        <label for="order-modal" class="btn btn-ghost btn-sm cursor-pointer">
+            <i class="fas fa-times mr-2"></i>
+            关闭
+        </label>
         {{else}}
-        <div class="uk-alert-primary" uk-alert>
-            暂无商品信息
-        </div>
+        <!-- 独立页面模式：显示返回按钮 -->
+        <a href="/orders" class="btn btn-ghost btn-sm" hx-get="/orders" hx-target="#main-container" hx-swap="innerHTML"
+            hx-push-url="true">
+            <i class="fas fa-arrow-left mr-2"></i>
+            返回列表
+        </a>
+        {{end}}
+
+        <!-- 状态更新按钮 -->
+        {{if eq .Order.Status "pending"}}
+        <button class="btn btn-success btn-sm" hx-put="/orders/{{.Order.ID}}/status"
+            hx-vals='{"status": "paid", "return": "detail"}'
+            hx-target="{{if .IsModal}}#order-modal-content{{else}}#main-container{{end}}" hx-swap="innerHTML">
+            <i class="fas fa-check mr-2"></i>
+            确认支付
+        </button>
+        {{else if eq .Order.Status "paid"}}
+        <button class="btn btn-primary btn-sm" hx-put="/orders/{{.Order.ID}}/status"
+            hx-vals='{"status": "shipped", "return": "detail"}'
+            hx-target="{{if .IsModal}}#order-modal-content{{else}}#main-container{{end}}" hx-swap="innerHTML">
+            <i class="fas fa-truck mr-2"></i>
+            确认发货
+        </button>
+        {{else if eq .Order.Status "shipped"}}
+        <button class="btn btn-success btn-sm" hx-put="/orders/{{.Order.ID}}/status"
+            hx-vals='{"status": "completed", "return": "detail"}'
+            hx-target="{{if .IsModal}}#order-modal-content{{else}}#main-container{{end}}" hx-swap="innerHTML">
+            <i class="fas fa-check-circle mr-2"></i>
+            完成订单
+        </button>
         {{end}}
     </div>
-
-    <!-- 订单时间线 -->
-    <div>
-        <h4
-            style="font-weight: 500; margin-bottom: 16px; display: flex; align-items: center; color: var(--text-primary); font-size: 16px;">
-            <i class="fas fa-history" style="margin-right: 8px; color: var(--primary-color);"></i>
-            订单时间线
-        </h4>
-        <div class="order-timeline">
-            <div class="timeline-item">
-                <strong style="color: var(--text-primary);">订单创建</strong>
-                <br>
-                <small style="color: var(--text-tertiary);">{{.Order.CreatedAt.Format "2006-01-02 15:04:05"}}</small>
-            </div>
-            {{if ne .Order.Status "pending"}}
-            <div class="timeline-item">
-                <strong style="color: var(--text-primary);">订单支付</strong>
-                <br>
-                <small style="color: var(--text-tertiary);">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
-            </div>
-            {{end}}
-            {{if or (eq .Order.Status "shipped") (eq .Order.Status "completed")}}
-            <div class="timeline-item">
-                <strong style="color: var(--text-primary);">订单发货</strong>
-                <br>
-                <small style="color: var(--text-tertiary);">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
-            </div>
-            {{end}}
-            {{if eq .Order.Status "completed"}}
-            <div class="timeline-item">
-                <strong style="color: var(--text-primary);">订单完成</strong>
-                <br>
-                <small style="color: var(--text-tertiary);">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
-            </div>
-            {{end}}
-            {{if eq .Order.Status "cancelled"}}
-            <div class="timeline-item">
-                <strong style="color: var(--error-color);">订单取消</strong>
-                <br>
-                <small style="color: var(--text-tertiary);">{{.Order.UpdatedAt.Format "2006-01-02 15:04:05"}}</small>
-            </div>
-            {{end}}
-        </div>
-    </div>
 </div>
+

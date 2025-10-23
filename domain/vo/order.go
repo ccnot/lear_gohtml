@@ -36,5 +36,6 @@ type OrderListData struct {
 
 // OrderDetailData 订单详情数据
 type OrderDetailData struct {
-	Order Order `json:"order"`
+	Order    Order `json:"order"`
+	IsModal  bool  `json:"is_modal"`
 }

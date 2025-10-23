@@ -1,91 +1,105 @@
 <!-- 顶部栏 -->
-<header class="top-header">
-    <div class="header-title">
+<header
+    class="h-16 bg-base-100 shadow-sm px-6 flex items-center justify-between sticky top-0 z-30 border-b border-base-300">
+    <div class="flex items-center gap-4">
+        <!-- 移动端菜单切换按钮 -->
+        <button class="btn btn-ghost btn-square btn-sm lg:hidden" @click="sidebarOpen = !sidebarOpen">
+            <i class="fas fa-bars text-base-content"></i>
+        </button>
+
         <!-- 将通过 HTMX 动态更新标题 -->
-        <span id="page-title">管理后台</span>
+        <span id="page-title" class="text-xl font-medium text-base-content">管理后台</span>
     </div>
 
-    <div class="header-actions">
-        <!-- 刷新按钮 -->
-        <button class="uk-button uk-button-default" onclick="window.location.reload()" title="刷新页面"
-            uk-tooltip="title: 刷新页面; pos: bottom">
-            <i class="fas fa-sync-alt"></i>
+    <div class="flex items-center gap-4">
+        <!-- 主题切换按钮 -->
+        <button class="btn btn-ghost btn-square btn-sm" id="theme-toggle-btn" onclick="simpleThemeToggle(event)"
+            title="切换主题">
+            <i id="theme-icon-light" class="fas fa-sun text-base-content"></i>
+            <i id="theme-icon-dark" class="fas fa-moon text-base-content hidden"></i>
         </button>
 
         <!-- 通知下拉菜单 -->
-        <div>
-            <button class="uk-button uk-button-default" type="button">
+        <div class="dropdown dropdown-end" x-data="{ open: false }">
+            <button type="button" class="btn btn-ghost btn-square btn-sm relative" @click="open = !open">
                 <i class="fas fa-bell"></i>
-                <span class="notification-badge">3</span>
+                <span
+                    class="absolute top-0 right-0 w-3 h-3 bg-error rounded-full flex items-center justify-center text-[10px] text-white">
+                    3
+                </span>
             </button>
-            <div uk-dropdown="mode: click; pos: bottom-right">
-                <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
-                    <strong style="font-size: 14px;">通知中心</strong>
+            <div class="dropdown-content bg-base-100 rounded-lg shadow-lg w-80 p-0 border border-base-300" x-show="open"
+                @click.away="open = false" x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95">
+                <div class="px-4 py-3 border-b border-base-300">
+                    <strong class="text-sm font-medium">通知中心</strong>
                 </div>
-                <ul class="uk-nav uk-dropdown-nav">
-                    <li>
-                        <a href="#">
-                            <div style="display: flex; gap: 12px;">
-                                <i class="fas fa-user" style="color: #1890ff; margin-top: 2px;"></i>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 14px;">新用户注册</div>
-                                    <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 2px;">5 分钟前
-                                    </div>
-                                </div>
+                <div class="max-h-96 overflow-y-auto">
+                    <a href="#" class="block p-4 hover:bg-base-200 transition-colors border-b border-base-200">
+                        <div class="flex gap-3">
+                            <i class="fas fa-user text-info mt-0.5"></i>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">新用户注册</div>
+                                <div class="text-xs text-base-content/60 mt-1">5 分钟前</div>
                             </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <div style="display: flex; gap: 12px;">
-                                <i class="fas fa-shopping-cart" style="color: #52c41a; margin-top: 2px;"></i>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 14px;">新订单</div>
-                                    <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 2px;">15 分钟前
-                                    </div>
-                                </div>
+                        </div>
+                    </a>
+                    <a href="#" class="block p-4 hover:bg-base-200 transition-colors border-b border-base-200">
+                        <div class="flex gap-3">
+                            <i class="fas fa-shopping-cart text-success mt-0.5"></i>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">新订单</div>
+                                <div class="text-xs text-base-content/60 mt-1">15 分钟前</div>
                             </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <div style="display: flex; gap: 12px;">
-                                <i class="fas fa-exclamation-triangle" style="color: #faad14; margin-top: 2px;"></i>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 14px;">库存预警</div>
-                                    <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 2px;">1 小时前
-                                    </div>
-                                </div>
+                        </div>
+                    </a>
+                    <a href="#" class="block p-4 hover:bg-base-200 transition-colors">
+                        <div class="flex gap-3">
+                            <i class="fas fa-exclamation-triangle text-warning mt-0.5"></i>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">库存预警</div>
+                                <div class="text-xs text-base-content/60 mt-1">1 小时前</div>
                             </div>
-                        </a>
-                    </li>
-                </ul>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
 
         <!-- 用户菜单下拉 -->
-        <div>
-            <button class="uk-button uk-button-default user-dropdown-trigger" type="button">
+        <div class="dropdown dropdown-end" x-data="{ open: false }">
+            <button type="button" class="btn btn-ghost btn-sm gap-2" @click="open = !open">
                 <i class="fas fa-user-circle"></i>
-                <span class="user-name">管理员</span>
-                <i class="fas fa-angle-down" style="font-size: 12px;"></i>
+                <span class="text-base-content">管理员</span>
+                <i class="fas fa-angle-down text-xs"></i>
             </button>
-            <div uk-dropdown="mode: click; pos: bottom-right">
-                <ul class="uk-nav uk-dropdown-nav">
+            <div class="dropdown-content bg-base-100 rounded-lg shadow-lg p-0 border border-base-300" x-show="open"
+                @click.away="open = false" x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95">
+                <ul class="menu menu-sm w-48 p-2">
                     <li>
                         <a href="#">
-                            <i class="fas fa-user"></i> 个人信息
+                            <i class="fas fa-user"></i>
+                            个人信息
                         </a>
                     </li>
                     <li>
                         <a href="#">
-                            <i class="fas fa-key"></i> 修改密码
+                            <i class="fas fa-key"></i>
+                            修改密码
                         </a>
                     </li>
-                    <li class="uk-nav-divider"></li>
                     <li>
-                        <a href="#" style="color: var(--error-color);">
-                            <i class="fas fa-sign-out-alt"></i> 退出登录
+                        <div class="divider my-1"></div>
+                    </li>
+                    <li>
+                        <a href="#" class="text-error">
+                            <i class="fas fa-sign-out-alt"></i>
+                            退出登录
                         </a>
                     </li>
                 </ul>

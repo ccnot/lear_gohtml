@@ -1,0 +1,62 @@
+{{define "components/pagination.html"}}
+<!-- 通用分页组件 -->
+<!-- 参数说明：
+   - BaseURL: 基础URL路径 (如 "/users", "/orders")
+   - PageInfo: 分页信息对象
+   - TargetContainer: 目标容器ID (如 "user-table-container", "order-table-container")
+   - ExtraParams: 额外的URL参数字典 (可选，包含 keyword, status 等)
+-->
+{{if gt .PageInfo.TotalPages 1}}
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+    <div class="text-sm text-base-content/60">
+        显示 {{.PageInfo.Page}} / {{.PageInfo.TotalPages}} 页，共 {{.PageInfo.Total}} 条记录
+    </div>
+    <div class="join">
+        {{if gt .PageInfo.Page 1}}
+        <a href="#"
+           hx-get="{{.BaseURL}}?page={{sub .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}{{range $key, $value := .ExtraParams}}&{{$key}}={{$value}}{{end}}"
+           hx-target="#{{.TargetContainer}}" hx-swap="innerHTML"
+           hx-select="#{{.TargetContainer}} > *"
+           class="join-item btn btn-sm">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        {{else}}
+        <button class="join-item btn btn-sm" disabled>
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        {{end}}
+
+        {{range $i := iterate .PageInfo.TotalPages}}
+        {{if eq $i $.PageInfo.Page}}
+        <button class="join-item btn btn-sm btn-active">{{$i}}</button>
+        {{else if or (eq $i 1) (eq $i $.PageInfo.TotalPages) (and (ge $i (sub $.PageInfo.Page 2))
+        (le $i (add $.PageInfo.Page 2)))}}
+        <a href="#"
+           hx-get="{{$.BaseURL}}?page={{$i}}&page_size={{$.PageInfo.PageSize}}{{range $key, $value := $.ExtraParams}}&{{$key}}={{$value}}{{end}}"
+           hx-target="#{{$.TargetContainer}}" hx-swap="innerHTML"
+           hx-select="#{{$.TargetContainer}} > *"
+           class="join-item btn btn-sm">
+            {{$i}}
+        </a>
+        {{else if or (eq $i 2) (eq $i (sub $.PageInfo.TotalPages 1))}}
+        <button class="join-item btn btn-sm" disabled>…</button>
+        {{end}}
+        {{end}}
+
+        {{if lt .PageInfo.Page .PageInfo.TotalPages}}
+        <a href="#"
+           hx-get="{{.BaseURL}}?page={{add .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}{{range $key, $value := .ExtraParams}}&{{$key}}={{$value}}{{end}}"
+           hx-target="#{{.TargetContainer}}" hx-swap="innerHTML"
+           hx-select="#{{.TargetContainer}} > *"
+           class="join-item btn btn-sm">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+        {{else}}
+        <button class="join-item btn btn-sm" disabled>
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        {{end}}
+    </div>
+</div>
+{{end}}
+{{end}}

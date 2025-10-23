@@ -1,56 +1,53 @@
 <!-- 商品卡片 - 用于网格显示和单卡更新 -->
-<div class="product-card" id="product-card-{{.ID}}">
-    <div style="position: relative;">
-        <div class="product-image"
-            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
-            <i class="fas fa-box" style="font-size: 64px; color: rgba(255,255,255,0.5);"></i>
+<div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow duration-200" id="product-card-{{.ID}}">
+    <figure class="relative">
+        <!-- 商品图片 -->
+        <div class="h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+            <i class="fas fa-box text-4xl text-white/50"></i>
         </div>
+
         <!-- 状态标签 -->
-        <div style="position: absolute; top: 10px; right: 10px;">
+        <div class="absolute top-2 right-2">
             {{if eq .Status "active"}}
-            <span class="badge success">在售</span>
+            <span class="badge badge-success">在售</span>
             {{else if eq .Status "inactive"}}
-            <span class="badge warning">下架</span>
+            <span class="badge badge-warning">下架</span>
             {{else}}
-            <span class="badge danger">缺货</span>
+            <span class="badge badge-error">缺货</span>
             {{end}}
         </div>
-    </div>
+    </figure>
 
-    <div class="product-info">
+    <div class="card-body p-4">
         <!-- 商品名称 -->
-        <h4 class="product-name" title="{{.Name}}">
+        <h3 class="card-title text-lg font-medium mb-2 truncate" title="{{.Name}}">
             {{.Name}}
-        </h4>
+        </h3>
 
         <!-- SKU 和分类 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span class="uk-label uk-label-default" style="font-size: 11px;">{{.SKU}}</span>
-            <span class="uk-label" style="font-size: 11px; background: var(--info-color);">{{.Category}}</span>
+        <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-outline badge-sm">{{.SKU}}</span>
+            <span class="badge badge-info badge-sm">{{.Category}}</span>
         </div>
 
         <!-- 价格和库存 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="product-price">¥{{printf "%.2f" .Price}}</div>
-            <div style="font-size: 14px; color: var(--text-tertiary);">
-                库存: <strong style="color: var(--text-primary);">{{.Stock}}</strong>
+        <div class="flex items-center justify-between mb-4">
+            <div class="text-xl font-bold text-primary">¥{{printf "%.2f" .Price}}</div>
+            <div class="text-sm text-base-content/60">
+                库存: <span class="font-semibold text-base-content">{{.Stock}}</span>
             </div>
         </div>
 
         <!-- 操作按钮 -->
-        <div style="display: flex; gap: 8px;" x-data="deleteConfirm({
-            title: '确认删除',
-            message: '确定要删除商品【{{.Name}}】吗？此操作不可恢复。',
-            url: '/products/{{.ID}}',
-            target: '#product-card-{{.ID}}'
-        })">
-            <a href="/products/{{.ID}}" class="uk-button uk-button-primary uk-button-small uk-width-expand"
-                hx-get="/products/{{.ID}}" hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true">
-                <i class="fas fa-edit"></i>
-                <span>编辑</span>
+        <div class="flex gap-2">
+            <a href="/products/{{.ID}}" class="btn btn-primary btn-sm flex-1" hx-get="/products/{{.ID}}"
+                hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true">
+                <i class="fas fa-edit mr-1"></i>
+                编辑
             </a>
 
-            <button class="uk-button uk-button-danger uk-button-small" @click="confirmDelete()" title="删除" uk-tooltip>
+            <button class="btn btn-error btn-sm" hx-delete="/products/{{.ID}}" hx-target="#product-card-{{.ID}}"
+                hx-swap="outerHTML swap:300ms" title="删除">
                 <i class="fas fa-trash"></i>
             </button>
         </div>

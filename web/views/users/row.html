@@ -1,10 +1,14 @@
 <!-- 用户表格单行 - 用于单行更新 -->
-<tr id="user-row-{{.ID}}">
+<tr id="user-row-{{.ID}}" class="hover">
     <td>{{.ID}}</td>
     <td>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <img src="{{.Avatar}}" alt="{{.Username}}" class="user-avatar">
-            <strong>{{.Username}}</strong>
+        <div class="flex items-center gap-3">
+            <div class="avatar placeholder">
+                <div class="bg-neutral text-neutral-content rounded-full w-10 h-10">
+                    <span class="text-lg">{{substr .Username 0 1}}</span>
+                </div>
+            </div>
+            <span class="font-medium">{{.Username}}</span>
         </div>
     </td>
     <td>{{.RealName}}</td>
@@ -12,38 +16,56 @@
     <td>{{.Phone}}</td>
     <td>
         {{if eq .Role "admin"}}
-        <span class="badge danger">管理员</span>
+        <span class="badge badge-error">管理员</span>
         {{else if eq .Role "editor"}}
-        <span class="badge info">编辑</span>
+        <span class="badge badge-info">编辑</span>
         {{else}}
-        <span class="badge">访客</span>
+        <span class="badge badge-outline">访客</span>
         {{end}}
     </td>
     <td>
         {{if eq .Status "active"}}
-        <span class="badge success">活跃</span>
+        <span class="badge badge-success">活跃</span>
         {{else}}
-        <span class="badge warning">非活跃</span>
+        <span class="badge badge-warning">非活跃</span>
         {{end}}
     </td>
-    <td>{{.CreatedAt.Format "2006-01-02"}}</td>
+    <td>{{formatDate .CreatedAt}}</td>
     <td>
-        <div class="action-buttons" x-data="deleteConfirm({
-            title: '确认删除',
-            message: '确定要删除用户【{{.Username}}】吗？此操作不可恢复。',
-            url: '/users/{{.ID}}',
-            target: '#user-row-{{.ID}}'
-        })">
+        <div class="flex gap-1" x-data="{ showConfirm: false }">
             <!-- 编辑按钮 -->
-            <a href="/users/{{.ID}}" class="btn-icon" hx-get="/users/{{.ID}}" hx-target="#main-container"
-                hx-swap="innerHTML" hx-push-url="true" title="编辑" uk-tooltip>
+            <a href="/users/{{.ID}}" class="btn btn-ghost btn-xs" hx-get="/users/{{.ID}}" hx-target="#main-container"
+                hx-swap="innerHTML" hx-push-url="true" title="编辑">
                 <i class="fas fa-edit"></i>
             </a>
 
             <!-- 删除按钮 -->
-            <button class="btn-icon danger" @click="confirmDelete()" title="删除" uk-tooltip>
+            <button class="btn btn-ghost btn-xs text-error" @click="showConfirm = true" title="删除">
                 <i class="fas fa-trash"></i>
             </button>
+
+            <!-- 确认对话框 -->
+            <div x-show="showConfirm" x-cloak @click.self="showConfirm = false"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" style="display: none;">
+                <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4 p-6" @click.stop>
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-warning text-3xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold mb-2">确认删除</h3>
+                            <p class="text-base-content/70">确定要删除用户【{{.Username}}】吗？此操作不可恢复。</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button @click="showConfirm = false" class="btn btn-ghost">取消</button>
+                        <button @click="showConfirm = false" hx-delete="/users/{{.ID}}" hx-target="#user-row-{{.ID}}"
+                            hx-swap="outerHTML swap:300ms" class="btn btn-error">
+                            确认删除
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </td>
 </tr>

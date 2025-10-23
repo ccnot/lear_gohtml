@@ -1,79 +1,90 @@
 <!-- 订单表格单行 - 用于单行更新 -->
-<tr id="order-row-{{.ID}}">
+<tr id="order-row-{{.ID}}" class="hover">
     <td>{{.ID}}</td>
-    <td><strong>{{.OrderNo}}</strong></td>
+    <td class="font-medium">{{.OrderNo}}</td>
     <td>
         <div>
-            <div>{{.CustomerName}}</div>
-            <small style="color: var(--text-tertiary);">{{.CustomerEmail}}</small>
+            <div class="font-medium">{{.CustomerName}}</div>
+            <div class="text-sm text-base-content/60">{{.CustomerEmail}}</div>
         </div>
     </td>
-    <td style="font-weight: 600; color: var(--error-color);">
-        ¥{{printf "%.2f" .TotalAmount}}
-    </td>
+    <td class="font-semibold text-error">¥{{printf "%.2f" .TotalAmount}}</td>
     <td>{{.PaymentMethod}}</td>
     <td>
         {{if eq .Status "pending"}}
-        <span class="badge warning">待处理</span>
+        <span class="badge badge-warning">待处理</span>
         {{else if eq .Status "paid"}}
-        <span class="badge info">已支付</span>
+        <span class="badge badge-info">已支付</span>
         {{else if eq .Status "shipped"}}
-        <span class="badge primary">已发货</span>
+        <span class="badge badge-primary">已发货</span>
         {{else if eq .Status "completed"}}
-        <span class="badge success">已完成</span>
+        <span class="badge badge-success">已完成</span>
         {{else if eq .Status "cancelled"}}
-        <span class="badge danger">已取消</span>
+        <span class="badge badge-error">已取消</span>
         {{end}}
     </td>
-    <td>{{.CreatedAt.Format "2006-01-02 15:04"}}</td>
+    <td>{{formatDateTime .CreatedAt}}</td>
     <td>
-        <div class="action-buttons">
+        <div class="flex gap-1 items-center">
             <!-- 查看详情按钮 -->
-            <button class="btn-icon" hx-get="/orders/{{.ID}}" hx-target="#order-modal-content" hx-swap="innerHTML"
-                @click="UIkit.modal('#order-modal').show()" title="查看详情" uk-tooltip>
+            <label for="order-modal" class="btn btn-ghost btn-xs cursor-pointer" hx-get="/orders/{{.ID}}"
+                hx-target="#order-modal-content" hx-swap="innerHTML" title="查看详情">
                 <i class="fas fa-eye"></i>
-            </button>
+            </label>
 
-            <!-- 状态更新下拉菜单 - 紧凑版 -->
-            <div>
-                <button class="btn-icon" type="button" title="更新状态" uk-tooltip>
+            <!-- 状态更新下拉菜单 -->
+            <div class="dropdown dropdown-bottom dropdown-hover">
+                <button tabindex="0" role="button" class="btn btn-ghost btn-xs" title="更新状态">
                     <i class="fas fa-edit"></i>
                 </button>
-                <div uk-dropdown="mode: click; pos: bottom-right; offset: 5" class="order-status-dropdown">
-                    <div class="status-dropdown-content">
-                        <a href="#" class="status-option" hx-put="/orders/{{.ID}}/status"
-                            hx-vals='{"status": "pending"}' hx-target="#order-row-{{.ID}}" hx-swap="outerHTML">
-                            <span class="badge warning">待处理</span>
+                <ul tabindex="0" class="dropdown-content z-[50] menu p-1 shadow-lg bg-base-100 rounded-lg w-36 border border-base-200">
+                    <!-- 待处理状态 -->
+                    <li>
+                        <a hx-put="/orders/{{.ID}}/status" hx-vals='{"status": "pending"}'
+                            hx-target="#order-row-{{.ID}}" hx-swap="outerHTML"
+                            class="flex items-center gap-2 p-2 hover:bg-primary/5 rounded transition-colors duration-200">
+                            <div class="w-2 h-2 rounded-full bg-warning flex-shrink-0"></div>
+                            <div class="font-medium text-sm">待处理</div>
                         </a>
-                        <a href="#" class="status-option" hx-put="/orders/{{.ID}}/status" hx-vals='{"status": "paid"}'
-                            hx-target="#order-row-{{.ID}}" hx-swap="outerHTML">
-                            <span class="badge info">已支付</span>
+                    </li>
+
+                    <!-- 已支付状态 -->
+                    <li>
+                        <a hx-put="/orders/{{.ID}}/status" hx-vals='{"status": "paid"}' hx-target="#order-row-{{.ID}}"
+                            hx-swap="outerHTML" class="flex items-center gap-2 p-2 hover:bg-primary/5 rounded transition-colors duration-200">
+                            <div class="w-2 h-2 rounded-full bg-info flex-shrink-0"></div>
+                            <div class="font-medium text-sm">已支付</div>
                         </a>
-                        <a href="#" class="status-option" hx-put="/orders/{{.ID}}/status"
-                            hx-vals='{"status": "shipped"}' hx-target="#order-row-{{.ID}}" hx-swap="outerHTML">
-                            <span class="badge primary">已发货</span>
+                    </li>
+
+                    <!-- 已发货状态 -->
+                    <li>
+                        <a hx-put="/orders/{{.ID}}/status" hx-vals='{"status": "shipped"}'
+                            hx-target="#order-row-{{.ID}}" hx-swap="outerHTML"
+                            class="flex items-center gap-2 p-2 hover:bg-primary/5 rounded transition-colors duration-200">
+                            <div class="w-2 h-2 rounded-full bg-primary flex-shrink-0"></div>
+                            <div class="font-medium text-sm">已发货</div>
                         </a>
-                        <a href="#" class="status-option" hx-put="/orders/{{.ID}}/status"
-                            hx-vals='{"status": "completed"}' hx-target="#order-row-{{.ID}}" hx-swap="outerHTML">
-                            <span class="badge success">已完成</span>
+                    </li>
+
+                    <!-- 已完成状态 -->
+                    <li>
+                        <a hx-put="/orders/{{.ID}}/status" hx-vals='{"status": "completed"}'
+                            hx-target="#order-row-{{.ID}}" hx-swap="outerHTML"
+                            class="flex items-center gap-2 p-2 hover:bg-primary/5 rounded transition-colors duration-200">
+                            <div class="w-2 h-2 rounded-full bg-success flex-shrink-0"></div>
+                            <div class="font-medium text-sm">已完成</div>
                         </a>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
 
             <!-- 取消订单按钮 -->
             {{if ne .Status "cancelled"}}
-            <div x-data="deleteConfirm({
-                title: '确认取消订单',
-                message: '确定要取消订单【{{.OrderNo}}】吗？订单将被标记为已取消状态。',
-                confirmText: '确定取消',
-                url: '/orders/{{.ID}}',
-                target: '#order-row-{{.ID}}'
-            })">
-                <button class="btn-icon danger" @click="confirmDelete()" title="取消订单" uk-tooltip>
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+            <button class="btn btn-ghost btn-xs text-error" hx-delete="/orders/{{.ID}}" hx-target="#order-row-{{.ID}}"
+                hx-swap="outerHTML swap:300ms" title="取消订单">
+                <i class="fas fa-times"></i>
+            </button>
             {{end}}
         </div>
     </td>

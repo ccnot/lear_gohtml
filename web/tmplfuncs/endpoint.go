@@ -1,7 +1,11 @@
 package tmplfuncs
 
 import (
+	"encoding/json"
+	"fmt"
+	"html/template"
 	"strings"
+	"time"
 
 	"github.com/8treenet/iris/v12/view"
 )
@@ -21,6 +25,18 @@ func Register(engine *view.HTMLEngine) {
 
 	// 迭代函数
 	engine.AddFunc("iterate", iterate)
+
+	// 字典函数
+	engine.AddFunc("dict", dict)
+
+	// JSON 序列化
+	engine.AddFunc("toJSON", toJSON)
+
+	// 日期时间格式化
+	engine.AddFunc("formatTime", formatTime)
+	engine.AddFunc("formatDate", formatDate)
+	engine.AddFunc("formatDateTime", formatDateTime)
+	engine.AddFunc("formatDateTimeFull", formatDateTimeFull)
 }
 
 // substr 截取字符串
@@ -66,4 +82,49 @@ func iterate(count int) []int {
 		result[i] = i + 1
 	}
 	return result
+}
+
+// dict 创建字典映射，用于在模板中传递多个参数
+func dict(values ...interface{}) (map[string]interface{}, error) {
+	if len(values)%2 != 0 {
+		return nil, fmt.Errorf("invalid dict call，需要偶数个参数")
+	}
+	d := make(map[string]interface{}, len(values)/2)
+	for i := 0; i < len(values); i += 2 {
+		key, ok := values[i].(string)
+		if !ok {
+			return nil, fmt.Errorf("dict keys must be strings")
+		}
+		d[key] = values[i+1]
+	}
+	return d, nil
+}
+
+// toJSON 将对象序列化为 JSON 字符串，用于在模板中传递数据到 JavaScript
+func toJSON(v interface{}) template.JS {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return template.JS("{}")
+	}
+	return template.JS(b)
+}
+
+// formatTime 格式化时间为指定格式
+func formatTime(t time.Time, layout string) string {
+	return t.Format(layout)
+}
+
+// formatDate 格式化日期（年-月-日）
+func formatDate(t time.Time) string {
+	return t.Format("2006-01-02")
+}
+
+// formatDateTime 格式化日期时间（年-月-日 时:分）
+func formatDateTime(t time.Time) string {
+	return t.Format("2006-01-02 15:04")
+}
+
+// formatDateTimeFull 格式化完整日期时间（年-月-日 时:分:秒）
+func formatDateTimeFull(t time.Time) string {
+	return t.Format("2006-01-02 15:04:05")
 }
