@@ -1,109 +1,198 @@
-<!-- 顶部栏 -->
-<header
-    class="h-16 bg-base-100 shadow-sm px-6 flex items-center justify-between sticky top-0 z-30 border-b border-base-300">
-    <div class="flex items-center gap-4">
+<!-- 顶部栏 - 使用 DaisyUI navbar 组件 -->
+<header class="navbar bg-base-100 shadow-sm border-b border-base-300 sticky top-0 z-30">
+    <!-- 左侧 - 菜单按钮和页面标题 -->
+    <div class="navbar-start">
         <!-- 移动端菜单切换按钮 -->
-        <button class="btn btn-ghost btn-square btn-sm lg:hidden" @click="sidebarOpen = !sidebarOpen">
-            <i class="fas fa-bars text-base-content"></i>
-        </button>
+        <div class="dropdown lg:hidden">
+            <button tabindex="0" role="button" class="btn btn-ghost btn-circle" @click="sidebarOpen = !sidebarOpen">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    class="h-5 w-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
 
-        <!-- 将通过 HTMX 动态更新标题 -->
-        <span id="page-title" class="text-xl font-medium text-base-content">管理后台</span>
+        <!-- 页面标题 - 移动端和桌面端都显示 -->
+        <a class="btn btn-ghost text-xl font-semibold">
+            <span id="page-title">管理后台</span>
+        </a>
     </div>
 
-    <div class="flex items-center gap-4">
-        <!-- 主题切换按钮 -->
-        <button class="btn btn-ghost btn-square btn-sm" id="theme-toggle-btn" onclick="simpleThemeToggle(event)"
-            title="切换主题">
-            <i id="theme-icon-light" class="fas fa-sun text-base-content"></i>
-            <i id="theme-icon-dark" class="fas fa-moon text-base-content hidden"></i>
-        </button>
+    <!-- 右侧操作区 -->
+    <div class="navbar-end gap-2">
+        <!-- 主题切换 - 使用 daisyUI 5 Theme Controller -->
+        <label class="swap swap-rotate btn btn-ghost btn-circle">
+            <!-- 这个隐藏的 checkbox 控制主题切换 -->
+            <input type="checkbox" class="theme-controller" value="dark" />
 
-        <!-- 通知下拉菜单 -->
-        <div class="dropdown dropdown-end" x-data="{ open: false }">
-            <button type="button" class="btn btn-ghost btn-square btn-sm relative" @click="open = !open">
-                <i class="fas fa-bell"></i>
-                <span
-                    class="absolute top-0 right-0 w-3 h-3 bg-error rounded-full flex items-center justify-center text-[10px] text-white">
-                    3
-                </span>
-            </button>
-            <div class="dropdown-content bg-base-100 rounded-lg shadow-lg w-80 p-0 border border-base-300" x-show="open"
-                @click.away="open = false" x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100"
-                x-transition:leave-end="opacity-0 scale-95">
-                <div class="px-4 py-3 border-b border-base-300">
-                    <strong class="text-sm font-medium">通知中心</strong>
+            <!-- 太阳图标 (浅色模式) -->
+            <svg class="swap-off fill-current w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                    d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+            </svg>
+
+            <!-- 月亮图标 (深色模式) -->
+            <svg class="swap-on fill-current w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                    d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
+            </svg>
+        </label>
+
+        <!-- 通知下拉 - 使用 daisyUI 5 dropdown -->
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                <div class="indicator">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <span class="badge badge-xs badge-error indicator-item">3</span>
                 </div>
-                <div class="max-h-96 overflow-y-auto">
-                    <a href="#" class="block p-4 hover:bg-base-200 transition-colors border-b border-base-200">
-                        <div class="flex gap-3">
-                            <i class="fas fa-user text-info mt-0.5"></i>
-                            <div class="flex-1">
-                                <div class="text-sm font-medium">新用户注册</div>
-                                <div class="text-xs text-base-content/60 mt-1">5 分钟前</div>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="#" class="block p-4 hover:bg-base-200 transition-colors border-b border-base-200">
-                        <div class="flex gap-3">
-                            <i class="fas fa-shopping-cart text-success mt-0.5"></i>
-                            <div class="flex-1">
-                                <div class="text-sm font-medium">新订单</div>
-                                <div class="text-xs text-base-content/60 mt-1">15 分钟前</div>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="#" class="block p-4 hover:bg-base-200 transition-colors">
-                        <div class="flex gap-3">
-                            <i class="fas fa-exclamation-triangle text-warning mt-0.5"></i>
-                            <div class="flex-1">
-                                <div class="text-sm font-medium">库存预警</div>
-                                <div class="text-xs text-base-content/60 mt-1">1 小时前</div>
-                            </div>
-                        </div>
-                    </a>
+            </div>
+            <div tabindex="0"
+                class="dropdown-content z-[1] card card-compact w-80 p-0 shadow-xl bg-base-100 border border-base-300">
+                <div class="card-body p-0">
+                    <!-- 标题 -->
+                    <div class="px-4 py-3 border-b border-base-300">
+                        <h3 class="font-semibold">通知中心</h3>
+                    </div>
+                    <!-- 通知列表 -->
+                    <ul class="menu menu-sm">
+                        <li>
+                            <a class="flex items-start gap-3 py-3">
+                                <div class="avatar">
+                                    <div class="w-8 rounded-full bg-primary/20 text-primary flex items-center justify-center">
+                                        <i class="fas fa-user text-xs"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-sm">新用户注册</div>
+                                    <div class="text-xs opacity-60">5 分钟前</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-start gap-3 py-3">
+                                <div class="avatar">
+                                    <div class="w-8 rounded-full bg-success/20 text-success flex items-center justify-center">
+                                        <i class="fas fa-shopping-cart text-xs"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-sm">新订单</div>
+                                    <div class="text-xs opacity-60">15 分钟前</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="flex items-start gap-3 py-3">
+                                <div class="avatar">
+                                    <div class="w-8 rounded-full bg-warning/20 text-warning flex items-center justify-center">
+                                        <i class="fas fa-exclamation-triangle text-xs"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-sm">库存预警</div>
+                                    <div class="text-xs opacity-60">1 小时前</div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- 查看全部 -->
+                    <div class="px-4 py-3 border-t border-base-300">
+                        <a href="#" class="btn btn-sm btn-block btn-ghost">查看全部通知</a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 用户菜单下拉 -->
-        <div class="dropdown dropdown-end" x-data="{ open: false }">
-            <button type="button" class="btn btn-ghost btn-sm gap-2" @click="open = !open">
-                <i class="fas fa-user-circle"></i>
-                <span class="text-base-content">管理员</span>
-                <i class="fas fa-angle-down text-xs"></i>
-            </button>
-            <div class="dropdown-content bg-base-100 rounded-lg shadow-lg p-0 border border-base-300" x-show="open"
-                @click.away="open = false" x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100"
-                x-transition:leave-end="opacity-0 scale-95">
-                <ul class="menu menu-sm w-48 p-2">
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-user"></i>
-                            个人信息
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fas fa-key"></i>
-                            修改密码
-                        </a>
-                    </li>
-                    <li>
-                        <div class="divider my-1"></div>
-                    </li>
-                    <li>
-                        <a href="#" class="text-error">
-                            <i class="fas fa-sign-out-alt"></i>
-                            退出登录
-                        </a>
-                    </li>
-                </ul>
+        <!-- 用户菜单 - 使用 daisyUI 5 dropdown -->
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost gap-2">
+                <div class="avatar">
+                    <div class="w-8 rounded-full bg-primary/20 text-primary-content flex items-center justify-center">
+                        <span class="text-sm font-medium">A</span>
+                    </div>
+                </div>
+                <span class="hidden md:inline-block">管理员</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
             </div>
+            <ul tabindex="0"
+                class="dropdown-content z-[1] menu menu-sm p-2 shadow-xl bg-base-100 rounded-box w-52 border border-base-300">
+                <li class="menu-title">
+                    <span>我的账户</span>
+                </li>
+                <li>
+                    <a>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        个人信息
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                        </svg>
+                        修改密码
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        系统设置
+                    </a>
+                </li>
+                <div class="divider my-1"></div>
+                <li>
+                    <a class="text-error">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        退出登录
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </header>
+
+<script>
+    // 初始化主题控制器
+    (function () {
+        const themeController = document.querySelector('.theme-controller');
+        if (!themeController) return;
+
+        // 从 localStorage 读取主题
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const isDark = savedTheme === 'dark';
+
+        // 设置初始状态
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeController.checked = isDark;
+
+        // 监听主题切换
+        themeController.addEventListener('change', function (e) {
+            const newTheme = e.target.checked ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    })();
+</script>

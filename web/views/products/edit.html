@@ -6,16 +6,9 @@
     <!-- 编辑商品表单卡片 -->
     <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
-            <!-- 页面头部 -->
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="card-title text-lg font-medium flex items-center gap-2">
-                    <i class="fas fa-edit text-info"></i>
-                    编辑商品信息
-                </h2>
-            </div>
-
+      
             <!-- 商品表单 -->
-            <form hx-put="/products/{{.Product.ID}}" hx-target="#main-container" hx-swap="innerHTML"
+            <form hx-put="/products/{{.Product.ID}}" hx-target="main" hx-swap="innerHTML"
                 @submit="submitForm($event)" x-data="productForm(true, {{.Product.ID}})"
                 x-init="handleFormInit($event, '{{.Product}}')">
 
@@ -172,7 +165,7 @@
 
                 <!-- 表单按钮 -->
                 <div class="flex justify-end gap-3 pt-6 border-t border-base-300">
-                    <a href="/products" class="btn btn-ghost" hx-get="/products" hx-target="#main-container"
+                    <a href="/products" class="btn btn-ghost" hx-get="/products" hx-target="main"
                         hx-swap="innerHTML" hx-push-url="true">
                         <i class="fas fa-arrow-left mr-2"></i>
                         返回列表

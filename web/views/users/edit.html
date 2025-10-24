@@ -6,16 +6,9 @@
     <!-- 编辑用户表单卡片 -->
     <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
-            <!-- 页面头部 -->
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="card-title text-lg font-medium flex items-center gap-2">
-                    <i class="fas fa-user-edit text-info"></i>
-                    编辑用户信息
-                </h2>
-            </div>
-
+    
             <!-- 用户表单 -->
-            <form hx-put="/users/{{.User.ID}}" hx-target="#main-container" hx-swap="innerHTML"
+            <form hx-put="/users/{{.User.ID}}" hx-target="main" hx-swap="innerHTML"
                 hx-indicator="#edit-submit-btn-spinner">
 
                 <!-- 表单字段 -->
@@ -166,7 +159,7 @@
 
                 <!-- 表单按钮 -->
                 <div class="flex justify-end gap-3 pt-6 border-t border-base-300">
-                    <a href="/users" class="btn btn-ghost" hx-get="/users" hx-target="#main-container"
+                    <a href="/users" class="btn btn-ghost" hx-get="/users" hx-target="main"
                         hx-swap="innerHTML" hx-push-url="true">
                         <i class="fas fa-arrow-left mr-2"></i>
                         返回列表

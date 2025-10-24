@@ -5,20 +5,6 @@
 
     <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
-            <!-- 页面头部 -->
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="card-title text-lg font-medium flex items-center gap-2">
-                    <i class="fas fa-box text-info"></i>
-                    商品列表
-                </h2>
-                <!-- 新增商品按钮 -->
-                <a href="/products/new" class="btn btn-primary" hx-get="/products/new" hx-target="#main-container"
-                    hx-swap="innerHTML" hx-push-url="true">
-                    <i class="fas fa-plus"></i>
-                    新增商品
-                </a>
-            </div>
-
             <!-- 搜索和筛选栏 -->
             <div class="flex flex-col lg:flex-row gap-4 mb-6">
                 <div class="flex-1 relative">
@@ -45,6 +31,15 @@
                         <option value="智能设备" {{if eq .Category "智能设备" }}selected{{end}}>智能设备</option>
                         <option value="电脑配件" {{if eq .Category "电脑配件" }}selected{{end}}>电脑配件</option>
                     </select>
+                </div>
+
+                <!-- 新增商品按钮 -->
+                <div>
+                    <a href="/products/new" class="btn btn-primary" hx-get="/products/new" hx-target="main"
+                        hx-swap="innerHTML" hx-push-url="true">
+                        <i class="fas fa-plus"></i>
+                        新增商品
+                    </a>
                 </div>
             </div>
 

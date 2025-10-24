@@ -1,24 +1,25 @@
-<!-- 仪表盘主页 -->
-<div class="space-y-6">
+<!-- 仪表盘主页 - 使用 daisyUI 5 组件 -->
+<div class="space-y-4">
     <!-- 统计卡片 - 每 30 秒自动刷新 -->
     <div id="stats-container" hx-get="/dashboard/stats" hx-trigger="every 30s" hx-swap="innerHTML">
         {{template "dashboard/stats.html" .Stats}}
     </div>
 
     <!-- 内容区域 -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <!-- 最近订单 -->
         <div class="lg:col-span-2">
-            <div class="card bg-base-100 shadow-sm border border-base-300 ">
+            <div class="card bg-base-100 shadow-lg border border-base-300">
                 <div class="card-body">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="card-title text-lg font-medium flex items-center gap-2">
-                            <i class="fas fa-shopping-cart text-info"></i>
-                            最近订单
-                        </h2>
-                        <a href="/orders" class="btn btn-sm btn-ghost" hx-get="/orders" hx-target="#main-container"
-                            hx-swap="innerHTML" hx-push-url="true">
+                    <div class="flex items-center justify-between mb-4">
+                        <a href="/orders" class="btn btn-sm btn-ghost gap-2" hx-get="/orders"
+                            hx-target="main" hx-swap="innerHTML" hx-push-url="true">
                             查看全部
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
                         </a>
                     </div>
 
@@ -39,28 +40,32 @@
                                 <tr class="hover">
                                     <td class="font-medium">{{.OrderNo}}</td>
                                     <td>{{.CustomerName}}</td>
-                                    <td class="font-semibold">¥{{printf "%.2f" .TotalAmount}}</td>
+                                    <td class="font-semibold text-error">¥{{printf "%.2f" .TotalAmount}}</td>
                                     <td>
                                         {{if eq .Status "pending"}}
-                                        <span class="badge badge-warning">待处理</span>
+                                        <span class="badge badge-warning badge-sm">待处理</span>
                                         {{else if eq .Status "paid"}}
-                                        <span class="badge badge-info">已支付</span>
+                                        <span class="badge badge-info badge-sm">已支付</span>
                                         {{else if eq .Status "shipped"}}
-                                        <span class="badge badge-primary">已发货</span>
+                                        <span class="badge badge-primary badge-sm">已发货</span>
                                         {{else if eq .Status "completed"}}
-                                        <span class="badge badge-success">已完成</span>
+                                        <span class="badge badge-success badge-sm">已完成</span>
                                         {{end}}
                                     </td>
-                                    <td>{{formatDateTime .CreatedAt}}</td>
+                                    <td class="text-sm opacity-70">{{formatDateTime .CreatedAt}}</td>
                                 </tr>
                                 {{end}}
                             </tbody>
                         </table>
                     </div>
                     {{else}}
-                    <div class="text-center py-12">
-                        <i class="fas fa-inbox text-6xl text-base-300 mb-4"></i>
-                        <p class="text-base-content/60">暂无订单数据</p>
+                    <div class="text-center py-8">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-base-300 mb-3" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                        <p class="text-base-content/60 text-sm">暂无订单数据</p>
                     </div>
                     {{end}}
                 </div>
@@ -68,26 +73,23 @@
         </div>
 
         <!-- 侧边栏信息 -->
-        <div class="space-y-6">
+        <div class="space-y-4">
             <!-- 最近用户 -->
-            <div class="card bg-base-100 shadow-sm border border-base-300 ">
+            <div class="card bg-base-100 shadow-lg border border-base-300">
                 <div class="card-body">
-                    <h2 class="card-title text-lg font-medium flex items-center gap-2 mb-4">
-                        <i class="fas fa-users text-success"></i>
-                        最近注册
-                    </h2>
 
                     {{if .RecentUsers}}
                     <div class="space-y-3">
                         {{range .RecentUsers}}
                         <div class="flex items-center gap-3 pb-3 border-b border-base-200 last:border-0 last:pb-0">
-                            <div
-                                class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                                {{substr .RealName 0 1}}
+                            <div class="avatar">
+                                <div class="w-10 rounded-full bg-accent/20 text-accent flex items-center justify-center">
+                                    <span class="text-sm font-medium">{{substr .RealName 0 1}}</span>
+                                </div>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="font-medium text-sm truncate">{{.RealName}}</div>
-                                <div class="text-xs text-base-content/60 truncate">{{.Email}}</div>
+                                <div class="text-xs opacity-60 truncate">{{.Email}}</div>
                             </div>
                             <div class="flex-shrink-0">
                                 {{if eq .Role "admin"}}
@@ -110,24 +112,25 @@
             </div>
 
             <!-- 热门商品 -->
-            <div class="card bg-base-100 shadow-sm border border-base-300 ">
+            <div class="card bg-base-100 shadow-lg border border-base-300">
                 <div class="card-body">
-                    <h2 class="card-title text-lg font-medium flex items-center gap-2 mb-4">
-                        <i class="fas fa-fire text-error"></i>
-                        热门商品
-                    </h2>
 
                     {{if .TopProducts}}
                     <div class="space-y-3">
                         {{range .TopProducts}}
                         <div class="flex items-center gap-3 pb-3 border-b border-base-200 last:border-0 last:pb-0">
-                            <div
-                                class="w-12 h-12 bg-base-200  flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-box text-2xl text-base-content/40"></i>
+                            <div class="avatar placeholder">
+                                <div class="bg-base-200 rounded w-12 h-12 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-base-content/40"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                    </svg>
+                                </div>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="font-medium text-sm truncate">{{.Name}}</div>
-                                <div class="text-xs text-base-content/60">库存: {{.Stock}}</div>
+                                <div class="text-xs opacity-60">库存: {{.Stock}}</div>
                             </div>
                             <div class="text-error font-semibold text-base flex-shrink-0">
                                 ¥{{printf "%.2f" .Price}}

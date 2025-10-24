@@ -11,7 +11,7 @@
         <div class="card-body">
             <div class="flex items-center gap-2 mb-4">
                 <i class="fas fa-receipt text-info text-lg"></i>
-                <h2 class="card-title text-lg font-medium">订单基本信息</h2>
+                <div class="text-lg font-medium">订单基本信息</div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -71,7 +71,7 @@
         <div class="card-body">
             <div class="flex items-center gap-2 mb-4">
                 <i class="fas fa-box text-success text-lg"></i>
-                <h2 class="card-title text-lg font-medium">订单商品</h2>
+                <div class="text-lg font-medium">订单商品</div>
             </div>
 
             {{if .Order.Items}}
@@ -121,7 +121,7 @@
         <div class="card-body">
             <div class="flex items-center gap-2 mb-6">
                 <i class="fas fa-history text-primary text-lg"></i>
-                <h2 class="card-title text-lg font-medium">订单时间线</h2>
+                <div class="text-lg font-medium">订单时间线</div>
             </div>
 
             <div class="relative">
@@ -281,14 +281,10 @@
 <!-- 操作按钮 -->
 <div class="flex justify-end gap-3 items-center">
     {{if .IsModal}}
-    <!-- 模态框模式：显示关闭按钮 -->
-    <label for="order-modal" class="btn btn-ghost btn-sm cursor-pointer">
-        <i class="fas fa-times mr-2"></i>
-        关闭
-    </label>
+    <!-- 模态框模式：不显示底部关闭按钮 -->
     {{else}}
     <!-- 独立页面模式：显示返回按钮 -->
-    <a href="/orders" class="btn btn-ghost btn-sm" hx-get="/orders" hx-target="#main-container" hx-swap="innerHTML"
+    <a href="/orders" class="btn btn-ghost btn-sm" hx-get="/orders" hx-target="main" hx-swap="innerHTML"
         hx-push-url="true">
         <i class="fas fa-arrow-left mr-2"></i>
         返回列表
@@ -299,21 +295,21 @@
     {{if eq .Order.Status "pending"}}
     <button class="btn btn-success btn-sm" hx-put="/orders/{{.Order.ID}}/status"
         hx-vals='{"status": "paid", "return": "detail"}'
-        hx-target="{{if .IsModal}}#order-modal-content{{else}}#main-container{{end}}" hx-swap="innerHTML">
+        hx-target="{{if .IsModal}}#order-modal-content{{else}}main{{end}}" hx-swap="innerHTML">
         <i class="fas fa-check mr-2"></i>
         确认支付
     </button>
     {{else if eq .Order.Status "paid"}}
     <button class="btn btn-primary btn-sm" hx-put="/orders/{{.Order.ID}}/status"
         hx-vals='{"status": "shipped", "return": "detail"}'
-        hx-target="{{if .IsModal}}#order-modal-content{{else}}#main-container{{end}}" hx-swap="innerHTML">
+        hx-target="{{if .IsModal}}#order-modal-content{{else}}main{{end}}" hx-swap="innerHTML">
         <i class="fas fa-truck mr-2"></i>
         确认发货
     </button>
     {{else if eq .Order.Status "shipped"}}
     <button class="btn btn-success btn-sm" hx-put="/orders/{{.Order.ID}}/status"
         hx-vals='{"status": "completed", "return": "detail"}'
-        hx-target="{{if .IsModal}}#order-modal-content{{else}}#main-container{{end}}" hx-swap="innerHTML">
+        hx-target="{{if .IsModal}}#order-modal-content{{else}}main{{end}}" hx-swap="innerHTML">
         <i class="fas fa-check-circle mr-2"></i>
         完成订单
     </button>

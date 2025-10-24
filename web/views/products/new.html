@@ -6,16 +6,9 @@
     <!-- 新增商品表单卡片 -->
     <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
-            <!-- 页面头部 -->
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="card-title text-lg font-medium flex items-center gap-2">
-                    <i class="fas fa-plus-circle text-success"></i>
-                    新增商品
-                </h2>
-            </div>
-
+        
             <!-- 商品表单 -->
-            <form hx-post="/products" hx-target="#main-container" hx-swap="innerHTML" @submit="submitForm($event)"
+            <form hx-post="/products" hx-target="main" hx-swap="innerHTML" @submit="submitForm($event)"
                 x-data="productForm()">
 
                 <!-- 错误提示框 -->
@@ -155,7 +148,7 @@
 
         <!-- 表单按钮 -->
         <div class="flex justify-end gap-3 pt-6 border-t border-base-300">
-            <a href="/products" class="btn btn-ghost" hx-get="/products" hx-target="#main-container" hx-swap="innerHTML"
+            <a href="/products" class="btn btn-ghost" hx-get="/products" hx-target="main" hx-swap="innerHTML"
                 hx-push-url="true">
                 <i class="fas fa-arrow-left mr-2"></i>
                 返回列表

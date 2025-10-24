@@ -1,116 +1,66 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="admin">
+<html lang="zh-CN" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GODASH</title>
 
-    <!-- TailwindCSS CDN -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/tailwindcss/3.3.5/tailwind.min.js"></script>
+    <!-- Tailwind CSS 4 + daisyUI 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
 
-    <!-- TailwindCSS Config -->
+    <!-- Tailwind CSS 4.x + daisyUI 5 配置 -->
     <script>
         tailwind.config = {
-            darkMode: ['class'],
-            content: ["./web/views/**/*.html", "./web/static/js/**/*.js"],
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            DEFAULT: '#1890ff',
-                            hover: '#40a9ff',
-                            active: '#096dd9'
-                        },
-                        success: {
-                            DEFAULT: '#52c41a',
-                            hover: '#73d13d',
-                            active: '#389e0d'
-                        },
-                        warning: {
-                            DEFAULT: '#faad14',
-                            hover: '#ffc53d',
-                            active: '#d48806'
-                        },
-                        error: {
-                            DEFAULT: '#f5222d',
-                            hover: '#ff4d4f',
-                            active: '#cf1322'
-                        },
-                        info: {
-                            DEFAULT: '#1890ff',
-                            hover: '#40a9ff',
-                            active: '#096dd9'
-                        },
-                        'sidebar-bg': '#001529',
-                        'sidebar-hover': '#000c17',
-                        'sidebar-text': 'rgba(255, 255, 255, 0.65)',
-                        'sidebar-text-active': '#ffffff'
-                    },
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif']
-                    },
-                    sidebarWidth: {
-                        DEFAULT: '240px',
-                        collapsed: '80px'
-                    },
-                    headerHeight: {
-                        DEFAULT: '64px',
-                        mobile: '56px'
-                    }
+            darkMode: ['class', '[data-theme="dark"]'],
+            themes: {
+                light: {
+                    "primary": "#3b82f6",
+                    "primary-focus": "#2563eb",
+                    "primary-content": "#ffffff",
+                    "secondary": "#64748b",
+                    "secondary-focus": "#475569",
+                    "secondary-content": "#ffffff",
+                    "accent": "#14b8a6",
+                    "accent-focus": "#0d9488",
+                    "accent-content": "#ffffff",
+                    "neutral": "#374151",
+                    "neutral-focus": "#1f2937",
+                    "neutral-content": "#ffffff",
+                    "base-100": "#ffffff",
+                    "base-200": "#f8fafc",
+                    "base-300": "#f1f5f9",
+                    "base-content": "#1e293b",
+                    "info": "#3b82f6",
+                    "success": "#10b981",
+                    "warning": "#f59e0b",
+                    "error": "#ef4444",
                 },
-            },
-            plugins: [
-                // DaisyUI plugin will be loaded via CDN
-            ],
-        }
-    </script>
-
-    <!-- DaisyUI CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.0/dist/full.min.css" rel="stylesheet" type="text/css" />
-
-    <!-- DaisyUI Config -->
-    <script>
-        window.daisyui = {
-            themes: [
-                {
-                    admin: {
-                        "primary": "#1890ff",
-                        "primary-focus": "#096dd9",
-                        "primary-content": "#ffffff",
-
-                        "secondary": "#722ed1",
-                        "secondary-focus": "#531dab",
-                        "secondary-content": "#ffffff",
-
-                        "accent": "#52c41a",
-                        "accent-focus": "#389e0d",
-                        "accent-content": "#ffffff",
-
-                        "neutral": "#001529",
-                        "neutral-focus": "#000c17",
-                        "neutral-content": "rgba(255, 255, 255, 0.65)",
-
-                        "base-100": "#ffffff",
-                        "base-200": "#fafafa",
-                        "base-300": "#f5f5f5",
-                        "base-content": "rgba(0, 0, 0, 0.85)",
-
-                        "info": "#1890ff",
-                        "success": "#52c41a",
-                        "warning": "#faad14",
-                        "error": "#f5222d",
-                    },
-                },
-                "light",
-                "dark",
-            ],
-            darkTheme: "dark",
-            base: true,
-            styled: true,
-            utils: true,
-            logs: true,
-            themeRoot: ":root",
+                dark: {
+                    "primary": "#60a5fa",
+                    "primary-focus": "#3b82f6",
+                    "primary-content": "#ffffff",
+                    "secondary": "#94a3b8",
+                    "secondary-focus": "#64748b",
+                    "secondary-content": "#1e293b",
+                    "accent": "#2dd4bf",
+                    "accent-focus": "#14b8a6",
+                    "accent-content": "#1e293b",
+                    "neutral": "#9ca3af",
+                    "neutral-focus": "#6b7280",
+                    "neutral-content": "#1e293b",
+                    "base-100": "#1e293b",
+                    "base-200": "#111827",
+                    "base-300": "#0f172a",
+                    "base-content": "#f8fafc",
+                    "info": "#60a5fa",
+                    "success": "#34d399",
+                    "warning": "#fbbf24",
+                    "error": "#f87171",
+                }
+            }
         }
     </script>
 
@@ -118,7 +68,7 @@
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- 自定义样式 -->
-    <link rel="stylesheet" href="/static/css/admin.css?v=20250118-modal-fix-001">
+    <link rel="stylesheet" href="/static/css/admin.css?v=20250124-menu-beautify">
 
     <!-- HTMX v2.0.7 -->
     <script src="https://cdn.bootcdn.net/ajax/libs/htmx/2.0.7/htmx.min.js"></script>
@@ -148,16 +98,16 @@
             <!-- 顶部栏 -->
             {{template "components/header.html"}}
 
-            <!-- 内容容器 - 这里是 HTMX 的目标区域 -->
-            <div id="main-container" class="p-6 flex-1 overflow-x-hidden">
+            <!-- 内容区域 - HTMX 直接加载到这里 -->
+            <main class="p-6 flex-1 overflow-x-hidden">
                 <!-- 默认加载仪表盘 -->
-                <div hx-get="/dashboard" hx-trigger="load" hx-target="#main-container" hx-swap="innerHTML">
+                <div hx-get="/dashboard" hx-trigger="load" hx-swap="innerHTML">
                     <div class="flex flex-col items-center justify-center py-12">
                         <div class="loading-spinner"></div>
                         <p class="mt-4 text-base-content/60">加载中...</p>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
 
@@ -194,10 +144,10 @@
                 showToast(detail) {
                     const id = this.nextId++;
                     const icons = {
-                        success: '<i class="fas fa-check-circle"></i>',
-                        error: '<i class="fas fa-exclamation-circle"></i>',
-                        warning: '<i class="fas fa-exclamation-triangle"></i>',
-                        info: '<i class="fas fa-info-circle"></i>'
+                        success: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+                        error: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+                        warning: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>',
+                        info: '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
                     };
 
                     const toast = {
@@ -209,55 +159,38 @@
                     };
 
                     this.toasts.push(toast);
-
-                    // 3秒后自动移除
-                    setTimeout(() => {
-                        this.removeToast(id);
-                    }, 3000);
+                    setTimeout(() => this.removeToast(id), 3000);
                 },
 
                 removeToast(id) {
                     const index = this.toasts.findIndex(t => t.id === id);
                     if (index > -1) {
                         this.toasts[index].visible = false;
-                        setTimeout(() => {
-                            this.toasts.splice(index, 1);
-                        }, 300);
+                        setTimeout(() => this.toasts.splice(index, 1), 300);
                     }
                 },
 
                 getToastClass(type) {
-                    const classes = {
+                    return {
                         success: 'alert-success',
                         error: 'alert-error',
                         warning: 'alert-warning',
                         info: 'alert-info'
-                    };
-                    return classes[type] || 'alert-info';
+                    }[type] || 'alert-info';
                 }
             };
         }
 
-        // Alpine.js全局组件和工具函数
+        // Alpine.js 全局应用状态
         function initApp() {
             return {
-                // 移动端侧边栏状态
                 sidebarOpen: window.innerWidth >= 1024,
-
-                // 当前激活的菜单项
                 activeMenu: '/dashboard',
 
-                // 切换移动端侧边栏
-                toggleSidebar() {
-                    this.sidebarOpen = !this.sidebarOpen;
-                },
-
-                // 设置激活菜单项
                 setActiveMenu(path) {
                     this.activeMenu = path;
                 },
 
-                // 处理窗口大小变化
                 handleResize() {
                     if (window.innerWidth >= 1024) {
                         this.sidebarOpen = true;
@@ -266,130 +199,23 @@
             }
         }
 
-
-
-        // 简单的主题切换函数 - 定义在全局作用域
-        window.simpleThemeToggle = function (event) {
-            event.preventDefault();
-            console.log('🔄 开始切换主题...');
-
-            const html = document.documentElement;
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            const daisyuiTheme = newTheme === 'dark' ? 'dark' : 'light';  // 使用 DaisyUI 内置主题
-
-            console.log('🔄 主题切换:', currentTheme, '->', newTheme, '| DaisyUI:', daisyuiTheme);
-
-            // 设置 DaisyUI 主题
-            html.setAttribute('data-theme', daisyuiTheme);
-
-            // 更新 dark 类
-            if (newTheme === 'dark') {
-                html.classList.add('dark');
-            } else {
-                html.classList.remove('dark');
-            }
-
-            // 保存到 localStorage
-            localStorage.setItem('theme', newTheme);
-
-            // 更新图标
-            const lightIcon = document.getElementById('theme-icon-light');
-            const darkIcon = document.getElementById('theme-icon-dark');
-            if (lightIcon && darkIcon) {
-                if (newTheme === 'dark') {
-                    lightIcon.classList.add('hidden');
-                    darkIcon.classList.remove('hidden');
-                } else {
-                    lightIcon.classList.remove('hidden');
-                    darkIcon.classList.add('hidden');
-                }
-            }
-
-            console.log('✅ 主题切换完成! newTheme:', newTheme);
-            console.log('🎨 当前 data-theme:', html.getAttribute('data-theme'));
-        };
-
-        // 获取当前主题状态
-        function getCurrentTheme() {
-            return localStorage.getItem('theme') || 'light';
-        }
-
-
-
-        // 初始化主题
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const theme = savedTheme || 'light'; // 默认浅色主题
-            const daisyuiTheme = theme === 'dark' ? 'dark' : 'light';  // 使用 DaisyUI 内置主题
-
-            console.log('🎨 初始化主题:', theme, '| DaisyUI:', daisyuiTheme);
-
-            const html = document.documentElement;
-            html.setAttribute('data-theme', daisyuiTheme);
-
-            // 更新 dark 类
-            if (theme === 'dark') {
-                html.classList.add('dark');
-            } else {
-                html.classList.remove('dark');
-            }
-
-            // 初始化图标状态
-            const lightIcon = document.getElementById('theme-icon-light');
-            const darkIcon = document.getElementById('theme-icon-dark');
-            if (lightIcon && darkIcon) {
-                if (theme === 'dark') {
-                    lightIcon.classList.add('hidden');
-                    darkIcon.classList.remove('hidden');
-                } else {
-                    lightIcon.classList.remove('hidden');
-                    darkIcon.classList.add('hidden');
-                }
-            }
-
-            console.log('✅ 主题初始化完成! theme:', theme, 'data-theme:', daisyuiTheme);
-        }
-
-        // 测试函数 - 可以在控制台中使用
-        window.testTheme = function (theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            console.log('🎨 设置主题为:', theme, '| 当前 data-theme:', document.documentElement.getAttribute('data-theme'));
-        };
-
         // HTMX 配置和事件监听
         document.addEventListener('DOMContentLoaded', function () {
-            // 初始化主题
-            initTheme();
-
-            // HTMX Toast 消息已移至 app.js 统一处理（带 URL 解码）
-
-            // 更新导航激活状态 - 处理HTMX加载后侧边栏消失的问题
+            // HTMX 事件处理
             document.body.addEventListener('htmx:afterSettle', function (evt) {
-                const target = evt.detail.target;
-                if (target && target.id === 'main-container') {
-                    // 延迟执行以确保Alpine.js已更新DOM
+                // 检查是否是主内容区域的更新
+                if (evt.detail.target?.tagName === 'MAIN' ||
+                    (evt.detail.target?.parentElement?.tagName === 'MAIN')) {
                     setTimeout(() => {
                         updateActiveNav();
-                        // 重新初始化侧边栏状态
-                        const sidebar = document.querySelector('aside');
-                        if (sidebar && window.app) {
-                            // 确保侧边栏在大屏幕上显示，小屏幕上隐藏
+                        if (window.app) {
                             window.app.sidebarOpen = window.innerWidth >= 1024;
-
-                            // 更新用户管理二级菜单的展开状态
-                            const currentPath = window.location.pathname;
-                            const userMenuContainer = sidebar.querySelector('[x-data*=\"activeMenu\"]');
-                            if (userMenuContainer && userMenuContainer.__x && userMenuContainer.__x.$data) {
-                                // 如果当前路径在用户管理相关页面，确保二级菜单展开，否则收起
-                                userMenuContainer.__x.$data.open = currentPath.startsWith('/users');
-                            }
                         }
                     }, 50);
                 }
             });
 
-            // 监听窗口大小变化
+            // 响应式处理
             window.addEventListener('resize', () => {
                 if (window.app) {
                     window.app.handleResize();
@@ -401,48 +227,74 @@
         function updateActiveNav() {
             const path = window.location.pathname;
             document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('href') === path) {
-                    item.classList.add('active');
-                }
+                item.classList.toggle('active', item.getAttribute('href') === path);
             });
 
-            // 更新Alpine.js状态
             if (window.app) {
                 window.app.setActiveMenu(path);
             }
 
-            // 更新用户管理菜单状态
-            Alpine.store('isUsersActive', path.startsWith('/users'));
-            Alpine.store('isUsersRolesActive', path.startsWith('/users/roles'));
-            Alpine.store('isUsersPermissionsActive', path.startsWith('/users/permissions'));
+            // 更新页面标题
+            updatePageTitle(path);
+        }
+
+        // 更新页面标题
+        function updatePageTitle(path) {
+            const pageTitle = document.getElementById('page-title');
+            if (!pageTitle) return;
+
+            const titles = {
+                '/dashboard': '仪表盘',
+                '/users': '用户列表',
+                '/users/roles': '角色管理',
+                '/users/permissions': '权限管理',
+                '/products': '商品列表',
+                '/orders': '订单列表',
+                '/settings': '系统设置'
+            };
+
+            pageTitle.textContent = titles[path] || '管理后台';
         }
     </script>
 
     <!-- 确认对话框组件 -->
     {{template "components/confirm-dialog.html"}}
 
-    <!-- 订单详情模态框 - 全局模态框，不受容器限制 -->
-    <input type="checkbox" id="order-modal" class="modal-toggle" />
-    <div class="modal" role="dialog">
-        <div class="modal-box max-w-4xl shadow-xl border border-base-300">
-            <label for="order-modal" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                <i class="fas fa-times"></i>
-            </label>
+    <!-- 订单详情模态框 - 使用 daisyUI 5 原生 dialog -->
+    <dialog id="order-modal" class="modal">
+        <div class="modal-box max-w-4xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
             <h3 class="font-bold text-lg flex items-center gap-2 mb-4">
-                <i class="fas fa-file-invoice text-info"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-info" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
                 订单详情
             </h3>
             <div id="order-modal-content">
-                <!-- 详情内容将通过 HTMX 加载 -->
                 <div class="text-center py-8">
-                    <div class="loading loading-spinner loading-lg"></div>
+                    <span class="loading loading-spinner loading-lg"></span>
                     <p class="mt-4">加载中...</p>
                 </div>
             </div>
         </div>
-        <label class="modal-backdrop" for="order-modal"></label>
-    </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <script>
+        // 模态框辅助函数
+        window.showOrderModal = function () {
+            document.getElementById('order-modal')?.showModal();
+        };
+        window.closeOrderModal = function () {
+            document.getElementById('order-modal')?.close();
+        };
+    </script>
 </body>
 
 </html>

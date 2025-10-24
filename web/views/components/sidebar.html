@@ -1,99 +1,152 @@
-<!-- 侧边栏导航 -->
+<!-- 侧边栏导航 - 使用 daisyUI 5 组件 -->
 <aside
-    class="fixed top-0 left-0 h-screen w-64 bg-base-100 text-base-content shadow-xl z-20 overflow-y-auto transition-transform duration-300 border-r border-base-300"
-    :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen, 'lg:translate-x-0': true }">
+    class="fixed top-0 left-0 h-screen w-64 bg-base-100 border-r border-base-300 z-20 transition-transform duration-300 sidebar-scrollbar overflow-y-auto"
+    :class="{ '-translate-x-full lg:translate-x-0': !sidebarOpen, 'translate-x-0': sidebarOpen }">
 
     <!-- Logo/品牌 -->
-    <div class="h-16 flex items-center justify-center text-xl font-semibold border-b border-base-300 gap-3">
-        <i class="fas fa-cube text-primary text-2xl"></i>
-        <span class="lg:inline" x-show="sidebarOpen" x-transition.duration.300ms>GODASH</span>
+    <div class="h-16 flex items-center px-6 border-b border-base-300 gap-3">
+        <div class="avatar placeholder">
+            <div class="bg-primary text-primary-content rounded-lg w-10">
+                <i class="fas fa-cube text-xl"></i>
+            </div>
+        </div>
+        <div class="flex-1 text-left" x-show="sidebarOpen" x-transition>
+            <div class="text-xl font-bold">GODASH</div>
+        </div>
     </div>
 
-    <!-- 导航菜单 -->
-    <nav class="py-4">
-        <ul class="menu bg-base-100 w-full">
-            <!-- 仪表盘 -->
-            <li>
-                <a href="/dashboard" :class="{ 'menu-active': activeMenu === '/dashboard' }" hx-get="/dashboard"
-                    hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true"
-                    @click="activeMenu = '/dashboard'">
-                    <i class="fas fa-home w-4"></i>
-                    <span x-show="sidebarOpen" x-transition.duration.300ms>仪表盘</span>
-                </a>
-            </li>
+    <!-- 导航菜单 - 使用 daisyUI 5 menu 组件，优化间距 -->
+    <ul class="menu menu-md px-3 py-6 space-y-1">
+        <!-- 仪表盘 -->
+        <li>
+            <a href="/dashboard" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active': activeMenu === '/dashboard' }"
+                hx-get="/dashboard" hx-target="main" hx-swap="innerHTML" hx-push-url="true"
+                @click="activeMenu = '/dashboard'; sidebarOpen = window.innerWidth >= 1024">
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span class="font-medium">仪表盘</span>
+                </div>
+            </a>
+        </li>
 
-            <!-- 用户管理（带二级菜单） -->
-            <li>
-                <details :open="activeMenu.startsWith('/users')">
-                    <summary>
-                        <i class="fas fa-users w-4"></i>
-                        <span x-show="sidebarOpen" x-transition.duration.300ms>用户管理</span>
-                    </summary>
+        <!-- 用户管理（带二级菜单） - 使用 daisyUI 5 collapse -->
+        <li>
+            <details :open="activeMenu.startsWith('/users')" class="group">
+                <summary class="rounded-lg transition-all duration-200">
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span class="font-medium">用户管理</span>
+                    </div>
+                </summary>
+                <ul class="ml-2 mt-1 space-y-1">
+                    <li>
+                        <a href="/users" :class="{ 'active': activeMenu === '/users' }" hx-get="/users"
+                            hx-target="main" hx-swap="innerHTML" hx-push-url="true"
+                            @click="activeMenu = '/users'; sidebarOpen = window.innerWidth >= 1024"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-base-200 transition-all duration-200 text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                            </svg>
+                            <span>用户列表</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/users/roles" :class="{ 'active': activeMenu === '/users/roles' }"
+                            hx-get="/users/roles" hx-target="main" hx-swap="innerHTML" hx-push-url="true"
+                            @click="activeMenu = '/users/roles'; sidebarOpen = window.innerWidth >= 1024"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-base-200 transition-all duration-200 text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                            <span>角色管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/users/permissions" :class="{ 'active': activeMenu === '/users/permissions' }"
+                            hx-get="/users/permissions" hx-target="main" hx-swap="innerHTML"
+                            hx-push-url="true"
+                            @click="activeMenu = '/users/permissions'; sidebarOpen = window.innerWidth >= 1024"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-base-200 transition-all duration-200 text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                </ul>
+            </details>
+        </li>
 
-                    <ul class="menu bg-base-100 rounded-box">
-                        <li>
-                            <a href="/users" :class="{ 'menu-active': activeMenu === '/users' }" hx-get="/users"
-                                hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true"
-                                @click="activeMenu = '/users'">
-                                <i class="fas fa-list w-3"></i>
-                                <span x-show="sidebarOpen">用户列表</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/users/roles" :class="{ 'menu-active': activeMenu === '/users/roles' }"
-                                hx-get="/users/roles" hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true"
-                                @click="activeMenu = '/users/roles'">
-                                <i class="fas fa-user-tag w-3"></i>
-                                <span x-show="sidebarOpen">角色管理</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/users/permissions" :class="{ 'menu-active': activeMenu === '/users/permissions' }"
-                                hx-get="/users/permissions" hx-target="#main-container" hx-swap="innerHTML"
-                                hx-push-url="true" @click="activeMenu = '/users/permissions'">
-                                <i class="fas fa-shield-alt w-3"></i>
-                                <span x-show="sidebarOpen">权限管理</span>
-                            </a>
-                        </li>
-                    </ul>
-                </details>
-            </li>
+        <!-- 商品管理 -->
+        <li>
+            <a href="/products" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active': activeMenu === '/products' }" hx-get="/products"
+                hx-target="main" hx-swap="innerHTML" hx-push-url="true"
+                @click="activeMenu = '/products'; sidebarOpen = window.innerWidth >= 1024">
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    <span class="font-medium">商品管理</span>
+                </div>
+            </a>
+        </li>
 
-            <!-- 商品管理 -->
-            <li>
-                <a href="/products" :class="{ 'menu-active': activeMenu === '/products' }" hx-get="/products"
-                    hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true"
-                    @click="activeMenu = '/products'">
-                    <i class="fas fa-box w-4"></i>
-                    <span x-show="sidebarOpen" x-transition.duration.300ms>商品管理</span>
-                </a>
-            </li>
+        <!-- 订单管理 -->
+        <li>
+            <a href="/orders" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active': activeMenu === '/orders' }" hx-get="/orders"
+                hx-target="main" hx-swap="innerHTML" hx-push-url="true"
+                @click="activeMenu = '/orders'; sidebarOpen = window.innerWidth >= 1024">
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span class="font-medium">订单管理</span>
+                </div>
+            </a>
+        </li>
 
-            <!-- 订单管理 -->
-            <li>
-                <a href="/orders" :class="{ 'menu-active': activeMenu === '/orders' }" hx-get="/orders"
-                    hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true" @click="activeMenu = '/orders'">
-                    <i class="fas fa-shopping-cart w-4"></i>
-                    <span x-show="sidebarOpen" x-transition.duration.300ms>订单管理</span>
-                </a>
-            </li>
+        <!-- 系统设置 -->
+        <li>
+            <a href="/settings" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active': activeMenu === '/settings' }" hx-get="/settings"
+                hx-target="main" hx-swap="innerHTML" hx-push-url="true"
+                @click="activeMenu = '/settings'; sidebarOpen = window.innerWidth >= 1024">
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="font-medium">系统设置</span>
+                </div>
+            </a>
+        </li>
+    </ul>
 
-            <!-- 系统设置 -->
-            <li>
-                <a href="/settings" :class="{ 'menu-active': activeMenu === '/settings' }" hx-get="/settings"
-                    hx-target="#main-container" hx-swap="innerHTML" hx-push-url="true"
-                    @click="activeMenu = '/settings'">
-                    <i class="fas fa-cog w-4"></i>
-                    <span x-show="sidebarOpen" x-transition.duration.300ms>系统设置</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <!-- 底部信息 -->
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-base-300 bg-base-100">
+        <div class="text-center text-xs opacity-50">
+            <p>GODASH v1.0</p>
+            <p>© 2025</p>
+        </div>
+    </div>
 </aside>
-
-<style>
-    /* 简化的侧边栏菜单样式 */
-    .menu-text {
-        @apply transition-opacity duration-300;
-    }
-</style>
