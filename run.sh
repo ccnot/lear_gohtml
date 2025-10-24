@@ -1,3 +1,5 @@
+rm ./main
+go build main.go
 docker build -t godash . --progress=plain --no-cache
 docker stop godash
 docker rm godash
