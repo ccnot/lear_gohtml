@@ -36,127 +36,182 @@
                         <div class="mt-6">
                             <!-- 基本信息 Tab -->
                             <div x-show="activeTab === 'basic'" x-transition>
-                                <h3 class="text-lg font-medium mb-4">基本信息</h3>
+                                <fieldset class="fieldset bg-base-200 border-base-300 rounded-lg p-6">
+                                    <legend class="fieldset-legend text-lg font-semibold">
+                                        <i class="fas fa-info-circle mr-2"></i>基本信息
+                                    </legend>
 
-                                <div class="space-y-4">
-                                    <div class="form-control">
-                                        <label class="label">
-                                            网站名称 <span class="text-error">*</span>
-                                        </label>
-                                        <div class="relative">
-                                            <input class="input input-bordered w-full pl-10" type="text"
-                                                name="site_name" placeholder="请输入网站名称" value="{{.SiteName}}" required>
-                                            <i
-                                                class="fas fa-pencil absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                                    <div class="space-y-6">
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text font-medium">网站名称</span>
+                                                <span class="label-text-alt text-error">*</span>
+                                            </label>
+                                            <div class="join">
+                                                <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-l-lg">
+                                                    <i class="fas fa-pencil opacity-70"></i>
+                                                </span>
+                                                <input type="text"
+                                                    name="site_name"
+                                                    placeholder="请输入网站名称"
+                                                    value="{{.SiteName}}"
+                                                    required
+                                                    class="input input-bordered input-sm flex-1 join-item rounded-r-lg peer">
+                                            </div>
+                                            <label class="label">
+                                                <span class="label-text-alt text-info">网站在浏览器标题栏显示的名称</span>
+                                            </label>
                                         </div>
-                                        <div class="label-text-alt">网站的显示名称</div>
-                                    </div>
 
-                                    <div class="form-control">
-                                        <label class="label">网站描述</label>
-                                        <div class="relative">
-                                            <textarea class="textarea textarea-bordered h-24 pl-10 pt-3" name="site_description"
-                                                placeholder="请输入网站描述">{{.SiteDescription}}</textarea>
-                                            <i class="fas fa-align-left absolute left-3 top-4 text-base-content/40"></i>
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text font-medium">网站描述</span>
+                                            </label>
+                                            <div class="join join-vertical">
+                                                <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-t-lg">
+                                                    <i class="fas fa-align-left opacity-70"></i>
+                                                </span>
+                                                <textarea name="site_description"
+                                                    placeholder="请输入网站描述，简要说明网站的功能和用途"
+                                                    rows="3"
+                                                    class="textarea textarea-bordered textarea-sm flex-1 join-item rounded-b-lg resize-none peer">{{.SiteDescription}}</textarea>
+                                            </div>
+                                            <label class="label">
+                                                <span class="label-text-alt text-info">用于 SEO 优化和网站简介</span>
+                                            </label>
                                         </div>
-                                        <div class="label-text-alt">简要描述网站的用途和功能</div>
                                     </div>
-                                </div>
+                                </fieldset>
                             </div>
 
                             <!-- 联系方式 Tab -->
                             <div x-show="activeTab === 'contact'" x-transition>
-                                <h3 class="text-lg font-medium mb-4">联系方式</h3>
+                                <fieldset class="fieldset bg-base-200 border-base-300 rounded-lg p-6">
+                                    <legend class="fieldset-legend text-lg font-semibold">
+                                        <i class="fas fa-address-book mr-2"></i>联系方式
+                                    </legend>
 
-                                <div class="space-y-4">
-                                    <div class="form-control">
-                                        <label class="label">
-                                            联系邮箱 <span class="text-error">*</span>
-                                        </label>
-                                        <div class="relative">
-                                            <input class="input input-bordered w-full pl-10" type="email"
-                                                name="contact_email" placeholder="admin@example.com"
-                                                value="{{.ContactEmail}}" required>
-                                            <i
-                                                class="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                                    <div class="space-y-6">
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text font-medium">联系邮箱</span>
+                                                <span class="label-text-alt text-error">*</span>
+                                            </label>
+                                            <div class="join">
+                                                <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-l-lg">
+                                                    <i class="fas fa-envelope opacity-70"></i>
+                                                </span>
+                                                <input type="email"
+                                                    name="contact_email"
+                                                    placeholder="admin@example.com"
+                                                    value="{{.ContactEmail}}"
+                                                    required
+                                                    class="input input-bordered input-sm flex-1 join-item rounded-r-lg peer">
+                                            </div>
+                                            <label class="label">
+                                                <span class="label-text-alt text-info">用于接收系统通知和用户联系</span>
+                                            </label>
                                         </div>
-                                        <div class="label-text-alt">系统通知和联系邮箱</div>
-                                    </div>
 
-                                    <div class="form-control">
-                                        <label class="label">联系电话</label>
-                                        <div class="relative">
-                                            <input class="input input-bordered w-full pl-10" type="tel"
-                                                name="contact_phone" placeholder="400-123-4567"
-                                                value="{{.ContactPhone}}">
-                                            <i
-                                                class="fas fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text font-medium">联系电话</span>
+                                            </label>
+                                            <div class="join">
+                                                <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-l-lg">
+                                                    <i class="fas fa-phone opacity-70"></i>
+                                                </span>
+                                                <input type="tel"
+                                                    name="contact_phone"
+                                                    placeholder="400-123-4567"
+                                                    value="{{.ContactPhone}}"
+                                                    class="input input-bordered input-sm flex-1 join-item rounded-r-lg peer">
+                                            </div>
+                                            <label class="label">
+                                                <span class="label-text-alt text-info">客服或技术支持热线</span>
+                                            </label>
                                         </div>
-                                        <div class="label-text-alt">客服或技术支持电话</div>
                                     </div>
-                                </div>
+                                </fieldset>
                             </div>
 
                             <!-- 区域设置 Tab -->
                             <div x-show="activeTab === 'regional'" x-transition>
-                                <h3 class="text-lg font-medium mb-4">区域设置</h3>
+                                <fieldset class="fieldset bg-base-200 border-base-300 rounded-lg p-6">
+                                    <legend class="fieldset-legend text-lg font-semibold">
+                                        <i class="fas fa-globe mr-2"></i>区域设置
+                                    </legend>
 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="form-control">
-                                        <label class="label">
-                                            货币 <span class="text-error">*</span>
-                                        </label>
-                                        <select class="select select-bordered w-full" name="currency" required>
-                                            <option value="CNY" {{if eq .Currency "CNY" }}selected{{end}}>人民币 (CNY)
-                                            </option>
-                                            <option value="USD" {{if eq .Currency "USD" }}selected{{end}}>美元 (USD)
-                                            </option>
-                                            <option value="EUR" {{if eq .Currency "EUR" }}selected{{end}}>欧元 (EUR)
-                                            </option>
-                                            <option value="GBP" {{if eq .Currency "GBP" }}selected{{end}}>英镑 (GBP)
-                                            </option>
-                                            <option value="JPY" {{if eq .Currency "JPY" }}selected{{end}}>日元 (JPY)
-                                            </option>
-                                        </select>
-                                        <div class="label-text-alt">系统使用的默认货币</div>
-                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text font-medium">货币</span>
+                                                <span class="label-text-alt text-error">*</span>
+                                            </label>
+                                            <div class="join">
+                                                <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-l-lg">
+                                                    <i class="fas fa-coins opacity-70"></i>
+                                                </span>
+                                                <select name="currency" required class="select select-bordered select-sm flex-1 join-item rounded-r-lg peer">
+                                                    <option value="">选择货币</option>
+                                                    <option value="CNY" {{if eq .Currency "CNY" }}selected{{end}}>人民币 (¥)</option>
+                                                    <option value="USD" {{if eq .Currency "USD" }}selected{{end}}>美元 ($)</option>
+                                                    <option value="EUR" {{if eq .Currency "EUR" }}selected{{end}}>欧元 (€)</option>
+                                                    <option value="GBP" {{if eq .Currency "GBP" }}selected{{end}}>英镑 (£)</option>
+                                                    <option value="JPY" {{if eq .Currency "JPY" }}selected{{end}}>日元 (¥)</option>
+                                                </select>
+                                            </div>
+                                            <label class="label">
+                                                <span class="label-text-alt text-info">商品价格显示的货币单位</span>
+                                            </label>
+                                        </div>
 
-                                    <div class="form-control">
-                                        <label class="label">
-                                            时区 <span class="text-error">*</span>
-                                        </label>
-                                        <select class="select select-bordered w-full" name="timezone" required>
-                                            <option value="Asia/Shanghai" {{if eq .Timezone "Asia/Shanghai"
-                                                }}selected{{end}}>亚洲/上海 (GMT+8)</option>
-                                            <option value="Asia/Singapore" {{if eq .Timezone "Asia/Singapore"
-                                                }}selected{{end}}>亚洲/新加坡 (GMT+8)</option>
-                                            <option value="Asia/Tokyo" {{if eq .Timezone "Asia/Tokyo" }}selected{{end}}>
-                                                亚洲/东京 (GMT+9)</option>
-                                            <option value="America/New_York" {{if eq .Timezone "America/New_York"
-                                                }}selected{{end}}>美国/纽约 (GMT-5)</option>
-                                            <option value="Europe/London" {{if eq .Timezone "Europe/London"
-                                                }}selected{{end}}>欧洲/伦敦 (GMT+0)</option>
-                                        </select>
-                                        <div class="label-text-alt">系统使用的时区</div>
-                                    </div>
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text font-medium">时区</span>
+                                                <span class="label-text-alt text-error">*</span>
+                                            </label>
+                                            <div class="join">
+                                                <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-l-lg">
+                                                    <i class="fas fa-clock opacity-70"></i>
+                                                </span>
+                                                <select name="timezone" required class="select select-bordered select-sm flex-1 join-item rounded-r-lg peer">
+                                                    <option value="">选择时区</option>
+                                                    <option value="Asia/Shanghai" {{if eq .Timezone "Asia/Shanghai" }}selected{{end}}>亚洲/上海 (GMT+8)</option>
+                                                    <option value="Asia/Singapore" {{if eq .Timezone "Asia/Singapore" }}selected{{end}}>亚洲/新加坡 (GMT+8)</option>
+                                                    <option value="Asia/Tokyo" {{if eq .Timezone "Asia/Tokyo" }}selected{{end}}>亚洲/东京 (GMT+9)</option>
+                                                    <option value="America/New_York" {{if eq .Timezone "America/New_York" }}selected{{end}}>美国/纽约 (GMT-5)</option>
+                                                    <option value="Europe/London" {{if eq .Timezone "Europe/London" }}selected{{end}}>欧洲/伦敦 (GMT+0)</option>
+                                                </select>
+                                            </div>
+                                            <label class="label">
+                                                <span class="label-text-alt text-info">系统时间显示的时区</span>
+                                            </label>
+                                        </div>
 
-                                    <div class="form-control">
-                                        <label class="label">
-                                            语言 <span class="text-error">*</span>
-                                        </label>
-                                        <select class="select select-bordered w-full" name="language" required>
-                                            <option value="zh-CN" {{if eq .Language "zh-CN" }}selected{{end}}>简体中文
-                                            </option>
-                                            <option value="zh-TW" {{if eq .Language "zh-TW" }}selected{{end}}>繁体中文
-                                            </option>
-                                            <option value="en-US" {{if eq .Language "en-US" }}selected{{end}}>English
-                                                (US)</option>
-                                            <option value="ja-JP" {{if eq .Language "ja-JP" }}selected{{end}}>日本語
-                                            </option>
-                                        </select>
-                                        <div class="label-text-alt">系统界面语言</div>
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text font-medium">语言</span>
+                                                <span class="label-text-alt text-error">*</span>
+                                            </label>
+                                            <div class="join">
+                                                <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-l-lg">
+                                                    <i class="fas fa-language opacity-70"></i>
+                                                </span>
+                                                <select name="language" required class="select select-bordered select-sm flex-1 join-item rounded-r-lg peer">
+                                                    <option value="">选择语言</option>
+                                                    <option value="zh-CN" {{if eq .Language "zh-CN" }}selected{{end}}>简体中文</option>
+                                                    <option value="zh-TW" {{if eq .Language "zh-TW" }}selected{{end}}>繁体中文</option>
+                                                    <option value="en-US" {{if eq .Language "en-US" }}selected{{end}}>English (US)</option>
+                                                    <option value="ja-JP" {{if eq .Language "ja-JP" }}selected{{end}}>日本語</option>
+                                                </select>
+                                            </div>
+                                            <label class="label">
+                                                <span class="label-text-alt text-info">管理界面显示语言</span>
+                                            </label>
+                                        </div>
                                     </div>
-                                </div>
+                                </fieldset>
                             </div>
                         </div>
 

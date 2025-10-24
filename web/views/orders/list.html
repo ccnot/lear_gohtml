@@ -75,3 +75,39 @@
         </div>
     </div>
 </div>
+
+<!-- 订单详情模态框 - 使用 daisyUI 5 原生 dialog -->
+<dialog id="order-modal" class="modal">
+    <div class="modal-box max-w-4xl">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+        <h3 class="font-bold text-lg flex items-center gap-2 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-info" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            订单详情
+        </h3>
+        <div id="order-modal-content">
+            <div class="text-center py-8">
+                <span class="loading loading-spinner loading-lg"></span>
+                <p class="mt-4">加载中...</p>
+            </div>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<script>
+// 模态框辅助函数
+window.showOrderModal = function () {
+    document.getElementById('order-modal')?.showModal();
+};
+window.closeOrderModal = function () {
+    document.getElementById('order-modal')?.close();
+};
+</script>

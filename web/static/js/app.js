@@ -203,70 +203,251 @@ document.addEventListener('alpine:init', () => {
 // HTMX 事件监听
 // ============================================
 
+// HTMX confirm 拦截 - 使用 DaisyUI dialog 替代原生 confirm
+document.addEventListener('htmx:confirm', function(event) {
+    // 检查是否有确认消息，只有真正使用 hx-confirm 的请求才处理
+    if (!event.detail.question) {
+        return; // 没有确认消息，让 HTMX 正常处理
+    }
+
+    // 阻止原生 confirm 对话框
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    // 获取确认消息
+    const message = event.detail.question;
+    const target = event.detail.target;
+
+    // 从 HTMX 元素中提取请求参数
+    const extractUrl = () => {
+        return target.getAttribute('hx-delete') ||
+               target.getAttribute('hx-put') ||
+               target.getAttribute('hx-post') ||
+               target.getAttribute('hx-patch') ||
+               target.getAttribute('hx-get');
+    };
+
+    const extractMethod = () => {
+        if (target.getAttribute('hx-delete')) return 'DELETE';
+        if (target.getAttribute('hx-put')) return 'PUT';
+        if (target.getAttribute('hx-post')) return 'POST';
+        if (target.getAttribute('hx-patch')) return 'PATCH';
+        if (target.getAttribute('hx-get')) return 'GET';
+        return 'POST';
+    };
+
+    // 解析 hx-vals 参数
+    let data = null;
+    const valsAttr = target.getAttribute('hx-vals');
+    if (valsAttr) {
+        try {
+            data = JSON.parse(valsAttr);
+        } catch (e) {
+            console.error('Failed to parse hx-vals:', e);
+        }
+    }
+
+    // 确保对话框存在
+    createConfirmDialog();
+
+    // 直接调用确认对话框显示函数
+    showConfirmDialog({
+        title: '确认操作',
+        message: message,
+        confirmText: '确定',
+        onConfirm: () => {
+            event.detail.issueRequest(true);
+        }
+    });
+});
+
+// 防止重复注册事件监听器的标志
+let htmxEventsRegistered = false;
+
 // 等待 DOM 加载完成后注册事件监听器
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('Toast 监听器已注册'); // 调试日志
+    if (htmxEventsRegistered) return;
+    htmxEventsRegistered = true;
 
-    // Toast 去重缓存（防止同一消息短时间内重复显示）
-    let lastToastMessage = '';
-    let lastToastTime = 0;
-
-    // 监听 HTMX 交换完成后的 Toast 消息（使用 afterSwap，响应头此时还可用）
+    // 监听 HTMX 交换完成后的 Toast 消息
     document.body.addEventListener('htmx:afterSwap', function (event) {
         const xhr = event.detail.xhr;
 
-        // 检查是否有 XHR 对象（有些 swap 可能没有）
-        if (!xhr) {
-            return;
-        }
+        if (!xhr) return;
 
         // 检查响应头中的 Toast 消息
         const toastMessage = xhr.getResponseHeader('X-Toast-Message');
         const toastType = xhr.getResponseHeader('X-Toast-Type') || 'success';
 
-        // 只有当真正有 Toast 消息时才处理
         if (toastMessage) {
-            console.log('🔔 Toast 原始消息:', toastMessage, 'Type:', toastType);
-
-            // 去重：如果是相同消息且在500毫秒内，忽略
-            const now = Date.now();
-            if (toastMessage === lastToastMessage && (now - lastToastTime) < 500) {
-                console.log('⏭️ 跳过重复的 Toast 消息');
-                return;
-            }
-
-            // 更新缓存
-            lastToastMessage = toastMessage;
-            lastToastTime = now;
-
             // 解码 URL 编码的中文消息
             let decodedMessage = toastMessage;
             try {
                 decodedMessage = decodeURIComponent(toastMessage);
-                console.log('✅ Toast 解码后:', decodedMessage);
             } catch (e) {
-                console.error('❌ 解码消息失败:', e);
+                // 解码失败时使用原始消息
             }
 
-            window.dispatchEvent(new CustomEvent('show-toast', {
-                detail: {
-                    message: decodedMessage,
-                    type: toastType
-                }
-            }));
+            // 显示简化的 Toast
+            showToast(decodedMessage, toastType);
         }
     });
 
     // 监听 HTMX 错误
     document.body.addEventListener('htmx:responseError', function (event) {
-        window.dispatchEvent(new CustomEvent('show-toast', {
-            detail: {
-                message: '请求失败，请稍后重试',
-                type: 'error'
-            }
-        }));
+        showToast('请求失败，请稍后重试', 'error');
     });
 });
+
+// 防止重复显示相同消息
+let lastToast = null;
+let lastToastTime = 0;
+
+// 简化的 Toast 显示函数
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    // 防止重复消息
+    const now = Date.now();
+    if (lastToast === message && (now - lastToastTime) < 1000) {
+        return; // 1秒内相同消息不重复显示
+    }
+
+    lastToast = message;
+    lastToastTime = now;
+
+    // 创建 Alert 元素
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} shadow-lg flex items-center justify-between`;
+
+    // 添加图标
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+
+    alert.innerHTML = `
+        <div class="flex items-center gap-2">
+            <span class="text-lg">${icons[type] || icons.info}</span>
+            <span>${message}</span>
+        </div>
+        <button class="btn btn-ghost btn-xs" onclick="this.parentElement.remove()">✕</button>
+    `;
+
+    // 添加到容器
+    container.appendChild(alert);
+
+    // 3秒后自动移除
+    setTimeout(() => {
+        if (alert.parentElement) {
+            alert.remove();
+        }
+    }, 3000);
+}
+
+// ============================================
+// 动态确认对话框组件
+// ============================================
+
+// 防止重复显示对话框的全局变量
+let isDialogShowing = false;
+
+function createConfirmDialog() {
+    // 检查是否已存在确认对话框
+    if (document.getElementById('confirm-dialog')) {
+        return;
+    }
+
+    // 创建确认对话框 HTML
+    const dialogHTML = `
+        <!-- 确认对话框组件 - 使用 daisyUI 5 原生 dialog -->
+        <dialog id="confirm-dialog" class="modal">
+            <div class="modal-box max-w-md">
+                <!-- 警告图标和标题 -->
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="avatar">
+                        <div class="w-12 rounded-full bg-warning/20 text-warning flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg" id="confirm-title"></h3>
+                        <p class="py-2 text-sm opacity-70" id="confirm-message"></p>
+                    </div>
+                </div>
+
+                <!-- 按钮组 -->
+                <div class="modal-action">
+                    <button class="btn btn-ghost btn-active" onclick="closeConfirmDialog()">取消</button>
+                    <button class="btn btn-warning" id="confirm-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span id="confirm-text"></span>
+                    </button>
+                </div>
+            </div>
+            <!-- 背景遮罩 -->
+            <form method="dialog" class="modal-backdrop">
+                <button onclick="closeConfirmDialog()">close</button>
+            </form>
+        </dialog>
+    `;
+
+    // 添加到 body
+    document.body.insertAdjacentHTML('beforeend', dialogHTML);
+}
+
+function showConfirmDialog(config) {
+    // 防止重复显示
+    if (isDialogShowing) {
+        return;
+    }
+
+    const dialog = document.getElementById('confirm-dialog');
+    if (!dialog) {
+        return;
+    }
+
+    isDialogShowing = true;
+
+    // 设置内容
+    document.getElementById('confirm-title').textContent = config.title || '确认操作';
+    document.getElementById('confirm-message').textContent = config.message || '您确定要执行此操作吗？';
+    document.getElementById('confirm-text').textContent = config.confirmText || '确定';
+
+    // 绑定确认按钮事件
+    const confirmBtn = document.getElementById('confirm-button');
+    confirmBtn.onclick = function() {
+        if (typeof config?.onConfirm === 'function') {
+            config.onConfirm();
+        }
+        closeConfirmDialog();
+    };
+
+    // 直接显示对话框，无动画
+    dialog.showModal();
+}
+
+function closeConfirmDialog() {
+    const dialog = document.getElementById('confirm-dialog');
+    if (dialog) {
+        // 直接关闭对话框，无动画
+        dialog.close();
+    }
+
+    // 重置显示标志
+    isDialogShowing = false;
+}
+
 
 // ============================================
 // 工具函数

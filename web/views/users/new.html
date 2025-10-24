@@ -10,59 +10,53 @@
             <form hx-post="/users" hx-target="main" hx-swap="innerHTML" hx-indicator="#submit-btn-spinner"
                 class="space-y-8">
 
-                <!-- 基本信息 -->
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-base-content">基本信息</h3>
-                    </div>
+                <!-- 基本信息字段组 -->
+                <fieldset class="fieldset bg-base-200 border-base-300 rounded-lg p-6 mb-6">
+                    <legend class="fieldset-legend text-lg font-semibold">
+                        <i class="fas fa-user mr-2"></i>基本信息
+                    </legend>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- 用户名 -->
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">用户名</span>
-                                <span class="label-text-alt text-error">*</span>
+                                <span class="label-text font-medium">用户名 <span class="text-error">*</span></span>
                             </label>
-                            <div class="relative">
-                                <input class="input input-bordered input-lg w-full pl-12" type="text" name="username"
-                                    placeholder="请输入用户名" required value="{{.Username}}">
-                                <i
-                                    class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40"></i>
-                            </div>
-                            <div class="label-text-alt mt-2">用户登录时使用的唯一标识</div>
+                            <label class="input input-bordered input-sm">
+                                <i class="fas fa-user h-[1em] opacity-50"></i>
+                                <input type="text" class="grow" name="username" placeholder="请输入用户名" required value="{{.Username}}">
+                            </label>
+                            <label class="label">
+                                <span class="label-text-alt text-xs text-base-content/50">用户登录时使用的唯一标识</span>
+                            </label>
                         </div>
 
                         <!-- 真实姓名 -->
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">真实姓名</span>
-                                <span class="label-text-alt text-error">*</span>
+                                <span class="label-text font-medium">真实姓名 <span class="text-error">*</span></span>
                             </label>
-                            <div class="relative">
-                                <input class="input input-bordered input-lg w-full pl-12" type="text" name="real_name"
-                                    placeholder="请输入真实姓名" required value="{{.RealName}}">
-                                <i
-                                    class="fas fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40"></i>
-                            </div>
-                            <div class="label-text-alt mt-2">用户的真实姓名，用于显示</div>
+                            <label class="input input-bordered input-sm">
+                                <i class="fas fa-id-card h-[1em] opacity-50"></i>
+                                <input type="text" class="grow" name="real_name" placeholder="请输入真实姓名" required value="{{.RealName}}">
+                            </label>
+                            <label class="label">
+                                <span class="label-text-alt text-xs text-base-content/50">用户的真实姓名，用于显示</span>
+                            </label>
                         </div>
 
                         <!-- 邮箱 -->
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">邮箱地址</span>
-                                <span class="label-text-alt text-error">*</span>
+                                <span class="label-text font-medium">邮箱地址 <span class="text-error">*</span></span>
                             </label>
-                            <div class="relative">
-                                <input class="input input-bordered input-lg w-full pl-12" type="email" name="email"
-                                    placeholder="请输入邮箱地址" required value="{{.Email}}">
-                                <i
-                                    class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40"></i>
-                            </div>
-                            <div class="label-text-alt mt-2">用于接收系统通知和找回密码</div>
+                            <label class="input input-bordered input-sm">
+                                <i class="fas fa-envelope h-[1em] opacity-50"></i>
+                                <input type="email" class="grow" name="email" placeholder="请输入邮箱地址" required value="{{.Email}}">
+                            </label>
+                            <label class="label">
+                                <span class="label-text-alt text-xs text-base-content/50">用于接收系统通知和找回密码</span>
+                            </label>
                         </div>
 
                         <!-- 电话 -->
@@ -70,58 +64,56 @@
                             <label class="label">
                                 <span class="label-text font-medium">手机号码</span>
                             </label>
-                            <div class="relative">
-                                <input class="input input-bordered input-lg w-full pl-12" type="tel" name="phone"
-                                    placeholder="请输入手机号码" pattern="^1[3-9]\d{9}$" value="{{.Phone}}">
-                                <i
-                                    class="fas fa-mobile-alt absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40"></i>
-                            </div>
-                            <div class="label-text-alt mt-2">11位手机号码，可选填</div>
+                            <label class="input input-bordered input-sm">
+                                <i class="fas fa-mobile-alt h-[1em] opacity-50"></i>
+                                <input type="tel" class="grow" name="phone" placeholder="请输入手机号码" pattern="^1[3-9]\d{9}$" value="{{.Phone}}">
+                            </label>
+                            <label class="label">
+                                <span class="label-text-alt text-xs text-base-content/50">11位手机号码，可选填</span>
+                            </label>
                         </div>
                     </div>
-                </div>
+                </fieldset>
 
-                <!-- 权限设置 -->
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-full bg-accent/20 text-accent flex items-center justify-center">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-base-content">权限设置</h3>
-                    </div>
+                <!-- 权限设置字段组 -->
+                <fieldset class="fieldset bg-base-200 border-base-300 rounded-lg p-6 mb-6">
+                    <legend class="fieldset-legend text-lg font-semibold">
+                        <i class="fas fa-shield-alt mr-2"></i>权限设置
+                    </legend>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- 角色 -->
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">用户角色</span>
-                                <span class="label-text-alt text-error">*</span>
+                                <span class="label-text font-medium">用户角色 <span class="text-error">*</span></span>
                             </label>
-                            <select class="select select-bordered select-lg w-full" name="role" required>
+                            <select class="select select-bordered select-sm w-full" name="role" required>
                                 <option value="">请选择用户角色</option>
                                 <option value="admin" {{if eq .Role "admin" }}selected{{end}}>👑 管理员 - 拥有所有权限</option>
                                 <option value="editor" {{if eq .Role "editor" }}selected{{end}}>✏️ 编辑 - 可编辑内容</option>
                                 <option value="viewer" {{if eq .Role "viewer" }}selected{{end}}>👁️ 访客 - 只读权限</option>
                             </select>
-                            <div class="label-text-alt mt-2">决定用户在系统中的权限范围</div>
+                            <label class="label">
+                                <span class="label-text-alt text-xs text-base-content/50">决定用户在系统中的权限范围</span>
+                            </label>
                         </div>
 
                         <!-- 状态 -->
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text font-medium">账户状态</span>
-                                <span class="label-text-alt text-error">*</span>
+                                <span class="label-text font-medium">账户状态 <span class="text-error">*</span></span>
                             </label>
-                            <select class="select select-bordered select-lg w-full" name="status" required>
+                            <select class="select select-bordered select-sm w-full" name="status" required>
                                 <option value="">请选择账户状态</option>
                                 <option value="active" {{if eq .Status "active" }}selected{{end}}>🟢 活跃 - 可正常使用</option>
-                                <option value="inactive" {{if eq .Status "inactive" }}selected{{end}}>🔴 非活跃 - 暂时禁用
-                                </option>
+                                <option value="inactive" {{if eq .Status "inactive" }}selected{{end}}>🔴 非活跃 - 暂时禁用</option>
                             </select>
-                            <div class="label-text-alt mt-2">控制用户是否可以登录系统</div>
+                            <label class="label">
+                                <span class="label-text-alt text-xs text-base-content/50">控制用户是否可以登录系统</span>
+                            </label>
                         </div>
                     </div>
-                </div>
+                </fieldset>
 
                 <!-- 表单按钮 -->
                 <div class="flex justify-between items-center pt-8 border-t border-base-300">

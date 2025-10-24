@@ -45,6 +45,50 @@ body {
   animation: spin 1s linear infinite;
 }
 
+/* ============================================
+   确认对话框动画
+   ============================================ */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.2s ease-out;
+}
+
+.animate-slide-out {
+  animation: slide-out 0.2s ease-in;
+}
+
+/* Modal 背景模糊效果 */
+.modal[open]::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* Modal 盒子阴影增强 */
+.modal-box {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -74,29 +118,6 @@ body {
 /* ============================================
    菜单激活状态优化 (daisyUI 5 兼容)
    ============================================ */
-.menu-item.active {
-  position: relative;
-  font-weight: 500;
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 1rem;
-  padding: 0.75rem 1rem;
-  background: oklch(var(--p) / 0.1) !important;
-  color: oklch(var(--p)) !important;
-  box-shadow: inset 0 0 0 1px oklch(var(--p) / 0.2);
-}
-
-.menu-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  bottom: auto;
-  width: 0.25rem;
-  height: 1.5rem;
-  background: oklch(var(--p));
-  border-radius: 0 0.25rem 0.25rem 0;
-}
 
 /* 菜单项基础样式 - 统一所有菜单项 */
 .menu-item {
@@ -104,12 +125,27 @@ body {
   font-size: 1rem;
   font-weight: 400;
   padding: 0.75rem 1rem;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   min-height: 3rem;
   border-radius: 0.5rem;
+  position: relative;
+}
+
+/* 菜单项悬停效果 - 整条变色 */
+.menu-item:not(.active):hover {
+  background: oklch(var(--bc) / 0.08);
+  color: oklch(var(--bc) / 0.9);
+}
+
+/* 菜单激活状态 - 简约背景色风格 */
+.menu-item.active {
+  position: relative;
+  font-weight: 500;
+  background: oklch(var(--p) / 0.12) !important;
+  color: oklch(var(--p)) !important;
 }
 
 /* summary 特殊处理 - 统一包装容器 */
@@ -120,26 +156,13 @@ body {
   width: 100%;
   font-family: system-ui, -apple-system, sans-serif;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: inherit;
 }
 
 /* 菜单项内容样式 */
 .menu-item span {
-  font-weight: 400;
+  font-weight: inherit;
   font-size: 1rem;
-}
-
-/* 菜单项悬停效果 - 整条变色 */
-.menu-item:not(.active):hover {
-  background: oklch(var(--bc) / 0.1);
-  color: oklch(var(--bc) / 0.9);
-}
-
-/* 菜单激活状态 - 增强颜色对比 */
-.menu-item.active {
-  background: oklch(var(--p) / 0.15) !important;
-  color: oklch(var(--p)) !important;
-  font-weight: 400;
 }
 
 /* details summary 样式调整 */
@@ -154,9 +177,9 @@ details summary::-webkit-details-marker {
 
 /* details open 状态下的 summary 保持 menu-item 样式 */
 details[open] > summary.menu-item {
-  background: oklch(var(--p) / 0.15) !important;
+  background: oklch(var(--p) / 0.12) !important;
   color: oklch(var(--p)) !important;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 /* 侧边栏菜单间距调整 */
@@ -187,9 +210,9 @@ details[open] > summary.menu-item {
 
 /* 子菜单项激活状态 */
 .menu ul li a.active {
-  background: oklch(var(--p) / 0.2) !important;
+  background: oklch(var(--p) / 0.15) !important;
   color: oklch(var(--p)) !important;
-  font-weight: 400 !important;
+  font-weight: 500 !important;
 }
 
 /* 子菜单项悬停效果 - 覆盖内联样式 */
@@ -198,15 +221,11 @@ details[open] > summary.menu-item {
   color: oklch(var(--bc) / 0.9) !important;
 }
 
-/* 子菜单项激活状态 */
-.menu-item.active[href*="/users"] {
-  background: oklch(var(--p) / 0.15) !important;
-}
 
 /* details summary 的悬停效果 */
 details[open] > summary {
   background: oklch(var(--bc) / 0.05);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 details summary:hover {
@@ -384,6 +403,7 @@ details summary:hover {
     @apply text-base font-semibold;
   }
 }
+
 
 /* ============================================
    Alpine.js x-cloak 优化

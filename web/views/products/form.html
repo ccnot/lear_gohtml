@@ -1,41 +1,88 @@
-<!-- 商品表单 - 用于新增和编辑 -->
+<!-- 商品表单 - 基于 DaisyUI 5 最新组件规范 -->
 <form {{if .IsEdit}} hx-put="/products/{{.Product.ID}}" hx-target="#product-card-{{.Product.ID}}" hx-swap="outerHTML"
     {{else}} hx-post="/products" hx-target="#products-container" hx-swap="outerHTML" {{end}}
-    x-data="productForm({{.IsEdit}})" @submit.prevent="submitForm">
+    x-data="productForm({{.IsEdit}})" @submit.prevent="submitForm" class="space-y-6">
 
-    <!-- 商品名称 -->
-    <div class="field">
-        <label class="label">商品名称 <span class="has-text-danger">*</span></label>
-        <div class="control has-icons-left">
-            <input class="input" type="text" name="name" placeholder="请输入商品名称" value="{{.Product.Name}}" required
-                x-model="form.name" :class="{'is-danger': errors.name}">
-            <span class="icon is-small is-left">
-                <i class="fas fa-tag"></i>
-            </span>
-        </div>
-        <p class="help is-danger" x-show="errors.name" x-text="errors.name"></p>
-    </div>
+    <!-- 基本信息 fieldset -->
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-lg p-6">
+        <legend class="fieldset-legend text-lg font-semibold">
+            <i class="fas fa-box mr-2"></i>基本信息
+        </legend>
 
-    <div class="form-row">
-        <!-- SKU -->
-        <div class="field">
-            <label class="label">SKU 编码 <span class="has-text-danger">*</span></label>
-            <div class="control has-icons-left">
-                <input class="input" type="text" name="sku" placeholder="请输入 SKU" value="{{.Product.SKU}}" {{if
-                    .IsEdit}}readonly{{end}} required x-model="form.sku" :class="{'is-danger': errors.sku}">
-                <span class="icon is-small is-left">
-                    <i class="fas fa-barcode"></i>
-                </span>
+        <div class="space-y-6">
+            <!-- 商品名称 -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text font-medium">商品名称</span>
+                    <span class="label-text-alt text-error">*</span>
+                </label>
+                <div class="join">
+                    <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-l-lg">
+                        <i class="fas fa-tag opacity-70"></i>
+                    </span>
+                    <input type="text"
+                        name="name"
+                        placeholder="请输入商品名称"
+                        value="{{.Product.Name}}"
+                        required
+                        x-model="form.name"
+                        :class="{'input-error': errors.name, 'input-success': !errors.name && form.name}"
+                        class="input input-bordered input-sm flex-1 join-item rounded-r-lg peer">
+                </div>
+                <div class="validator" x-show="errors.name">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    <span x-text="errors.name"></span>
+                </div>
+                <label class="label">
+                    <span class="label-text-alt text-info">商品显示名称，建议简洁明了</span>
+                </label>
             </div>
-            <p class="help is-danger" x-show="errors.sku" x-text="errors.sku"></p>
-        </div>
 
-        <!-- 分类 -->
-        <div class="field">
-            <label class="label">分类 <span class="has-text-danger">*</span></label>
-            <div class="control">
-                <div class="select is-fullwidth">
-                    <select name="category" required x-model="form.category">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- SKU -->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-medium">SKU 编码</span>
+                        <span class="label-text-alt text-error">*</span>
+                    </label>
+                    <div class="join">
+                        <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-l-lg">
+                            <i class="fas fa-barcode opacity-70"></i>
+                        </span>
+                        <input type="text"
+                            name="sku"
+                            placeholder="请输入 SKU"
+                            value="{{.Product.SKU}}"
+                            {{if .IsEdit}}readonly{{end}}
+                            required
+                            x-model="form.sku"
+                            :class="{'input-error': errors.sku, 'input-success': !errors.sku && form.sku}"
+                            class="input input-bordered input-sm flex-1 join-item rounded-r-lg peer">
+                    </div>
+                    <div class="validator" x-show="errors.sku">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                        <span x-text="errors.sku"></span>
+                    </div>
+                    <label class="label">
+                        <span class="label-text-alt text-warning">SKU 创建后不可修改</span>
+                    </label>
+                </div>
+
+                <!-- 分类 -->
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-medium">分类</span>
+                        <span class="label-text-alt text-error">*</span>
+                    </label>
+                    <select name="category"
+                        required
+                        x-model="form.category"
+                        :class="{'select-error': errors.category, 'select-success': !errors.category && form.category}"
+                        class="select select-bordered select-sm w-full peer">
                         <option value="">请选择分类</option>
                         <option value="电子产品" {{if eq .Product.Category "电子产品" }}selected{{end}}>电子产品</option>
                         <option value="数码配件" {{if eq .Product.Category "数码配件" }}selected{{end}}>数码配件</option>
@@ -43,86 +90,166 @@
                         <option value="智能设备" {{if eq .Product.Category "智能设备" }}selected{{end}}>智能设备</option>
                         <option value="电脑配件" {{if eq .Product.Category "电脑配件" }}selected{{end}}>电脑配件</option>
                     </select>
+                    <div class="validator" x-show="errors.category">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                        <span x-text="errors.category"></span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </fieldset>
 
-    <div class="form-row">
-        <!-- 价格 -->
-        <div class="field">
-            <label class="label">价格 <span class="has-text-danger">*</span></label>
-            <div class="control has-icons-left">
-                <input class="input" type="number" name="price" placeholder="0.00" value="{{.Product.Price}}"
-                    step="0.01" min="0" required x-model="form.price" :class="{'is-danger': errors.price}">
-                <span class="icon is-small is-left">
-                    <i class="fas fa-dollar-sign"></i>
-                </span>
+    <!-- 库存与定价 fieldset -->
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-lg p-6">
+        <legend class="fieldset-legend text-lg font-semibold">
+            <i class="fas fa-calculator mr-2"></i>库存与定价
+        </legend>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 价格 -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text font-medium">价格</span>
+                    <span class="label-text-alt text-error">*</span>
+                </label>
+                <div class="join">
+                    <span class="join-item bg-base-300 border border-base-300 px-3 flex items-center text-sm rounded-l-lg">
+                        ¥
+                    </span>
+                    <input type="number"
+                        name="price"
+                        placeholder="0.00"
+                        value="{{.Product.Price}}"
+                        step="0.01"
+                        min="0"
+                        required
+                        x-model="form.price"
+                        :class="{'input-error': errors.price, 'input-success': !errors.price && form.price && parseFloat(form.price) > 0}"
+                        class="input input-bordered input-sm flex-1 join-item rounded-r-lg peer">
+                </div>
+                <div class="validator" x-show="errors.price">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    <span x-text="errors.price"></span>
+                </div>
+                <label class="label">
+                    <span class="label-text-alt text-info">请输入大于 0 的数字</span>
+                </label>
             </div>
-            <p class="help">请输入正数</p>
-            <p class="help is-danger" x-show="errors.price" x-text="errors.price"></p>
-        </div>
 
-        <!-- 库存 -->
-        <div class="field">
-            <label class="label">库存 <span class="has-text-danger">*</span></label>
-            <div class="control has-icons-left">
-                <input class="input" type="number" name="stock" placeholder="0" value="{{.Product.Stock}}" min="0"
-                    required x-model="form.stock" :class="{'is-danger': errors.stock}">
-                <span class="icon is-small is-left">
-                    <i class="fas fa-boxes"></i>
-                </span>
+            <!-- 库存 -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text font-medium">库存</span>
+                    <span class="label-text-alt text-error">*</span>
+                </label>
+                <input type="number"
+                    name="stock"
+                    placeholder="0"
+                    value="{{.Product.Stock}}"
+                    min="0"
+                    required
+                    x-model="form.stock"
+                    :class="{'input-error': errors.stock, 'input-success': !errors.stock && form.stock && parseInt(form.stock) >= 0}"
+                    class="input input-bordered input-sm w-full peer">
+                <div class="validator" x-show="errors.stock">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    <span x-text="errors.stock"></span>
+                </div>
+                <label class="label">
+                    <span class="label-text-alt text-info">库存为 0 时商品自动显示为缺货</span>
+                </label>
             </div>
-            <p class="help is-danger" x-show="errors.stock" x-text="errors.stock"></p>
         </div>
-    </div>
+    </fieldset>
 
-    <!-- 状态 -->
-    <div class="field">
-        <label class="label">状态 <span class="has-text-danger">*</span></label>
-        <div class="control">
-            <label class="radio">
-                <input type="radio" name="status" value="active" {{if or (eq .Product.Status "active" ) (not
-                    .Product.Status)}}checked{{end}} x-model="form.status">
-                在售
-            </label>
-            <label class="radio">
-                <input type="radio" name="status" value="inactive" {{if eq .Product.Status "inactive" }}checked{{end}}
-                    x-model="form.status">
-                下架
-            </label>
-            <label class="radio">
-                <input type="radio" name="status" value="out_of_stock" {{if eq .Product.Status "out_of_stock"
-                    }}checked{{end}} x-model="form.status">
-                缺货
-            </label>
-        </div>
-    </div>
+    <!-- 销售状态 fieldset -->
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-lg p-6">
+        <legend class="fieldset-legend text-lg font-semibold">
+            <i class="fas fa-store mr-2"></i>销售状态
+        </legend>
 
-    <!-- 描述 -->
-    <div class="field">
-        <label class="label">商品描述</label>
-        <div class="control">
-            <textarea class="textarea" name="description" placeholder="请输入商品描述" rows="3"
-                x-model="form.description">{{.Product.Description}}</textarea>
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text font-medium">状态</span>
+                <span class="label-text-alt text-error">*</span>
+            </label>
+            <div class="flex flex-wrap gap-6">
+                <label class="cursor-pointer label gap-2">
+                    <input type="radio"
+                        name="status"
+                        value="active"
+                        {{if or (eq .Product.Status "active" ) (not .Product.Status)}}checked{{end}}
+                        x-model="form.status"
+                        class="radio radio-sm radio-primary">
+                    <span class="label-text">在售</span>
+                </label>
+                <label class="cursor-pointer label gap-2">
+                    <input type="radio"
+                        name="status"
+                        value="inactive"
+                        {{if eq .Product.Status "inactive" }}checked{{end}}
+                        x-model="form.status"
+                        class="radio radio-sm radio-primary">
+                    <span class="label-text">下架</span>
+                </label>
+                <label class="cursor-pointer label gap-2">
+                    <input type="radio"
+                        name="status"
+                        value="out_of_stock"
+                        {{if eq .Product.Status "out_of_stock" }}checked{{end}}
+                        x-model="form.status"
+                        class="radio radio-sm radio-primary">
+                    <span class="label-text">缺货</span>
+                </label>
+            </div>
+            <label class="label">
+                <span class="label-text-alt text-info">在售商品可以在前台购买，下架商品不可见</span>
+            </label>
         </div>
-    </div>
+    </fieldset>
 
-    <!-- 提交按钮 -->
-    <div class="field is-grouped is-grouped-right" style="margin-top: 2rem;">
-        <div class="control">
-            <button type="button" class="button" @click="$refs.productModal.classList.remove('is-active')">
-                取消
-            </button>
+    <!-- 详细描述 fieldset -->
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-lg p-6">
+        <legend class="fieldset-legend text-lg font-semibold">
+            <i class="fas fa-align-left mr-2"></i>详细描述
+        </legend>
+
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text font-medium">商品描述</span>
+            </label>
+            <textarea name="description"
+                placeholder="请输入商品描述，支持 Markdown 格式"
+                rows="4"
+                x-model="form.description"
+                class="textarea textarea-bordered textarea-sm w-full resize-none">{{.Product.Description}}</textarea>
+            <label class="label">
+                <span class="label-text-alt text-info">支持换行和基本格式，商品详细说明</span>
+            </label>
         </div>
-        <div class="control">
-            <button type="submit" class="button is-primary" :class="{'is-loading': loading}" :disabled="loading">
-                <span class="icon">
-                    <i class="fas fa-save"></i>
-                </span>
-                <span>{{if .IsEdit}}更新{{else}}创建{{end}}</span>
-            </button>
-        </div>
+    </fieldset>
+
+    <!-- 操作按钮 -->
+    <div class="flex justify-end gap-3 pt-6 border-t border-base-300">
+        <button type="button"
+            @click="$refs.productModal.classList.remove('is-active')"
+            class="btn btn-ghost btn-sm">
+            <i class="fas fa-times mr-1"></i>
+            取消
+        </button>
+        <button type="submit"
+            :class="{'loading': loading}"
+            :disabled="loading"
+            class="btn btn-primary btn-sm">
+            <i class="fas fa-save mr-1"></i>
+            {{if .IsEdit}}更新{{else}}创建{{end}}
+        </button>
     </div>
 </form>
 
