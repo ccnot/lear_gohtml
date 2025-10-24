@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GODASH</title>
 
-    <!-- Tailwind CSS 4 + daisyUI 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <!-- Tailwind CSS 4 + daisyUI 5 (本地资源) -->
+    <link href="/static/css/daisyui.css" rel="stylesheet" type="text/css" />
+    <script src="/static/js/tailwind.js"></script>
+    <link href="/static/css/daisyui-themes.css" rel="stylesheet" type="text/css" />
 
     <!-- Tailwind CSS 4.x + daisyUI 5 配置 -->
     <script>
@@ -68,7 +68,7 @@
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- 自定义样式 -->
-    <link rel="stylesheet" href="/static/css/admin.css?v=20250124-menu-beautify">
+    <link rel="stylesheet" href="/static/css/admin.css?v=20251024-menu-beautify">
 
     <!-- HTMX v2.0.7 -->
     <script src="https://cdn.bootcdn.net/ajax/libs/htmx/2.0.7/htmx.min.js"></script>
@@ -77,7 +77,7 @@
     <script defer src="https://cdn.bootcdn.net/ajax/libs/alpinejs/3.15.0/cdn.min.js"></script>
 
     <!-- 自定义 JS (添加版本号避免缓存) -->
-    <script src="/static/js/app.js?v=20250118-daisyui0021"></script>
+    <script src="/static/js/app.js?v=20250118-daisyui0024"></script>
 </head>
 
 <body class="bg-base-200 text-base-content" x-data="initApp()" x-init="$app = window.app = $el.__x; updateActiveNav()"
