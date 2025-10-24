@@ -2,8 +2,8 @@
 package controller
 
 import (
-	"gohtml/domain/vo"
-	"gohtml/infra"
+	"godash/domain/vo"
+	"godash/infra"
 	"math/rand"
 	"time"
 

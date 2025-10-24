@@ -54,7 +54,7 @@ go run main.go
 ## 项目结构
 
 ```
-gohtml/
+godash/
 ├── adapter/controller/    # 控制器层（dashboard, user, product, order, setting）
 ├── domain/vo/            # 值对象（数据结构定义）
 ├── web/

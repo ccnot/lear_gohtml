@@ -3,8 +3,8 @@ package controller
 
 import (
 	"fmt"
-	"gohtml/domain/vo"
-	"gohtml/infra"
+	"godash/domain/vo"
+	"godash/infra"
 	"time"
 
 	"github.com/8treenet/freedom"

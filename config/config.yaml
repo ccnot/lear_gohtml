@@ -16,7 +16,7 @@ redis:
     pool_timeout: 8
 other:
     listen_addr: :8000
-    service_name: gohtml
+    service_name: godash
     repository_request_timeout: 10
     prometheus_listen_addr: :9090
     logger_level: debug

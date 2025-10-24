@@ -73,7 +73,7 @@ func newConfig() *Configuration {
 
 // EntryPoint .
 func EntryPoint() {
-	envConfig := os.Getenv("gohtml-CONF")
+	envConfig := os.Getenv("godash-CONF")
 	if envConfig != "" {
 		os.Setenv(freedom.ProfileENV, envConfig)
 		return

@@ -1,4 +1,4 @@
-module gohtml
+module godash
 
 go 1.23.0
 
