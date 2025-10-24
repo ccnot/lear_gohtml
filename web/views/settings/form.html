@@ -161,16 +161,19 @@
                         </div>
 
                         <!-- 提交按钮 -->
-                        <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-base-300">
-                            <button type="button" class="btn btn-ghost" onclick="location.reload()">
-                                <i class="fas fa-undo mr-2"></i>
-                                重置
-                            </button>
-                            <button type="submit" class="btn btn-primary" :disabled="loading">
-                                <span x-show="loading" class="loading loading-spinner loading-sm mr-2"></span>
-                                <i class="fas fa-save mr-2" x-show="!loading"></i>
-                                保存设置
-                            </button>
+                        <div class="flex justify-end mt-8 pt-6 border-t border-base-300">
+                            <!-- 使用 DaisyUI 5 btn-group -->
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-ghost" onclick="location.reload()">
+                                    <i class="fas fa-undo"></i>
+                                    重置
+                                </button>
+                                <button type="submit" class="btn btn-primary" :disabled="loading">
+                                    <span x-show="loading" class="loading loading-spinner loading-sm"></span>
+                                    <i class="fas fa-save" x-show="!loading"></i>
+                                    保存设置
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -193,13 +196,14 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-3">
+            <!-- 使用 DaisyUI 5 btn-group -->
+            <div class="btn-group">
                 <button class="btn btn-warning" @click="if(confirm('确定要清除缓存吗？')) { alert('缓存已清除（模拟操作）') }">
-                    <i class="fas fa-broom mr-2"></i>
+                    <i class="fas fa-broom"></i>
                     清除缓存
                 </button>
                 <button class="btn btn-error" @click="if(confirm('确定要重置所有设置吗？此操作不可恢复！')) { alert('设置已重置（模拟操作）') }">
-                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <i class="fas fa-exclamation-circle"></i>
                     重置所有设置
                 </button>
             </div>

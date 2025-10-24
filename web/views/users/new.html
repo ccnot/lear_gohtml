@@ -125,17 +125,20 @@
 
                 <!-- 表单按钮 -->
                 <div class="flex justify-between items-center pt-8 border-t border-base-300">
-                    <a href="/users" class="btn btn-ghost btn-lg" hx-get="/users" hx-target="main" hx-swap="innerHTML"
-                        hx-push-url="true">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        返回列表
-                    </a>
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <span id="submit-btn-spinner"
-                            class="loading loading-spinner loading-sm mr-2 htmx-indicator"></span>
-                        <i class="fas fa-user-plus mr-2"></i>
-                        创建用户
-                    </button>
+                    <!-- 使用 DaisyUI 5 btn-group -->
+                    <div class="btn-group">
+                        <a href="/users" class="btn btn-ghost btn-lg" hx-get="/users" hx-target="main" hx-swap="innerHTML"
+                            hx-push-url="true">
+                            <i class="fas fa-arrow-left"></i>
+                            返回列表
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <span id="submit-btn-spinner"
+                                class="loading loading-spinner loading-sm htmx-indicator"></span>
+                            <i class="fas fa-user-plus"></i>
+                            创建用户
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>

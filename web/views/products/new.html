@@ -147,17 +147,20 @@
         </div>
 
         <!-- 表单按钮 -->
-        <div class="flex justify-end gap-3 pt-6 border-t border-base-300">
-            <a href="/products" class="btn btn-ghost" hx-get="/products" hx-target="main" hx-swap="innerHTML"
-                hx-push-url="true">
-                <i class="fas fa-arrow-left mr-2"></i>
-                返回列表
-            </a>
-            <button type="submit" class="btn btn-primary" :disabled="loading">
-                <span x-show="loading" class="loading loading-spinner loading-sm mr-2"></span>
-                <i class="fas fa-save mr-2" x-show="!loading"></i>
-                创建商品
-            </button>
+        <div class="flex justify-end pt-6 border-t border-base-300">
+            <!-- 使用 DaisyUI 5 btn-group -->
+            <div class="btn-group">
+                <a href="/products" class="btn btn-ghost" hx-get="/products" hx-target="main" hx-swap="innerHTML"
+                    hx-push-url="true">
+                    <i class="fas fa-arrow-left"></i>
+                    返回列表
+                </a>
+                <button type="submit" class="btn btn-primary" :disabled="loading">
+                    <span x-show="loading" class="loading loading-spinner loading-sm"></span>
+                    <i class="fas fa-save" x-show="!loading"></i>
+                    创建商品
+                </button>
+            </div>
         </div>
         </form>
     </div>
@@ -231,26 +234,3 @@
     }
 </script>
 
-<style>
-    .form-control {
-        @apply space-y-2;
-    }
-
-    .form-control label {
-        @apply block text-sm font-medium mb-2;
-    }
-
-    .form-control .input,
-    .form-control .textarea,
-    .form-control .select {
-        @apply w-full;
-    }
-
-    .form-control .input-error {
-        @apply input-error;
-    }
-
-    .label-text-alt {
-        @apply text-xs text-base-content/60 mt-1;
-    }
-</style>

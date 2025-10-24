@@ -1,162 +1,114 @@
-<!-- 统计卡片 - 使用 card 组件替代 stats 组件 -->
+<!-- 统计数据 - 使用 DaisyUI 5 stat 组件 -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     <!-- 总用户数 -->
-    <div class="card bg-primary text-primary-content shadow-lg hover:shadow-xl transition-all duration-300 border-0">
-        <div class="card-body">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-primary-content/80 text-sm font-medium">总用户数</div>
-                    <div class="text-3xl font-bold mt-1">{{.TotalUsers}}</div>
-                    <div class="text-primary-content/70 text-sm mt-2">↗︎ 12% 较上月</div>
-                </div>
-                <div class="text-primary-content/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                </div>
-            </div>
+    <div class="stat bg-primary text-primary-content shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
+        <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary-content/80" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
         </div>
+        <div class="stat-title">总用户数</div>
+        <div class="stat-value">{{.TotalUsers}}</div>
+        <div class="stat-desc">↗︎ 12% 较上月</div>
     </div>
 
     <!-- 总商品数 -->
-    <div class="card bg-info text-info-content shadow-lg hover:shadow-xl transition-all duration-300 border-0">
-        <div class="card-body">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-info-content/80 text-sm font-medium">总商品数</div>
-                    <div class="text-3xl font-bold mt-1">{{.TotalProducts}}</div>
-                    <div class="text-info-content/70 text-sm mt-2">↗︎ 8% 较上月</div>
-                </div>
-                <div class="text-info-content/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                </div>
-            </div>
+    <div class="stat bg-info text-info-content shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
+        <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-info-content/80" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
         </div>
+        <div class="stat-title">总商品数</div>
+        <div class="stat-value">{{.TotalProducts}}</div>
+        <div class="stat-desc">↗︎ 8% 较上月</div>
     </div>
 
     <!-- 总订单数 -->
-    <div class="card bg-success text-success-content shadow-lg hover:shadow-xl transition-all duration-300 border-0">
-        <div class="card-body">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-success-content/80 text-sm font-medium">总订单数</div>
-                    <div class="text-3xl font-bold mt-1">{{.TotalOrders}}</div>
-                    <div class="text-success-content/70 text-sm mt-2">↗︎ 23% 较上月</div>
-                </div>
-                <div class="text-success-content/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                </div>
-            </div>
+    <div class="stat bg-success text-success-content shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
+        <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-success-content/80" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
         </div>
+        <div class="stat-title">总订单数</div>
+        <div class="stat-value">{{.TotalOrders}}</div>
+        <div class="stat-desc">↗︎ 23% 较上月</div>
     </div>
 
     <!-- 总收入 -->
-    <div class="card bg-warning text-warning-content shadow-lg hover:shadow-xl transition-all duration-300 border-0">
-        <div class="card-body">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-warning-content/80 text-sm font-medium">总收入</div>
-                    <div class="text-3xl font-bold mt-1">¥{{printf "%.2f" .TotalRevenue}}</div>
-                    <div class="text-warning-content/70 text-sm mt-2">↗︎ 18% 较上月</div>
-                </div>
-                <div class="text-warning-content/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-            </div>
+    <div class="stat bg-warning text-warning-content shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
+        <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-warning-content/80" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
         </div>
+        <div class="stat-title">总收入</div>
+        <div class="stat-value">¥{{printf "%.2f" .TotalRevenue}}</div>
+        <div class="stat-desc">↗︎ 18% 较上月</div>
     </div>
 
     <!-- 活跃用户 -->
-    <div class="card bg-success text-success-content shadow-lg hover:shadow-xl transition-all duration-300 border-0">
-        <div class="card-body">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-success-content/80 text-sm font-medium">活跃用户</div>
-                    <div class="text-3xl font-bold mt-1">{{.ActiveUsers}}</div>
-                    <div class="text-success-content/70 text-sm mt-2">在线用户数</div>
-                </div>
-                <div class="text-success-content/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                    </svg>
-                </div>
-            </div>
+    <div class="stat bg-success text-success-content shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
+        <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-success-content/80" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
         </div>
+        <div class="stat-title">活跃用户</div>
+        <div class="stat-value">{{.ActiveUsers}}</div>
+        <div class="stat-desc">在线用户数</div>
     </div>
 
     <!-- 待处理订单 -->
-    <div class="card bg-warning text-warning-content shadow-lg hover:shadow-xl transition-all duration-300 border-0">
-        <div class="card-body">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-warning-content/80 text-sm font-medium">待处理订单</div>
-                    <div class="text-3xl font-bold mt-1">{{.PendingOrders}}</div>
-                    <div class="text-warning-content/70 text-sm mt-2">需要处理</div>
-                </div>
-                <div class="text-warning-content/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-            </div>
+    <div class="stat bg-warning text-warning-content shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
+        <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-warning-content/80" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
         </div>
+        <div class="stat-title">待处理订单</div>
+        <div class="stat-value">{{.PendingOrders}}</div>
+        <div class="stat-desc">需要处理</div>
     </div>
 
     <!-- 低库存商品 -->
-    <div class="card bg-error text-error-content shadow-lg hover:shadow-xl transition-all duration-300 border-0">
-        <div class="card-body">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-error-content/80 text-sm font-medium">低库存预警</div>
-                    <div class="text-3xl font-bold mt-1">{{.LowStock}}</div>
-                    <div class="text-error-content/70 text-sm mt-2">需要补货</div>
-                </div>
-                <div class="text-error-content/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                </div>
-            </div>
+    <div class="stat bg-error text-error-content shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
+        <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-error-content/80" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
         </div>
+        <div class="stat-title">低库存预警</div>
+        <div class="stat-value">{{.LowStock}}</div>
+        <div class="stat-desc">需要补货</div>
     </div>
 
     <!-- 今日订单 -->
-    <div class="card bg-primary text-primary-content shadow-lg hover:shadow-xl transition-all duration-300 border-0">
-        <div class="card-body">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-primary-content/80 text-sm font-medium">今日订单</div>
-                    <div class="text-3xl font-bold mt-1">{{.TodayOrders}}</div>
-                    <div class="text-primary-content/70 text-sm mt-2">↗︎ 5 较昨日</div>
-                </div>
-                <div class="text-primary-content/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                </div>
-            </div>
+    <div class="stat bg-primary text-primary-content shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
+        <div class="stat-figure">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary-content/80" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
         </div>
+        <div class="stat-title">今日订单</div>
+        <div class="stat-value">{{.TodayOrders}}</div>
+        <div class="stat-desc">↗︎ 5 较昨日</div>
     </div>
 </div>
