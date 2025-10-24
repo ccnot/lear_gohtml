@@ -1,6 +1,6 @@
 /**
  * Admin Dashboard - 全局 JavaScript
- * 包含 Alpine.js 组件和工具函数
+ * 重构版本：基于 HTMX v2.0.7 + DaisyUI 5.3.7 + Alpine.js v3.15.0
  */
 
 // ============================================
@@ -9,47 +9,36 @@
 
 document.addEventListener('alpine:init', () => {
 
-    // ============================================
-    // 删除确认组件（通用）
-    // ============================================
+    // 删除确认组件 - 简化版本
     Alpine.data('deleteConfirm', (options) => ({
         confirmDelete() {
-            // 采用统一的 confirm-dialog 配置，交由组件使用 HTMX 范式发起请求
-            window.dispatchEvent(new CustomEvent('confirm-dialog', {
-                detail: {
-                    title: options.title || '确认删除',
-                    message: options.message,
-                    confirmText: options.confirmText || '确定删除',
-                    // 使用 config 字段描述 HTMX 请求参数（confirm-dialog 会创建临时 hx-* 元素）
-                    url: options.url,
-                    method: 'DELETE',
-                    data: null,
-                    target: options.target,
-                    swap: 'outerHTML swap:300ms'
+            showConfirmDialog({
+                title: options.title || '确认删除',
+                message: options.message || '确定要删除这个项目吗？',
+                confirmText: options.confirmText || '删除',
+                onConfirm: () => {
+                    // 使用 HTMX 发起请求
+                    const element = document.querySelector(options.target);
+                    if (element) {
+                        htmx.trigger(element, 'delete');
+                    }
                 }
-            }));
+            });
         }
     }));
 
-    // ============================================
-    // 通用表单验证器
-    // ============================================
+    // 通用表单验证器 - 简化版本
     function createValidator(rules) {
         return function(formData) {
             const errors = {};
-
             for (const [field, rule] of Object.entries(rules)) {
                 const value = formData[field];
-
                 if (rule.required && !value) {
                     errors[field] = rule.message || `${field}不能为空`;
-                    continue;
                 }
-
                 if (rule.pattern && value && !rule.pattern.test(value)) {
                     errors[field] = rule.patternMessage || `${field}格式不正确`;
                 }
-
                 if (rule.validator && value) {
                     const customError = rule.validator(value);
                     if (customError) {
@@ -57,12 +46,11 @@ document.addEventListener('alpine:init', () => {
                     }
                 }
             }
-
             return errors;
         };
     }
 
-    // 验证规则
+    // 基础验证规则
     const validationRules = {
         username: {
             required: true,
@@ -80,17 +68,9 @@ document.addEventListener('alpine:init', () => {
             required: true,
             message: '真实姓名不能为空'
         },
-        siteName: {
-            required: true,
-            message: '网站名称不能为空'
-        },
         name: {
             required: true,
             message: '商品名称不能为空'
-        },
-        sku: {
-            required: true,
-            message: 'SKU不能为空'
         },
         price: {
             validator: (value) => {
@@ -99,21 +79,11 @@ document.addEventListener('alpine:init', () => {
                     return '请输入有效的价格';
                 }
             }
-        },
-        stock: {
-            validator: (value) => {
-                const stock = parseInt(value);
-                if (isNaN(stock) || stock < 0) {
-                    return '请输入有效的库存数量';
-                }
-            }
         }
     };
 
-    // ============================================
     // 通用表单组件
-    // ============================================
-    function createFormComponent(defaultForm, rules, options = {}) {
+    function createFormComponent(defaultForm, rules) {
         return {
             loading: false,
             errors: {},
@@ -131,10 +101,6 @@ document.addEventListener('alpine:init', () => {
                     return false;
                 }
                 this.loading = true;
-
-                if (options.customSubmit) {
-                    options.customSubmit.call(this, event);
-                }
             },
 
             clearErrors() {
@@ -146,150 +112,57 @@ document.addEventListener('alpine:init', () => {
     // 用户表单组件
     Alpine.data('userForm', (isEdit = false) => {
         const rules = { ...validationRules };
-        if (isEdit) {
-            delete rules.username; // 编辑时用户名不是必填
-        }
-
+        if (isEdit) delete rules.username;
         return createFormComponent({
-            username: '',
-            email: '',
-            realName: '',
-            phone: '',
-            role: 'viewer',
-            status: 'active'
+            username: '', email: '', realName: '', phone: '', role: 'viewer', status: 'active'
         }, rules);
     });
 
     // 商品表单组件
     Alpine.data('productForm', () => createFormComponent({
-        name: '',
-        sku: '',
-        category: '',
-        price: '',
-        stock: '',
-        status: 'active',
-        description: ''
+        name: '', sku: '', category: '', price: '', stock: '', status: 'active', description: ''
     }, {
         name: validationRules.name,
-        sku: validationRules.sku,
-        price: validationRules.price,
-        stock: validationRules.stock
-    }));
-
-    // 设置表单组件
-    Alpine.data('settingsForm', () => createFormComponent({
-        siteName: '',
-        siteUrl: '',
-        email: '',
-        description: '',
-        enableRegistration: true,
-        enableComments: true,
-        itemsPerPage: 10,
-        maintenanceMode: false
-    }, {
-        siteName: validationRules.siteName,
-        email: validationRules.email
-    }, {
-        customSubmit(event) {
-            if (this.validate()) {
-                this.loading = true;
-                htmx.trigger(event.target, 'submit');
-            }
-        }
+        price: validationRules.price
     }));
 });
 
 // ============================================
-// HTMX 事件监听
+// HTMX 事件监听 - 简化版本
 // ============================================
 
-// HTMX confirm 拦截 - 使用 DaisyUI dialog 替代原生 confirm
+// HTMX confirm 拦截 - 使用 DaisyUI dialog
 document.addEventListener('htmx:confirm', function(event) {
-    // 检查是否有确认消息，只有真正使用 hx-confirm 的请求才处理
-    if (!event.detail.question) {
-        return; // 没有确认消息，让 HTMX 正常处理
-    }
+    if (!event.detail.question) return;
 
-    // 阻止原生 confirm 对话框
     event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-
-    // 获取确认消息
-    const message = event.detail.question;
-    const target = event.detail.target;
-
-    // 从 HTMX 元素中提取请求参数
-    const extractUrl = () => {
-        return target.getAttribute('hx-delete') ||
-               target.getAttribute('hx-put') ||
-               target.getAttribute('hx-post') ||
-               target.getAttribute('hx-patch') ||
-               target.getAttribute('hx-get');
-    };
-
-    const extractMethod = () => {
-        if (target.getAttribute('hx-delete')) return 'DELETE';
-        if (target.getAttribute('hx-put')) return 'PUT';
-        if (target.getAttribute('hx-post')) return 'POST';
-        if (target.getAttribute('hx-patch')) return 'PATCH';
-        if (target.getAttribute('hx-get')) return 'GET';
-        return 'POST';
-    };
-
-    // 解析 hx-vals 参数
-    let data = null;
-    const valsAttr = target.getAttribute('hx-vals');
-    if (valsAttr) {
-        try {
-            data = JSON.parse(valsAttr);
-        } catch (e) {
-            console.error('Failed to parse hx-vals:', e);
-        }
-    }
-
-    // 确保对话框存在
-    createConfirmDialog();
-
-    // 直接调用确认对话框显示函数
     showConfirmDialog({
         title: '确认操作',
-        message: message,
+        message: event.detail.question,
         confirmText: '确定',
-        onConfirm: () => {
-            event.detail.issueRequest(true);
-        }
+        onConfirm: () => event.detail.issueRequest(true)
     });
 });
 
-// 防止重复注册事件监听器的标志
-let htmxEventsRegistered = false;
-
-// 等待 DOM 加载完成后注册事件监听器
+// Toast 消息处理
 document.addEventListener('DOMContentLoaded', function () {
-    if (htmxEventsRegistered) return;
-    htmxEventsRegistered = true;
-
-    // 监听 HTMX 交换完成后的 Toast 消息
+    // 监听 HTMX 请求完成后的 Toast 消息
     document.body.addEventListener('htmx:afterSwap', function (event) {
         const xhr = event.detail.xhr;
-
         if (!xhr) return;
 
-        // 检查响应头中的 Toast 消息
         const toastMessage = xhr.getResponseHeader('X-Toast-Message');
         const toastType = xhr.getResponseHeader('X-Toast-Type') || 'success';
 
+        console.log('Toast Debug - Message:', toastMessage, 'Type:', toastType); // 调试日志
+
         if (toastMessage) {
-            // 解码 URL 编码的中文消息
             let decodedMessage = toastMessage;
             try {
                 decodedMessage = decodeURIComponent(toastMessage);
             } catch (e) {
                 // 解码失败时使用原始消息
             }
-
-            // 显示简化的 Toast
             showToast(decodedMessage, toastType);
         }
     });
@@ -300,29 +173,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// 防止重复显示相同消息
+// Toast 显示函数
 let lastToast = null;
 let lastToastTime = 0;
 
-// 简化的 Toast 显示函数
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
-    // 防止重复消息
     const now = Date.now();
     if (lastToast === message && (now - lastToastTime) < 1000) {
-        return; // 1秒内相同消息不重复显示
+        return; // 防止重复消息
     }
 
     lastToast = message;
     lastToastTime = now;
 
-    // 创建 Alert 元素
     const alert = document.createElement('div');
     alert.className = `alert alert-${type} shadow-lg flex items-center justify-between`;
 
-    // 添加图标
     const icons = {
         success: '✅',
         error: '❌',
@@ -338,10 +207,8 @@ function showToast(message, type = 'info') {
         <button class="btn btn-ghost btn-xs" onclick="this.parentElement.remove()">✕</button>
     `;
 
-    // 添加到容器
     container.appendChild(alert);
 
-    // 3秒后自动移除
     setTimeout(() => {
         if (alert.parentElement) {
             alert.remove();
@@ -349,82 +216,22 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// ============================================
-// 动态确认对话框组件
-// ============================================
-
-// 防止重复显示对话框的全局变量
+// 确认对话框组件
 let isDialogShowing = false;
 
-function createConfirmDialog() {
-    // 检查是否已存在确认对话框
-    if (document.getElementById('confirm-dialog')) {
-        return;
-    }
-
-    // 创建确认对话框 HTML
-    const dialogHTML = `
-        <!-- 确认对话框组件 - 使用 daisyUI 5 原生 dialog -->
-        <dialog id="confirm-dialog" class="modal">
-            <div class="modal-box max-w-md">
-                <!-- 警告图标和标题 -->
-                <div class="flex items-start gap-4 mb-4">
-                    <div class="avatar">
-                        <div class="w-12 rounded-full bg-warning/20 text-warning flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-bold text-lg" id="confirm-title"></h3>
-                        <p class="py-2 text-sm opacity-70" id="confirm-message"></p>
-                    </div>
-                </div>
-
-                <!-- 按钮组 -->
-                <div class="modal-action">
-                    <button class="btn btn-ghost btn-active" onclick="closeConfirmDialog()">取消</button>
-                    <button class="btn btn-warning" id="confirm-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span id="confirm-text"></span>
-                    </button>
-                </div>
-            </div>
-            <!-- 背景遮罩 -->
-            <form method="dialog" class="modal-backdrop">
-                <button onclick="closeConfirmDialog()">close</button>
-            </form>
-        </dialog>
-    `;
-
-    // 添加到 body
-    document.body.insertAdjacentHTML('beforeend', dialogHTML);
-}
-
 function showConfirmDialog(config) {
-    // 防止重复显示
-    if (isDialogShowing) {
-        return;
-    }
+    if (isDialogShowing) return;
 
+    createConfirmDialog();
     const dialog = document.getElementById('confirm-dialog');
-    if (!dialog) {
-        return;
-    }
+    if (!dialog) return;
 
     isDialogShowing = true;
 
-    // 设置内容
     document.getElementById('confirm-title').textContent = config.title || '确认操作';
-    document.getElementById('confirm-message').textContent = config.message || '您确定要执行此操作吗？';
+    document.getElementById('confirm-message').textContent = config.message || '确定要执行此操作吗？';
     document.getElementById('confirm-text').textContent = config.confirmText || '确定';
 
-    // 绑定确认按钮事件
     const confirmBtn = document.getElementById('confirm-button');
     confirmBtn.onclick = function() {
         if (typeof config?.onConfirm === 'function') {
@@ -433,32 +240,55 @@ function showConfirmDialog(config) {
         closeConfirmDialog();
     };
 
-    // 直接显示对话框，无动画
     dialog.showModal();
+}
+
+function createConfirmDialog() {
+    if (document.getElementById('confirm-dialog')) return;
+
+    const dialogHTML = `
+        <dialog id="confirm-dialog" class="modal">
+            <div class="modal-box max-w-md">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="avatar">
+                        <div class="w-12 rounded-full bg-warning/20 text-warning flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg" id="confirm-title"></h3>
+                        <p class="py-2 text-sm opacity-70" id="confirm-message"></p>
+                    </div>
+                </div>
+                <div class="modal-action">
+                    <button class="btn btn-ghost" onclick="closeConfirmDialog()">取消</button>
+                    <button class="btn btn-warning" id="confirm-button">
+                        <span id="confirm-text"></span>
+                    </button>
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button onclick="closeConfirmDialog()">close</button>
+            </form>
+        </dialog>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', dialogHTML);
 }
 
 function closeConfirmDialog() {
     const dialog = document.getElementById('confirm-dialog');
-    if (dialog) {
-        // 直接关闭对话框，无动画
-        dialog.close();
-    }
-
-    // 重置显示标志
+    if (dialog) dialog.close();
     isDialogShowing = false;
 }
 
 
 // ============================================
-// 工具函数
+// 工具函数 - 简化版本
 // ============================================
 
-/**
- * 格式化日期
- * @param {Date|string} date - 日期对象或字符串
- * @param {string} format - 格式，默认 'YYYY-MM-DD HH:mm:ss'
- * @returns {string} 格式化后的日期字符串
- */
 function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
     const d = new Date(date);
     const year = d.getFullYear();
@@ -466,33 +296,19 @@ function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
     const day = String(d.getDate()).padStart(2, '0');
     const hours = String(d.getHours()).padStart(2, '0');
     const minutes = String(d.getMinutes()).padStart(2, '0');
-    const seconds = String(d.getSeconds()).padStart(2, '0');
 
     return format
         .replace('YYYY', year)
         .replace('MM', month)
         .replace('DD', day)
         .replace('HH', hours)
-        .replace('mm', minutes)
-        .replace('ss', seconds);
+        .replace('mm', minutes);
 }
 
-/**
- * 格式化货币
- * @param {number} amount - 金额
- * @param {string} currency - 货币符号，默认 '¥'
- * @returns {string} 格式化后的货币字符串
- */
 function formatCurrency(amount, currency = '¥') {
     return `${currency}${parseFloat(amount).toFixed(2)}`;
 }
 
-/**
- * 防抖函数
- * @param {Function} func - 要执行的函数
- * @param {number} wait - 等待时间（毫秒）
- * @returns {Function} 防抖后的函数
- */
 function debounce(func, wait = 300) {
     let timeout;
     return function executedFunction(...args) {
@@ -505,10 +321,6 @@ function debounce(func, wait = 300) {
     };
 }
 
-// 将工具函数挂载到 window 对象（可选）
-window.utils = {
-    formatDate,
-    formatCurrency,
-    debounce
-};
+// 工具函数挂载
+window.utils = { formatDate, formatCurrency, debounce };
 

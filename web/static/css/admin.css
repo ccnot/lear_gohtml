@@ -1,27 +1,7 @@
-/* 管理后台自定义样式 - DaisyUI 5 + Tailwind CSS 4 */
-/* 基于 daisyUI 5 标准主题系统重构 */
+/* 管理后台自定义样式 - DaisyUI 5.3.7 + Tailwind CSS 4 */
+/* 简化版本，只保留必要的自定义样式 */
 
-/* ============================================
-   全局样式优化
-   ============================================ */
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ============================================
-   过渡和动画
-   ============================================ */
+/* HTMX 过渡动画 */
 .htmx-swapping {
   opacity: 0;
   transition: opacity 200ms ease-out;
@@ -32,9 +12,7 @@ body {
   transition: opacity 200ms ease-in;
 }
 
-/* ============================================
-   自定义加载动画
-   ============================================ */
+/* 自定义加载动画 */
 .loading-spinner {
   display: inline-block;
   width: 1.25rem;
@@ -45,37 +23,8 @@ body {
   animation: spin 1s linear infinite;
 }
 
-/* ============================================
-   确认对话框动画
-   ============================================ */
-@keyframes slide-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes slide-out {
-  from {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95) translateY(-10px);
-  }
-}
-
-.animate-slide-in {
-  animation: slide-in 0.2s ease-out;
-}
-
-.animate-slide-out {
-  animation: slide-out 0.2s ease-in;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Modal 背景模糊效果 */
@@ -84,20 +33,7 @@ body {
   backdrop-filter: blur(2px);
 }
 
-/* Modal 盒子阴影增强 */
-.modal-box {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ============================================
-   侧边栏优化
-   ============================================ */
+/* 侧边栏菜单优化 */
 .sidebar-scrollbar::-webkit-scrollbar {
   width: 0.375rem;
 }
@@ -111,303 +47,29 @@ body {
   border-radius: 0.375rem;
 }
 
-.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: oklch(var(--bc) / 0.3);
-}
-
-/* ============================================
-   菜单激活状态优化 (daisyUI 5 兼容)
-   ============================================ */
-
-/* 菜单项基础样式 - 统一所有菜单项 */
-.menu-item {
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
-  padding: 0.75rem 1rem;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  min-height: 3rem;
-  border-radius: 0.5rem;
-  position: relative;
-}
-
-/* 菜单项悬停效果 - 整条变色 */
-.menu-item:not(.active):hover {
-  background: oklch(var(--bc) / 0.08);
-  color: oklch(var(--bc) / 0.9);
-}
-
-/* 菜单激活状态 - 简约背景色风格 */
+/* 菜单激活状态 - 简化版本 */
 .menu-item.active {
-  position: relative;
-  font-weight: 500;
-  background: oklch(var(--p) / 0.12) !important;
-  color: oklch(var(--p)) !important;
-}
-
-/* summary 特殊处理 - 统一包装容器 */
-.menu-item > div {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  font-family: system-ui, -apple-system, sans-serif;
-  font-size: 1rem;
-  font-weight: inherit;
-}
-
-/* 菜单项内容样式 */
-.menu-item span {
-  font-weight: inherit;
-  font-size: 1rem;
-}
-
-/* details summary 样式调整 */
-details summary {
-  list-style: none;
-  cursor: pointer;
-}
-
-details summary::-webkit-details-marker {
-  display: none;
-}
-
-/* details open 状态下的 summary 保持 menu-item 样式 */
-details[open] > summary.menu-item {
   background: oklch(var(--p) / 0.12) !important;
   color: oklch(var(--p)) !important;
   font-weight: 500;
 }
 
-/* 侧边栏菜单间距调整 */
-.menu li {
-  margin: 0.25rem 0;
-}
-
-/* 子菜单项样式 - 统一大小和间距，覆盖内联样式 */
-.menu ul li a {
-  font-family: system-ui, -apple-system, sans-serif !important;
-  font-size: 0.95rem !important;
-  font-weight: 400 !important;
-  padding: 0.625rem 0.875rem !important;
-  margin: 0.125rem 0 !important;
-  display: flex !important;
-  align-items: center;
-  gap: 0.75rem !important;
-  min-height: 2.5rem;
-  border-radius: 0.5rem !important;
-  transition: background-color 0.2s ease !important;
-}
-
-/* 子菜单项span样式 */
-.menu ul li a span {
-  font-size: 0.95rem !important;
-  font-weight: 400 !important;
-}
-
-/* 子菜单项激活状态 */
-.menu ul li a.active {
-  background: oklch(var(--p) / 0.15) !important;
-  color: oklch(var(--p)) !important;
-  font-weight: 500 !important;
-}
-
-/* 子菜单项悬停效果 - 覆盖内联样式 */
+/* 子菜单项样式 */
 .menu ul li a:hover {
   background: oklch(var(--bc) / 0.12) !important;
-  color: oklch(var(--bc) / 0.9) !important;
 }
 
-
-/* details summary 的悬停效果 */
-details[open] > summary {
-  background: oklch(var(--bc) / 0.05);
-  font-weight: 500;
-}
-
-details summary:hover {
-  background: oklch(var(--bc) / 0.08);
-}
-
-/* ============================================
-   统计数据动画优化 (daisyUI 5 stats)
-   ============================================ */
-.stat {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.stat:hover {
-  transform: translateY(-0.25rem);
-}
-
-/* ============================================
-   表格行 hover 优化
-   ============================================ */
-.table tbody tr {
-  transition: background-color 0.15s ease;
-}
-
-/* ============================================
-   卡片阴影优化
-   ============================================ */
-.card {
-  transition: box-shadow 0.2s ease;
-}
-
-.card:hover {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-/* ============================================
-   模态框 z-index 修复
-   ============================================ */
-.modal {
-  z-index: 999;
-}
-
-.modal-box {
-  max-height: calc(100vh - 5rem);
-  overflow-y: auto;
-}
-
-/* ============================================
-   Dropdown z-index 优化 (daisyUI 5 兼容)
-   ============================================ */
-.dropdown-content {
-  z-index: 50 !important;
-}
-
-/* ============================================
-   响应式优化
-   ============================================ */
+/* 响应式优化 */
 @media (max-width: 1024px) {
   .sidebar-mobile-hidden {
     transform: translateX(-100%);
   }
-  
   .sidebar-mobile-shown {
     transform: translateX(0);
   }
 }
 
-/* ============================================
-   打印样式
-   ============================================ */
-@media print {
-  aside,
-  header,
-  .no-print {
-    display: none !important;
-  }
-
-  .print-full-width {
-    margin-left: 0 !important;
-    width: 100% !important;
-  }
-}
-
-/* ============================================
-   DaisyUI 5 细节优化
-   ============================================ */
-
-/* 优化 join 组件的分页按钮 */
-.join .btn {
-  @apply border-base-300;
-}
-
-.join .btn-active {
-  @apply bg-primary text-primary-content border-primary;
-}
-
-/* 优化 btn-group 的间距 */
-.btn-group {
-  @apply shadow-sm;
-}
-
-.btn-group .btn:first-child:not(:last-child) {
-  @apply rounded-l-lg;
-}
-
-.btn-group .btn:last-child:not(:first-child) {
-  @apply rounded-r-lg;
-}
-
-/* 优化 stat 组件的响应式 */
-@media (max-width: 768px) {
-  .stat {
-    @apply text-center;
-  }
-
-  .stat-figure {
-    @apply mx-auto mb-2;
-  }
-}
-
-/* ============================================
-   表格字体优化
-   ============================================ */
-
-/* 用户列表表格字体优化 */
-#user-table-container .table td {
-  @apply text-base py-3;
-}
-
-#user-table-container .table th {
-  @apply text-sm font-semibold py-3;
-}
-
-#user-table-container .table td.font-medium {
-  @apply text-base font-medium;
-}
-
-/* 订单列表表格字体优化 */
-#order-table-container .table td {
-  @apply text-base py-3;
-}
-
-#order-table-container .table th {
-  @apply text-sm font-semibold py-3;
-}
-
-#order-table-container .table td.font-medium {
-  @apply text-base font-medium;
-}
-
-#order-table-container .table td.font-semibold {
-  @apply text-lg font-semibold;
-}
-
-/* 表格行高优化 */
-.table tbody tr {
-  @apply hover:bg-base-200;
-}
-
-/* 小屏幕下的表格优化 */
-@media (max-width: 768px) {
-  .table td {
-    @apply text-sm py-2;
-  }
-
-  .table th {
-    @apply text-xs py-2;
-  }
-
-  .table td.font-medium {
-    @apply text-sm font-medium;
-  }
-
-  .table td.font-semibold {
-    @apply text-base font-semibold;
-  }
-}
-
-
-/* ============================================
-   Alpine.js x-cloak 优化
-   ============================================ */
+/* Alpine.js x-cloak */
 [x-cloak] {
   display: none !important;
 }

@@ -174,15 +174,15 @@ func (c *UserController) PutBy(id int64) freedom.Result {
 	c.updateUser(&user, formData)
 	mockUsers[id] = user
 
-	// 设置成功提示并导航
-	c.NavigateTo("/users")
+	// 设置成功提示并返回用户列表页面
 	c.SetSuccessToast("用户更新成功")
+	c.NavigateTo("/users")
 
-	return &infra.JSONResponse{
-		Object: map[string]interface{}{
-			"success": true,
-			"id":      id,
-		},
+	// 获取用户列表数据
+	userListData := c.getUserListData()
+	return &infra.ViewResponse{
+		Name: "users/list.html",
+		Data: userListData,
 	}
 }
 
@@ -224,6 +224,39 @@ func (c *UserController) GetPermissions() freedom.Result {
 	return &infra.ViewResponse{
 		Name: "users/permissions.html",
 		Data: nil,
+	}
+}
+
+// getUserListData 获取用户列表数据（辅助方法）
+func (c *UserController) getUserListData() vo.UserListData {
+	// 使用默认搜索参数
+	params := vo.SearchParams{
+		Page:     1,
+		PageSize: 10,
+	}
+
+	_, pagination := c.SearchHelper(params)
+	filteredUsers := c.filterUsers(params)
+
+	// 转换为 interface{} 进行分页
+	users := make([]interface{}, len(filteredUsers))
+	for i, user := range filteredUsers {
+		users[i] = user
+	}
+
+	pagedUsers, pagination := c.Paginate(users, pagination)
+
+	// 转换回用户类型
+	result := make([]vo.User, len(pagedUsers))
+	for i, user := range pagedUsers {
+		result[i] = user.(vo.User)
+	}
+
+	return vo.UserListData{
+		Users:    result,
+		PageInfo: c.CreatePageInfo(pagination),
+		Query:    "",
+		Status:   "",
 	}
 }
 

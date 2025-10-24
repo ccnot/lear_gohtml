@@ -106,7 +106,8 @@ func (c *BaseController) HandleValidationError(err error, viewName string, data 
 
 // SPA Navigation
 func (c *BaseController) NavigateTo(path string) {
-	c.Worker.IrisContext().Header("HX-Location", `{"path":"`+path+`","target":"#main-container","swap":"innerHTML"}`)
+	// 使用 HX-Push-Url 更新浏览器历史记录
+	c.Worker.IrisContext().Header("HX-Push-Url", path)
 }
 
 // FilterHelper 通用过滤助手

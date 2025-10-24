@@ -6,63 +6,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GODASH</title>
 
-    <!-- Tailwind CSS 4 + daisyUI 5 (本地资源) -->
-    <!-- <link href="/static/css/daisyui.css" rel="stylesheet" type="text/css" />
-    <script src="/static/js/tailwind.js"></script>
-    <link href="/static/css/daisyui-themes.css" rel="stylesheet" type="text/css" /> -->
+    <!-- Tailwind CSS 4 + daisyUI 5.3.7 -->
     <link href="https://gcore.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script defer src="https://gcore.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https:///gcore.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
 
-    <!-- Tailwind CSS 4.x + daisyUI 5 配置 -->
+    <!-- DaisyUI 5.3.7 主题配置 -->
     <script>
         tailwind.config = {
-            darkMode: ['class', '[data-theme="dark"]'],
-            themes: {
-                light: {
-                    "primary": "#3b82f6",
-                    "primary-focus": "#2563eb",
-                    "primary-content": "#ffffff",
-                    "secondary": "#64748b",
-                    "secondary-focus": "#475569",
-                    "secondary-content": "#ffffff",
-                    "accent": "#14b8a6",
-                    "accent-focus": "#0d9488",
-                    "accent-content": "#ffffff",
-                    "neutral": "#374151",
-                    "neutral-focus": "#1f2937",
-                    "neutral-content": "#ffffff",
-                    "base-100": "#ffffff",
-                    "base-200": "#f8fafc",
-                    "base-300": "#f1f5f9",
-                    "base-content": "#1e293b",
-                    "info": "#3b82f6",
-                    "success": "#10b981",
-                    "warning": "#f59e0b",
-                    "error": "#ef4444",
-                },
-                dark: {
-                    "primary": "#60a5fa",
-                    "primary-focus": "#3b82f6",
-                    "primary-content": "#ffffff",
-                    "secondary": "#94a3b8",
-                    "secondary-focus": "#64748b",
-                    "secondary-content": "#1e293b",
-                    "accent": "#2dd4bf",
-                    "accent-focus": "#14b8a6",
-                    "accent-content": "#1e293b",
-                    "neutral": "#9ca3af",
-                    "neutral-focus": "#6b7280",
-                    "neutral-content": "#1e293b",
-                    "base-100": "#1e293b",
-                    "base-200": "#111827",
-                    "base-300": "#0f172a",
-                    "base-content": "#f8fafc",
-                    "info": "#60a5fa",
-                    "success": "#34d399",
-                    "warning": "#fbbf24",
-                    "error": "#f87171",
-                }
+            plugins: [require('daisyui')],
+            daisyui: {
+                themes: [
+                    "light",
+                    "dark",
+                    "cupcake",
+                    "bumblebee",
+                    "emerald",
+                    "corporate",
+                    "synthwave",
+                    {
+                        "godash": {
+                            "primary": "#3b82f6",
+                            "primary-focus": "#2563eb",
+                            "primary-content": "#ffffff",
+                            "secondary": "#64748b",
+                            "secondary-focus": "#475569",
+                            "secondary-content": "#ffffff",
+                            "accent": "#14b8a6",
+                            "accent-focus": "#0d9488",
+                            "accent-content": "#ffffff",
+                            "neutral": "#374151",
+                            "neutral-focus": "#1f2937",
+                            "neutral-content": "#ffffff",
+                            "base-100": "#ffffff",
+                            "base-200": "#f8fafc",
+                            "base-300": "#f1f5f9",
+                            "base-content": "#1e293b",
+                            "info": "#3b82f6",
+                            "success": "#10b981",
+                            "warning": "#f59e0b",
+                            "error": "#ef4444",
+                        }
+                    }
+                ],
+                darkTheme: "dark",
+                base: true,
+                styled: true,
+                utils: true,
+                prefix: "",
+                logs: true,
+                themeRoot: ":root"
             }
         }
     </script>
@@ -71,32 +64,36 @@
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- 自定义样式 -->
-    <link rel="stylesheet" href="/static/css/admin.css?v=20250124111441">
+    <link rel="stylesheet" href="/static/css/admin.css?v=20250125120000">
 
     <!-- HTMX v2.0.7 -->
-    <script src="https://gcore.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"
+        integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ"
+        crossorigin="anonymous"></script>
 
     <!-- Alpine.js v3.15.0 -->
     <script defer src="https://gcore.jsdelivr.net/npm/alpinejs@3.15.0/dist/cdn.min.js"></script>
 
-    <!-- 自定义 JS (添加版本号避免缓存) -->
-    <script src="/static/js/app.js?v=20250124-clean-nav"></script>
+    <!-- 自定义 JS -->
+    <script src="/static/js/app.js?v=20250125120000"></script>
 </head>
 
-<body class="bg-base-200 text-base-content" x-data="initApp()" x-init="init()" x-data="$store = Alpine.store">
+<body class="bg-base-200 text-base-content" x-data="initApp()" x-init="init()">
+    <!-- 移动端侧边栏关闭按钮 -->
     <template x-if="sidebarOpen">
-        <button @click="$store.sidebarOpen = false; $dispatch('close-sidebar')"
+        <button @click="sidebarOpen = false"
             class="fixed top-4 right-4 z-[999] btn btn-circle btn-ghost btn-sm lg:hidden">
             <i class="fas fa-times"></i>
         </button>
     </template>
+
     <div class="flex min-h-screen">
         <!-- 侧边栏 -->
         {{template "components/sidebar.html"}}
 
         <!-- 主内容区 -->
-        <div class="flex-1 transition-all duration-300"
-            :class="{ 'lg:ml-64': true, 'ml-0': !sidebarOpen || window.innerWidth >= 1024 }">
+        <div class="flex-1 transition-all duration-300 lg:ml-64"
+            :class="{ 'ml-0': !sidebarOpen && window.innerWidth < 1024 }">
             <!-- 顶部栏 -->
             {{template "components/header.html"}}
 
@@ -105,7 +102,7 @@
                 <!-- 默认加载仪表盘 -->
                 <div hx-get="/dashboard" hx-trigger="load" hx-swap="innerHTML">
                     <div class="flex flex-col items-center justify-center py-12">
-                        <div class="loading-spinner"></div>
+                        <span class="loading loading-spinner loading-lg"></span>
                         <p class="mt-4 text-base-content/60">加载中...</p>
                     </div>
                 </div>
@@ -126,9 +123,7 @@
                 activeMenu: window.location.pathname,
 
                 init() {
-                    // 确保初始状态正确应用
                     this.$nextTick(() => {
-                        // 触发一次重新渲染以确保样式正确应用
                         this.activeMenu = window.location.pathname;
                     });
                 },
@@ -145,11 +140,10 @@
             }
         }
 
-        // HTMX 配置和事件监听
+        // 响应式处理
         document.addEventListener('DOMContentLoaded', function () {
-            // 响应式处理
             window.addEventListener('resize', () => {
-                if (window.app) {
+                if (window.app && window.app.handleResize) {
                     window.app.handleResize();
                 }
             });
