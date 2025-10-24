@@ -29,7 +29,7 @@ max_conn_age = 300
 pool_timeout = 8
 
 [other]
-listen_addr = ":8000"
+listen_addr = ":80"
 service_name = "gohtml"
 repository_request_timeout = 10
 prometheus_listen_addr = ":9090"
