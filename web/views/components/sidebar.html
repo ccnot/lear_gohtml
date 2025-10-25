@@ -19,7 +19,7 @@
     <ul class="menu menu-md px-3 py-6 space-y-1">
         <!-- 仪表盘 -->
         <li>
-            <a href="/dashboard" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active': activeMenu === '/dashboard' }"
+            <a href="/dashboard" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active text-primary font-semibold': activeMenu === '/dashboard' }"
                 hx-get="/dashboard" hx-target="main" hx-swap="innerHTML" hx-push-url="true"
                 @click="activeMenu = '/dashboard'; sidebarOpen = window.innerWidth >= 1024">
                 <div class="flex items-center gap-3">
@@ -37,7 +37,7 @@
         <li>
             <details :open="activeMenu.startsWith('/users')" class="group">
                 <summary class="menu-item rounded-lg transition-all duration-200"
-                    :class="{ 'active': activeMenu.startsWith('/users') }">
+                    :class="{ 'active text-primary font-semibold': activeMenu.startsWith('/users') }">
                     <div class="flex items-center gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -49,7 +49,7 @@
                 </summary>
                 <ul class="ml-2 mt-1 space-y-1">
                     <li>
-                        <a href="/users" :class="{ 'active': activeMenu === '/users' }" hx-get="/users"
+                        <a href="/users" :class="{ 'active text-primary font-semibold': activeMenu === '/users' }" hx-get="/users"
                             hx-target="main" hx-swap="innerHTML" hx-push-url="true"
                             @click="activeMenu = '/users'; sidebarOpen = window.innerWidth >= 1024"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-base-200 transition-all duration-200 text-sm">
@@ -62,7 +62,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/users/roles" :class="{ 'active': activeMenu === '/users/roles' }"
+                        <a href="/users/roles" :class="{ 'active text-primary font-semibold': activeMenu === '/users/roles' }"
                             hx-get="/users/roles" hx-target="main" hx-swap="innerHTML" hx-push-url="true"
                             @click="activeMenu = '/users/roles'; sidebarOpen = window.innerWidth >= 1024"
                             class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-base-200 transition-all duration-200 text-sm">
@@ -75,7 +75,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/users/permissions" :class="{ 'active': activeMenu === '/users/permissions' }"
+                        <a href="/users/permissions" :class="{ 'active text-primary font-semibold': activeMenu === '/users/permissions' }"
                             hx-get="/users/permissions" hx-target="main" hx-swap="innerHTML"
                             hx-push-url="true"
                             @click="activeMenu = '/users/permissions'; sidebarOpen = window.innerWidth >= 1024"
@@ -94,7 +94,7 @@
 
         <!-- 商品管理 -->
         <li>
-            <a href="/products" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active': activeMenu === '/products' }" hx-get="/products"
+            <a href="/products" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active text-primary font-semibold': activeMenu === '/products' }" hx-get="/products"
                 hx-target="main" hx-swap="innerHTML" hx-push-url="true"
                 @click="activeMenu = '/products'; sidebarOpen = window.innerWidth >= 1024">
                 <div class="flex items-center gap-3">
@@ -110,7 +110,7 @@
 
         <!-- 订单管理 -->
         <li>
-            <a href="/orders" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active': activeMenu === '/orders' }" hx-get="/orders"
+            <a href="/orders" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active text-primary font-semibold': activeMenu === '/orders' }" hx-get="/orders"
                 hx-target="main" hx-swap="innerHTML" hx-push-url="true"
                 @click="activeMenu = '/orders'; sidebarOpen = window.innerWidth >= 1024">
                 <div class="flex items-center gap-3">
@@ -126,7 +126,7 @@
 
         <!-- 系统设置 -->
         <li>
-            <a href="/settings" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active': activeMenu === '/settings' }" hx-get="/settings"
+            <a href="/settings" class="menu-item rounded-lg transition-all duration-200" :class="{ 'active text-primary font-semibold': activeMenu === '/settings' }" hx-get="/settings"
                 hx-target="main" hx-swap="innerHTML" hx-push-url="true"
                 @click="activeMenu = '/settings'; sidebarOpen = window.innerWidth >= 1024">
                 <div class="flex items-center gap-3">
