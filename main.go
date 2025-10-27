@@ -20,8 +20,8 @@ import (
 func main() {
 	app := freedom.NewApplication()
 	app.Iris().HandleDir("/static", "./web/static")
-	viewEngine := view.HTML("./web/views", ".html")
-	//viewEngine := view.HTML("./web/views", ".html").Reload(true) //如果设置为true，则重新加载模板，模板将在每次渲染时重新加载,当你在开发中并且厌倦了重新启动时，可以使用它
+	//viewEngine := view.HTML("./web/views", ".html")
+	viewEngine := view.HTML("./web/views", ".html").Reload(true) //如果设置为true，则重新加载模板，模板将在每次渲染时重新加载,当你在开发中并且厌倦了重新启动时，可以使用它
 	tmplfuncs.Register(viewEngine)
 	//viewEngine := view.HTML("./web/views", ".html")
 	app.Iris().RegisterView(viewEngine)

@@ -10,60 +10,51 @@
 <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-base-300">
     <!-- 分页信息 -->
     <div class="text-sm opacity-70">
-        显示第 <span class="font-semibold">{{.PageInfo.Page}}</span> / <span class="font-semibold">{{.PageInfo.TotalPages}}</span> 页，共 <span class="font-semibold">{{.PageInfo.Total}}</span> 条记录
+        显示第 <span class="font-semibold">{{.PageInfo.Page}}</span> / <span
+            class="font-semibold">{{.PageInfo.TotalPages}}</span> 页，共 <span
+            class="font-semibold">{{.PageInfo.Total}}</span> 条记录
     </div>
-    
+
     <!-- 分页按钮 - 使用 daisyUI 5 的 join 组件 -->
     <div class="join">
         <!-- 上一页 -->
         {{if gt .PageInfo.Page 1}}
-        <button 
-            class="join-item btn btn-sm"
-            hx-get="{{.BaseURL}}?page={{sub .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}{{range $key, $value := .ExtraParams}}&{{$key}}={{$value}}{{end}}"
-            hx-target="#{{.TargetContainer}}" 
-            hx-swap="innerHTML"
-            hx-select="#{{.TargetContainer}} > *">
-            «
-        </button>
+            <button class="join-item btn btn-sm"
+                hx-get="{{.BaseURL}}?page={{sub .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}{{range $key, $value := .ExtraParams}}&{{$key}}={{$value}}{{end}}"
+                hx-target="#{{.TargetContainer}}" hx-swap="innerHTML" hx-select="#{{.TargetContainer}}">
+                «
+            </button>
         {{else}}
-        <button class="join-item btn btn-sm btn-disabled" disabled>«</button>
+            <button class="join-item btn btn-sm btn-disabled" disabled>«</button>
         {{end}}
-        
+
         <!-- 页码按钮 -->
         {{$currentPage := .PageInfo.Page}}
         {{$totalPages := .PageInfo.TotalPages}}
-        {{range $i := iterate $totalPages}}
-            {{if eq $i $currentPage}}
-                <!-- 当前页 -->
-                <button class="join-item btn btn-sm btn-active">{{$i}}</button>
-            {{else if or (eq $i 1) (eq $i $totalPages) (and (ge $i (sub $currentPage 2)) (le $i (add $currentPage 2)))}}
-                <!-- 显示的页码 -->
-                <button 
-                    class="join-item btn btn-sm"
-                    hx-get="{{$.BaseURL}}?page={{$i}}&page_size={{$.PageInfo.PageSize}}{{range $key, $value := $.ExtraParams}}&{{$key}}={{$value}}{{end}}"
-                    hx-target="#{{$.TargetContainer}}" 
-                    hx-swap="innerHTML"
-                    hx-select="#{{$.TargetContainer}} > *">
-                    {{$i}}
-                </button>
-            {{else if or (eq $i 2) (eq $i (sub $totalPages 1))}}
-                <!-- 省略号 -->
-                <button class="join-item btn btn-sm btn-disabled" disabled>...</button>
-            {{end}}
-        {{end}}
         
+        {{range $i := pageRange $currentPage $totalPages}}
+                {{if eq $i $currentPage}}
+                    <!-- 当前页 -->
+                    <button class="join-item btn btn-sm btn-active">{{$i}}</button>
+                {{else}}
+                    <!-- 显示的页码 -->
+                    <button class="join-item btn btn-sm"
+                        hx-get="{{$.BaseURL}}?page={{$i}}&page_size={{$.PageInfo.PageSize}}{{range $key, $value := $.ExtraParams}}&{{$key}}={{$value}}{{end}}"
+                        hx-target="#{{$.TargetContainer}}" hx-swap="innerHTML" hx-select="#{{$.TargetContainer}}">
+                        {{$i}}
+                    </button>
+                {{end}}
+        {{end}}
+
         <!-- 下一页 -->
         {{if lt .PageInfo.Page .PageInfo.TotalPages}}
-        <button 
-            class="join-item btn btn-sm"
-            hx-get="{{.BaseURL}}?page={{add .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}{{range $key, $value := .ExtraParams}}&{{$key}}={{$value}}{{end}}"
-            hx-target="#{{.TargetContainer}}" 
-            hx-swap="innerHTML"
-            hx-select="#{{.TargetContainer}} > *">
-            »
-        </button>
+            <button class="join-item btn btn-sm"
+                hx-get="{{.BaseURL}}?page={{add .PageInfo.Page 1}}&page_size={{.PageInfo.PageSize}}{{range $key, $value := .ExtraParams}}&{{$key}}={{$value}}{{end}}"
+                hx-target="#{{.TargetContainer}}" hx-swap="innerHTML" hx-select="#{{.TargetContainer}}">
+                »
+            </button>
         {{else}}
-        <button class="join-item btn btn-sm btn-disabled" disabled>»</button>
+            <button class="join-item btn btn-sm btn-disabled" disabled>»</button>
         {{end}}
     </div>
 </div>

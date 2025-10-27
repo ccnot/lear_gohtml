@@ -25,6 +25,7 @@ func Register(engine *view.HTMLEngine) {
 
 	// 迭代函数
 	engine.AddFunc("iterate", iterate)
+	engine.AddFunc("pageRange", pageRange)
 
 	// 字典函数
 	engine.AddFunc("dict", dict)
@@ -80,6 +81,40 @@ func iterate(count int) []int {
 	result := make([]int, count)
 	for i := 0; i < count; i++ {
 		result[i] = i + 1
+	}
+	return result
+}
+
+// pageRange 生成分页显示的页码范围，只包含当前页前后2页和首尾页
+func pageRange(currentPage, totalPages int) []int {
+	var result []int
+
+	// 总是包含第1页
+	if currentPage > 1 {
+		result = append(result, 1)
+	}
+
+	// 计算显示范围：当前页前2页到后2页
+	start := currentPage - 2
+	if start < 2 {
+		start = 2
+	}
+
+	end := currentPage + 2
+	if end > totalPages-1 {
+		end = totalPages - 1
+	}
+
+	// 添加中间页码
+	for i := start; i <= end; i++ {
+		if i >= 2 && i <= totalPages-1 {
+			result = append(result, i)
+		}
+	}
+
+	// 总是包含最后一页（如果与第1页不同）
+	if totalPages > 1 && currentPage != totalPages {
+		result = append(result, totalPages)
 	}
 	return result
 }

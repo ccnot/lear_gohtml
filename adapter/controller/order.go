@@ -32,7 +32,7 @@ func init() {
 	statuses := []string{"pending", "paid", "shipped", "completed", "cancelled"}
 	payments := []string{"支付宝", "微信支付", "银行卡", "货到付款"}
 
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 300; i++ {
 		// 生成订单项
 		itemCount := rand.Intn(3) + 1
 		items := make([]vo.OrderItem, itemCount)
