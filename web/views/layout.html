@@ -11,53 +11,6 @@
     <script defer src="https://gcore.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <!-- DaisyUI 5.3.7 主题配置 -->
-    <script>
-        tailwind.config = {
-            plugins: [require('daisyui')],
-            daisyui: {
-                themes: [
-                    "light",
-                    "dark",
-                    "cupcake",
-                    "bumblebee",
-                    "emerald",
-                    "corporate",
-                    "synthwave",
-                    {
-                        "godash": {
-                            "primary": "#3b82f6",
-                            "primary-focus": "#2563eb",
-                            "primary-content": "#ffffff",
-                            "secondary": "#64748b",
-                            "secondary-focus": "#475569",
-                            "secondary-content": "#ffffff",
-                            "accent": "#14b8a6",
-                            "accent-focus": "#0d9488",
-                            "accent-content": "#ffffff",
-                            "neutral": "#374151",
-                            "neutral-focus": "#1f2937",
-                            "neutral-content": "#ffffff",
-                            "base-100": "#ffffff",
-                            "base-200": "#f8fafc",
-                            "base-300": "#f1f5f9",
-                            "base-content": "#1e293b",
-                            "info": "#3b82f6",
-                            "success": "#10b981",
-                            "warning": "#f59e0b",
-                            "error": "#ef4444",
-                        }
-                    }
-                ],
-                darkTheme: "dark",
-                base: true,
-                styled: true,
-                utils: true,
-                prefix: "",
-                logs: true,
-                themeRoot: ":root"
-            }
-        }
-    </script>
 
     <!-- Font Awesome 图标 -->
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -112,41 +65,6 @@
     <div id="toast-container" class="fixed top-20 right-6 z-[9999] flex flex-col gap-2 max-w-96">
     </div>
 
-    <!-- Alpine.js 全局组件 -->
-    <script>
-        // Alpine.js 全局应用状态
-        function initApp() {
-            return {
-                sidebarOpen: window.innerWidth >= 1024,
-                activeMenu: window.location.pathname,
-
-                init() {
-                    this.$nextTick(() => {
-                        this.activeMenu = window.location.pathname;
-                    });
-                },
-
-                setActiveMenu(path) {
-                    this.activeMenu = path;
-                },
-
-                handleResize() {
-                    if (window.innerWidth >= 1024) {
-                        this.sidebarOpen = true;
-                    }
-                }
-            }
-        }
-
-        // 响应式处理
-        document.addEventListener('DOMContentLoaded', function () {
-            window.addEventListener('resize', () => {
-                if (window.app && window.app.handleResize) {
-                    window.app.handleResize();
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>

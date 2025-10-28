@@ -173,26 +173,3 @@
         </div>
     </div>
 </header>
-
-<script>
-    // 初始化主题控制器
-    (function () {
-        const themeController = document.querySelector('.theme-controller');
-        if (!themeController) return;
-
-        // 从 localStorage 读取主题
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        const isDark = savedTheme === 'dark';
-
-        // 设置初始状态
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        themeController.checked = isDark;
-
-        // 监听主题切换
-        themeController.addEventListener('change', function (e) {
-            const newTheme = e.target.checked ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
-    })();
-</script>

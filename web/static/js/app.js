@@ -29,7 +29,7 @@ document.addEventListener('alpine:init', () => {
 
     // 通用表单验证器 - 简化版本
     function createValidator(rules) {
-        return function(formData) {
+        return function (formData) {
             const errors = {};
             for (const [field, rule] of Object.entries(rules)) {
                 const value = formData[field];
@@ -132,7 +132,7 @@ document.addEventListener('alpine:init', () => {
 // ============================================
 
 // HTMX confirm 拦截 - 使用 DaisyUI dialog
-document.addEventListener('htmx:confirm', function(event) {
+document.addEventListener('htmx:confirm', function (event) {
     if (!event.detail.question) return;
 
     event.preventDefault();
@@ -233,7 +233,7 @@ function showConfirmDialog(config) {
     document.getElementById('confirm-text').textContent = config.confirmText || '确定';
 
     const confirmBtn = document.getElementById('confirm-button');
-    confirmBtn.onclick = function() {
+    confirmBtn.onclick = function () {
         if (typeof config?.onConfirm === 'function') {
             config.onConfirm();
         }
@@ -323,4 +323,358 @@ function debounce(func, wait = 300) {
 
 // 工具函数挂载
 window.utils = { formatDate, formatCurrency, debounce };
+
+// ============================================
+// 从HTML文件迁移的脚本函数
+// ============================================
+
+// 从 web/views/orders/list.html 迁移的模态框辅助函数
+window.showOrderModal = function () {
+    document.getElementById('order-modal')?.showModal();
+};
+window.closeOrderModal = function () {
+    document.getElementById('order-modal')?.close();
+};
+
+// 从 web/views/components/header.html 迁移的主题控制器初始化
+(function () {
+    const themeController = document.querySelector('.theme-controller');
+    if (!themeController) return;
+
+    // 从 localStorage 读取主题
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    const isDark = savedTheme === 'dark';
+
+    // 设置初始状态
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeController.checked = isDark;
+
+    // 监听主题切换
+    themeController.addEventListener('change', function (e) {
+        const newTheme = e.target.checked ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+})();
+
+// 从 web/views/products/new.html 迁移的商品表单函数
+function productForm(isEdit = false) {
+    return {
+        loading: false,
+        errors: {},
+        form: {
+            name: '',
+            sku: '',
+            category: '',
+            price: '',
+            stock: '',
+            status: 'active',
+            description: ''
+        },
+
+        validateForm() {
+            this.errors = {};
+            let isValid = true;
+
+            if (!this.form.name) {
+                this.errors.name = '商品名称不能为空';
+                isValid = false;
+            }
+
+            if (!this.form.sku && !isEdit) {
+                this.errors.sku = 'SKU不能为空';
+                isValid = false;
+            }
+
+            if (!this.form.category) {
+                this.errors.category = '请选择商品分类';
+                isValid = false;
+            }
+
+            if (!this.form.price || parseFloat(this.form.price) < 0) {
+                this.errors.price = '请输入有效的价格';
+                isValid = false;
+            }
+
+            if (!this.form.stock || parseInt(this.form.stock) < 0) {
+                this.errors.stock = '请输入有效的库存数量';
+                isValid = false;
+            }
+
+            if (!this.form.status) {
+                this.errors.status = '请选择商品状态';
+                isValid = false;
+            }
+
+            return isValid;
+        },
+
+        submitForm(event) {
+            if (this.validateForm()) {
+                this.loading = true;
+
+                // 让 HTMX 处理表单提交
+                htmx.trigger(event.target, 'submit');
+
+                // 监听提交完成
+                setTimeout(() => {
+                    this.loading = false;
+                }, 500);
+            }
+        }
+    }
+}
+
+// 从 web/views/products/form.html 迁移的产品表单函数
+function productFormForForm(isEdit) {
+    return {
+        loading: false,
+        errors: {},
+        form: {
+            name: '',
+            sku: '',
+            category: '',
+            price: '',
+            stock: '',
+            status: 'active',
+            description: ''
+        },
+
+        validateForm() {
+            this.errors = {};
+            let isValid = true;
+
+            if (!this.form.name) {
+                this.errors.name = '商品名称不能为空';
+                isValid = false;
+            }
+
+            if (!this.form.sku && !isEdit) {
+                this.errors.sku = 'SKU 不能为空';
+                isValid = false;
+            }
+
+            if (!this.form.price || parseFloat(this.form.price) <= 0) {
+                this.errors.price = '请输入有效的价格';
+                isValid = false;
+            }
+
+            if (!this.form.stock || parseInt(this.form.stock) < 0) {
+                this.errors.stock = '请输入有效的库存';
+                isValid = false;
+            }
+
+            return isValid;
+        },
+
+        submitForm(event) {
+            if (this.validateForm()) {
+                this.loading = true;
+                // 让 HTMX 处理表单提交
+                htmx.trigger(event.target, 'submit');
+
+                // 监听提交完成
+                setTimeout(() => {
+                    this.loading = false;
+                    // 关闭模态框
+                    document.querySelector('.modal').classList.remove('is-active');
+                }, 500);
+            }
+        }
+    };
+}
+
+// 从 web/views/products/edit.html 迁移的编辑商品表单函数
+function editProductForm(isEdit = false, productId = null) {
+    return {
+        loading: false,
+        errors: {},
+        form: {
+            name: '',
+            sku: '',
+            category: '',
+            price: '',
+            stock: '',
+            status: '',
+            description: ''
+        },
+
+        handleFormInit(event, productData) {
+            // 编辑模式：预填充表单数据
+            if (isEdit && productData) {
+                this.form = {
+                    name: productData.name || '',
+                    sku: productData.sku || '',
+                    category: productData.category || '',
+                    price: productData.price || '',
+                    stock: productData.stock || '',
+                    status: productData.status || '',
+                    description: productData.description || ''
+                };
+            }
+        },
+
+        validateForm() {
+            this.errors = {};
+            let isValid = true;
+
+            if (!this.form.name) {
+                this.errors.name = '商品名称不能为空';
+                isValid = false;
+            }
+
+            if (!this.form.category) {
+                this.errors.category = '请选择商品分类';
+                isValid = false;
+            }
+
+            if (!this.form.price || parseFloat(this.form.price) < 0) {
+                this.errors.price = '请输入有效的价格';
+                isValid = false;
+            }
+
+            if (!this.form.stock || parseInt(this.form.stock) < 0) {
+                this.errors.stock = '请输入有效的库存数量';
+                isValid = false;
+            }
+
+            if (!this.form.status) {
+                this.errors.status = '请选择商品状态';
+                isValid = false;
+            }
+
+            return isValid;
+        },
+
+        submitForm(event) {
+            if (!this.validateForm()) {
+                return;
+            }
+
+            this.loading = true;
+
+            // 让 HTMX 处理表单提交
+            htmx.trigger(event.target, 'submit');
+
+            // 监听提交完成
+            setTimeout(() => {
+                this.loading = false;
+            }, 500);
+        }
+    }
+}
+
+// 从 web/views/settings/form.html 迁移的设置表单函数
+function settingsForm() {
+    return {
+        loading: false,
+
+        submitForm(event) {
+            this.loading = true;
+            // 让 HTMX 处理表单提交
+            htmx.trigger(event.target, 'submit');
+
+            // 监听提交完成
+            setTimeout(() => {
+                this.loading = false;
+            }, 500);
+        }
+    };
+}
+
+// 从 web/views/demo/features.html 迁移的演示页面函数
+function demoPage() {
+    return {
+        activeTab: 'htmx',
+        showTransition: false,
+        showCustomTransition: false,
+
+        init() {
+            console.log('✅ 特性演示页面已初始化');
+        }
+    };
+}
+
+// 从 web/views/layout.html 迁移的全局应用状态和响应式处理
+// Alpine.js 全局应用状态
+function initApp() {
+    return {
+        sidebarOpen: window.innerWidth >= 1024,
+        activeMenu: window.location.pathname,
+
+        init() {
+            this.$nextTick(() => {
+                this.activeMenu = window.location.pathname;
+            });
+        },
+
+        setActiveMenu(path) {
+            this.activeMenu = path;
+        },
+
+        handleResize() {
+            if (window.innerWidth >= 1024) {
+                this.sidebarOpen = true;
+            }
+        }
+    }
+}
+
+// 响应式处理
+document.addEventListener('DOMContentLoaded', function () {
+    window.addEventListener('resize', () => {
+        if (window.app && window.app.handleResize) {
+            window.app.handleResize();
+        }
+    });
+});
+
+// Tailwind配置（从layout.html迁移）
+if (window.tailwind) {
+    tailwind.config = {
+        plugins: [require('daisyui')],
+        daisyui: {
+            themes: [
+                "light",
+                "dark",
+                "cupcake",
+                "bumblebee",
+                "emerald",
+                "corporate",
+                "synthwave",
+                {
+                    "godash": {
+                        "primary": "#3b82f6",
+                        "primary-focus": "#2563eb",
+                        "primary-content": "#ffffff",
+                        "secondary": "#64748b",
+                        "secondary-focus": "#475569",
+                        "secondary-content": "#ffffff",
+                        "accent": "#14b8a6",
+                        "accent-focus": "#0d9488",
+                        "accent-content": "#ffffff",
+                        "neutral": "#374151",
+                        "neutral-focus": "#1f2937",
+                        "neutral-content": "#ffffff",
+                        "base-100": "#ffffff",
+                        "base-200": "#f8fafc",
+                        "base-300": "#f1f5f9",
+                        "base-content": "#1e293b",
+                        "info": "#3b82f6",
+                        "success": "#10b981",
+                        "warning": "#f59e0b",
+                        "error": "#ef4444",
+                    }
+                }
+            ],
+            darkTheme: "dark",
+            base: true,
+            styled: true,
+            utils: true,
+            prefix: "",
+            logs: true,
+            themeRoot: ":root"
+        }
+    }
+}
 

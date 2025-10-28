@@ -265,22 +265,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    function settingsForm() {
-        return {
-            loading: false,
-
-            submitForm(event) {
-                this.loading = true;
-                // 让 HTMX 处理表单提交
-                htmx.trigger(event.target, 'submit');
-
-                // 监听提交完成
-                setTimeout(() => {
-                    this.loading = false;
-                }, 500);
-            }
-        };
-    }
-</script>
