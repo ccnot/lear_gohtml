@@ -29,7 +29,7 @@
         <div class="btn-group btn-group-vertical lg:btn-group-horizontal">
             <!-- 查看详情按钮 - 使用原生 dialog -->
             <button class="btn btn-ghost btn-sm" hx-get="/orders/{{.ID}}" hx-target="#order-modal-content"
-                hx-swap="innerHTML" onclick="document.getElementById('order-modal').showModal()" title="查看详情">
+                hx-swap="innerHTML" onclick="modal.show('order-modal')" title="查看详情">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

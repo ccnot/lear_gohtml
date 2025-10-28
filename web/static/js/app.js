@@ -324,17 +324,47 @@ function debounce(func, wait = 300) {
 // 工具函数挂载
 window.utils = { formatDate, formatCurrency, debounce };
 
+// 通用模态框管理函数
+window.modal = {
+    show: function (modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.showModal();
+            return true;
+        }
+        console.warn(`模态框 #${modalId} 未找到`);
+        return false;
+    },
+
+    close: function (modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.close();
+            return true;
+        }
+        console.warn(`模态框 #${modalId} 未找到`);
+        return false;
+    },
+
+    toggle: function (modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            if (modal.open) {
+                modal.close();
+            } else {
+                modal.showModal();
+            }
+            return true;
+        }
+        console.warn(`模态框 #${modalId} 未找到`);
+        return false;
+    }
+};
+
+
 // ============================================
 // 从HTML文件迁移的脚本函数
 // ============================================
-
-// 从 web/views/orders/list.html 迁移的模态框辅助函数
-window.showOrderModal = function () {
-    document.getElementById('order-modal')?.showModal();
-};
-window.closeOrderModal = function () {
-    document.getElementById('order-modal')?.close();
-};
 
 // 从 web/views/components/header.html 迁移的主题控制器初始化
 (function () {
